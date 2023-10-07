@@ -12,7 +12,6 @@
 // Sets default values
 APhotoModePawn::APhotoModePawn()
 {
- 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Camera 
@@ -33,35 +32,30 @@ APhotoModePawn::APhotoModePawn()
 	ScreenshotRenderTarget = nullptr;
 }
 
-// Called when the game starts or when spawned
 void APhotoModePawn::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
-// Called every frame
 void APhotoModePawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 }
 
-// Called to bind functionality to input
 void APhotoModePawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	if (PlayerInputComponent)
-	{	
-		PlayerInputComponent->BindAction("CaptureScreenshot", IE_Pressed, this, &APhotoModePawn::CaptureScreenshot);
+	check(PlayerInputComponent);
 
-		PlayerInputComponent->BindAxis("MoveForward", this, &APhotoModePawn::MoveForward);
-		PlayerInputComponent->BindAxis("MoveRight", this, &APhotoModePawn::MoveRight);
-		PlayerInputComponent->BindAxis("LookUp", this, &APhotoModePawn::LookUp);
-		PlayerInputComponent->BindAxis("Turn", this, &APhotoModePawn::Turn);
+	PlayerInputComponent->BindAction("CaptureScreenshot", IE_Pressed, this, &APhotoModePawn::CaptureScreenshot);
 
-	}
+	PlayerInputComponent->BindAxis("MoveForward", this, &APhotoModePawn::MoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", this, &APhotoModePawn::MoveRight);
+	PlayerInputComponent->BindAxis("LookUp", this, &APhotoModePawn::LookUp);
+	PlayerInputComponent->BindAxis("Turn", this, &APhotoModePawn::Turn);
 }
 
 void APhotoModePawn::MoveForward(float Value)

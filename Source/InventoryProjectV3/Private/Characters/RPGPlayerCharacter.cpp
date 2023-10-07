@@ -102,7 +102,6 @@ ARPGPlayerCharacter::ARPGPlayerCharacter()
 	bStealthed = false;
 }
 
-// Called when the game starts or when spawned
 void ARPGPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -110,7 +109,6 @@ void ARPGPlayerCharacter::BeginPlay()
 	//HPComp->OnHealthChanged.AddDynamic(this, &ARPGPlayerCharacter::Death);
 }
 
-// Called every frame
 void ARPGPlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -118,7 +116,6 @@ void ARPGPlayerCharacter::Tick(float DeltaTime)
 	TraceForInteractableObjects(TraceLength, false);
 }
 
-// Called to bind functionality to input
 void ARPGPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -236,7 +233,6 @@ void ARPGPlayerCharacter::Death()
 {
 	if (!HPComp)
 	{
-		// HPComp is invalid
 		return;
 	}
 
@@ -348,7 +344,7 @@ AActor* ARPGPlayerCharacter::TraceForInteractableObjects(float inTraceLength, bo
 	}
 
 	const FVector StartLoc = CameraComp->GetComponentLocation();
-	const FVector EndLoc = (StartLoc + (CameraComp->GetForwardVector() * inTraceLength)); // Start location of linetrace is added to camera's forward vector which is multiplied by Trace length
+	const FVector EndLoc = (StartLoc + (CameraComp->GetForwardVector() * inTraceLength));
 
 	FHitResult HitResult;
 
@@ -400,13 +396,12 @@ void ARPGPlayerCharacter::Interact()
 {
 	if (!InteractActor)
 	{
-		// Interact actor doesn't exist
 		return;
 	}
 
 	if (!InteractActor->GetClass()->ImplementsInterface(URPGInteract_Interface::StaticClass()))
 	{
-		// Interact actor doesn't implement the interface
+		// Actor is not interactable
 		return;
 	}
 

@@ -6,7 +6,7 @@
 UCharacterSelectionScreen_Widget::UCharacterSelectionScreen_Widget(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
 {
-	
+	CharacterCustomizationData = nullptr;
 }
 
 bool UCharacterSelectionScreen_Widget::Initialize()

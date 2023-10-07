@@ -49,6 +49,18 @@ struct FCharacterSelectionData
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Selection")
 	UTexture2D* Portrait;
 
+	/* How much should we offset preview camera by? */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Selection")
+	FVector PreviewCameraDistanceDelta;
+
+	FCharacterSelectionData()
+	{
+		Name = FText::FromString("Default");
+		SkeletalMesh = nullptr;
+		AssociatedAnimBP = nullptr;
+		Portrait = nullptr;
+		PreviewCameraDistanceDelta = FVector::ZeroVector;
+	}
 };
 
 UCLASS()
@@ -61,7 +73,6 @@ class INVENTORYPROJECTV3_API ARPGPlayerCharacter : public ACharacter
 
 public:
 
-	// Sets default values for this character's properties
 	ARPGPlayerCharacter();
 
 	virtual void BeginPlay() override;
@@ -113,20 +124,13 @@ public:
 
 protected:
 
-	/* Called for forwards/backward input */
 	void MoveForward(float Value);
-
-	/* Called for side to side input */
 	void MoveRight(float Value);
 
 	void StartJumping();
-
 	void StopJumping();
 
-	/* Sprint start */
 	void StartSprinting();
-
-	/* Sprint end */
 	void StopSprinting();
 
 	/*
@@ -217,9 +221,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Dialog")
 	bool bInDialog;
 	
-	/* Console command to change character model to a specified one. 
-	 * MyTODO: Make a UI-based character selection system
-	 */
+	/* Console command to change character model to a specified one. */
 	UFUNCTION(Exec)
 	void RPGChangeCharacterModel();
 
@@ -236,7 +238,5 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Movement")
 	void BlueprintOnStealthPressed();
-
-protected:
 
 };

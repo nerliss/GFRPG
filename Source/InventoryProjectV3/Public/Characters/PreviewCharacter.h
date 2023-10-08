@@ -39,6 +39,8 @@ protected:
 
 public:	
 
+	USkeletalMeshComponent* GetPreviewMesh() const { return PreviewMesh; }
+
 	/* Character customizations list currently associated with this class */
 	UPROPERTY(BlueprintReadWrite, Category = "Character Customization")
 	UCharacterCustomizationData* AssociatedCharacterCustomizationData;
@@ -52,9 +54,13 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void ResetCameraDistance();
 
+public:
+
 	/* Update camera distance to preview model by DistanceDelta associated with that Character Data */
 	UFUNCTION(BlueprintCallable)
 	void UpdateCameraDistance(FVector DistanceDelta);
+
+protected:
 
 	/* Return character selection data associated with current player model. 
 	* Needs to be called after AssociatedCharacterCustomizationData is initialized.
@@ -68,13 +74,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AddPreviewModelRotation(FRotator RotationDelta);
 
-protected:
-
 	/* Forces all skeletal mesh's materials and their textures to use highest mip level */
 	UFUNCTION(BlueprintCallable)
 	void LoadTextures();
-
-public:
 
 	/* Called upon spawning and assigning AssociatedCharacterCustomizationData to this actor */
 	UPROPERTY(BlueprintCallable, Category = "Character Customization")

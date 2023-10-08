@@ -15,8 +15,6 @@ class INVENTORYPROJECTV3_API URPGHUD_Widget : public UUserWidget
 {
 	GENERATED_BODY()
 	
-private:
-
 	bool Initialize() override;
 
 public:

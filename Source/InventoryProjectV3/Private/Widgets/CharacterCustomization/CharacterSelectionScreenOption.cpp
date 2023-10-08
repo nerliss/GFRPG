@@ -4,6 +4,9 @@
 #include "Widgets/CharacterCustomization/CharacterSelectionScreenOption.h"
 #include "Components/Button.h"
 #include "Characters/RPGPlayerCharacter.h"
+#include "GameInstance/RPGGameInstanceBase.h"
+#include "Kismet/GameplayStatics.h"
+#include "Save/RPGSaveGameObject.h"
 
 void UCharacterSelectionScreenOption::NativeConstruct()
 {
@@ -32,7 +35,18 @@ void UCharacterSelectionScreenOption::OnOptionsButtonClicked()
 	PlayerCharacter->GetMesh()->SetSkeletalMeshAsset(AssociatedCharacterSelectionData.SkeletalMesh);
 	PlayerCharacter->GetMesh()->SetAnimInstanceClass(AssociatedCharacterSelectionData.AssociatedAnimBP);
 
-	// MyTODO: Move from blueprints saving selected character feature 
+	auto* RPGGameInstance = Cast<URPGGameInstanceBase>(GetWorld()->GetGameInstance());
+	if (!RPGGameInstance)
+	{	
+		UE_LOG(LogTemp, Error, TEXT("Game instance is invalid"));
+		return;
+	}
+
+	RPGGameInstance->GetSaveGameObject()->CharacterPlayerData = AssociatedCharacterSelectionData;
+	const bool bSaveSuccessful = UGameplayStatics::SaveGameToSlot(RPGGameInstance->GetSaveGameObject(), RPGGameInstance->GetSaveSlotName(), 0);
+
+	FString SaveDebugMessage = bSaveSuccessful ? TEXT("Character saved") : TEXT("An error occured when trying to save selected character");
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *SaveDebugMessage);
 }
 
 FText UCharacterSelectionScreenOption::GetButtonText() const

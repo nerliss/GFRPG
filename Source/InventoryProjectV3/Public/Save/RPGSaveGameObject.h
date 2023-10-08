@@ -1,0 +1,25 @@
+// Destruction Games. 2022
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameFramework/SaveGame.h"
+#include "Characters/RPGPlayerCharacter.h"
+#include "RPGSaveGameObject.generated.h"
+
+/**
+ * 
+ */
+UCLASS()
+class INVENTORYPROJECTV3_API URPGSaveGameObject : public USaveGame
+{
+	GENERATED_BODY()
+	
+	URPGSaveGameObject();
+
+public:
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player")
+	FCharacterSelectionData CharacterPlayerData;
+
+};

@@ -24,6 +24,8 @@
 #include "Interfaces/RPGInteract_Interface.h"
 #include "DamageTypes/DamageTypeEnviromental.h"
 #include "DataAssets/CharacterSoundCollection.h"
+#include "GameInstance/RPGGameInstanceBase.h"
+#include "Save/RPGSaveGameObject.h"
 
 DEFINE_LOG_CATEGORY(LogRPGPlayerCharacter);
 
@@ -81,6 +83,8 @@ ARPGPlayerCharacter::ARPGPlayerCharacter()
 	BaseTurnRate = 45.f;
 	BaseLookUpRate = 45.f;
 
+	GameInstanceReference = nullptr;
+
 	// Camera
 	MaxTargetBoomLength = SpringArmComp->TargetArmLength;
 	MinTargetBoomLength = 0.f;
@@ -106,7 +110,9 @@ void ARPGPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	//HPComp->OnHealthChanged.AddDynamic(this, &ARPGPlayerCharacter::Death);
+	GameInstanceReference = GetWorld()->GetGameInstanceChecked<URPGGameInstanceBase>();
+
+	LoadLastCharacterModel();
 }
 
 void ARPGPlayerCharacter::Tick(float DeltaTime)
@@ -422,32 +428,18 @@ void ARPGPlayerCharacter::ToggleInventory()
 	InventoryComp->ToggleInventory();
 }
 
-void ARPGPlayerCharacter::RPGChangeCharacterModel()
+void ARPGPlayerCharacter::LoadLastCharacterModel()
 {
-	int DataPieceIndex = 255;
+	check(GameInstanceReference);
 
-	// Find our current mesh in the collection
-	for (int i = 0; i < CharacterSelectionData.Num(); i++)
+	const auto SaveCharacterData = GameInstanceReference->GetSaveGameObject()->CharacterPlayerData;
+
+	if (SaveCharacterData.SkeletalMesh)
 	{
-		const auto& DataPiece = CharacterSelectionData[i];
+		GetMesh()->SetSkeletalMeshAsset(SaveCharacterData.SkeletalMesh);
+		GetMesh()->SetAnimInstanceClass(SaveCharacterData.AssociatedAnimBP);
 
-		if (DataPiece.SkeletalMesh == GetMesh()->GetSkeletalMeshAsset())
-		{
-			DataPieceIndex = i;
-			break;
-		}
-	}
-
-	// Get data from next index if valid
-	const auto& NextDataPiece = CharacterSelectionData.IsValidIndex(DataPieceIndex + 1) ? CharacterSelectionData[DataPieceIndex + 1] : CharacterSelectionData[0];
-	auto* NextSKM = NextDataPiece.SkeletalMesh;
-	const TSubclassOf<UAnimInstance> NextAnimBP = NextDataPiece.AssociatedAnimBP;
-
-	// Apply to our character
-	if (NextSKM && NextAnimBP)
-	{
-		GetMesh()->SetSkeletalMesh(NextSKM);
-		GetMesh()->SetAnimInstanceClass(NextAnimBP);
+		UE_LOG(LogRPGPlayerCharacter, Verbose, TEXT("Last character model was loaded"));
 	}
 }
 

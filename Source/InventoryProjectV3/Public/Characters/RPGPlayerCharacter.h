@@ -20,6 +20,7 @@ class URPGHUD_Widget;
 class UCharacterSoundCollection;
 class UAnimInstance;
 class USkeletalMesh;
+class URPGGameInstanceBase;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogRPGPlayerCharacter, Log, All);
 
@@ -220,13 +221,11 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Dialog")
 	bool bInDialog;
-	
-	/* Console command to change character model to a specified one. */
-	UFUNCTION(Exec)
-	void RPGChangeCharacterModel();
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character Selection")
-	TArray<FCharacterSelectionData> CharacterSelectionData;
+	UPROPERTY(BlueprintReadOnly, Category = "Game")
+	URPGGameInstanceBase* GameInstanceReference;
+
+	void LoadLastCharacterModel();
 
 public:
 

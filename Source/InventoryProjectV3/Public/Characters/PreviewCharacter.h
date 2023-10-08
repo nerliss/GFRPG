@@ -62,9 +62,13 @@ protected:
 	*/
 	FCharacterSelectionData FindCurrentCharacterData() const;
 
+public:
+
 	/* Rotates character model. Currently called in CharacterSelectionScreen_Widget on mouse move */
 	UFUNCTION(BlueprintCallable)
 	void AddPreviewModelRotation(FRotator RotationDelta);
+
+protected:
 
 	/* Forces all skeletal mesh's materials and their textures to use highest mip level */
 	UFUNCTION(BlueprintCallable)

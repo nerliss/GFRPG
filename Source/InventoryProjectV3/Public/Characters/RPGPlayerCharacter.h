@@ -23,7 +23,7 @@ class USkeletalMesh;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogRPGPlayerCharacter, Log, All);
 
-/* Player camera point of view enum */
+/* Player camera point of view */
 UENUM(BlueprintType)
 enum class EPlayerPOV : uint8
 {

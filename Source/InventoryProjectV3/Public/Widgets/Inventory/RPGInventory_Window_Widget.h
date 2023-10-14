@@ -24,9 +24,9 @@ public:
 
 	URPGInventory_Window_Widget(const FObjectInitializer& ObjectInitializer);
 	
-	virtual bool Initialize() override;
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
+	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory")
 	TSubclassOf<URPGInventory_Slot_Widget> InventorySlotWidgetClass;

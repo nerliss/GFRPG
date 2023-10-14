@@ -5,6 +5,8 @@
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
 #include "Items/RPGItem_Base.h"
+#include "Characters/RPGPlayerCharacter.h"
+#include "PlayerController/RPGPlayer_Controller.h"
 
 URPGInventory_Slot_Widget::URPGInventory_Slot_Widget(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
@@ -12,11 +14,9 @@ URPGInventory_Slot_Widget::URPGInventory_Slot_Widget(const FObjectInitializer& O
 	SlotIndex = 255;
 	SlotContent = FInventorySlot();
 	InventoryReference = nullptr;
-}
 
-bool URPGInventory_Slot_Widget::Initialize()
-{
-	return Super::Initialize();
+	PlayerCharacterOwner = nullptr;
+	PlayerControllerOwner = nullptr;
 }
 
 void URPGInventory_Slot_Widget::NativeConstruct()
@@ -24,6 +24,9 @@ void URPGInventory_Slot_Widget::NativeConstruct()
 	Super::NativeConstruct();
 
 	UpdateThumbnail();
+
+	PlayerCharacterOwner = Cast<ARPGPlayerCharacter>(GetOwningPlayerPawn());
+	PlayerControllerOwner = Cast<ARPGPlayer_Controller>(GetOwningPlayer());
 }
 
 void URPGInventory_Slot_Widget::NativeDestruct()
@@ -33,13 +36,7 @@ void URPGInventory_Slot_Widget::NativeDestruct()
 
 void URPGInventory_Slot_Widget::UpdateThumbnail()
 {
-	//if (!IsValid(SlotContent))
-	//{
-	//	// Invalid slot
-	//	return;
-	//}
-
-	if (SlotContent.Quantity <= 0)
+	if (SlotContent.Quantity <= 0) // MyTODO: Check this
 	{
 		// Slot is empty
 		return;
@@ -55,12 +52,6 @@ void URPGInventory_Slot_Widget::UpdateThumbnail()
 
 FText URPGInventory_Slot_Widget::GetItemQuantity()
 {
-	//if (!IsValid(SlotContent))
-	//{
-	//	// Invalid slot
-	//	return FText::FromString(TEXT(""));
-	//}
-
 	if (!IsValid(SlotContent.Item.Class))
 	{
 		// Invalid item class

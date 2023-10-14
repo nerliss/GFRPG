@@ -8,17 +8,24 @@
 #include "Widgets/RPGHUD_Widget.h"
 #include "Utility/Utility.h"
 #include "Kismet/GameplayStatics.h"
-#include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Characters/RPGPlayerCharacter.h"
 
 DEFINE_LOG_CATEGORY(LogRPGInventory);
 
+#if !UE_BUILD_SHIPPING
+static TAutoConsoleVariable<int32> CvarDebugShowInventoryList(TEXT("DebugShowInventoryList"), 0, TEXT("Enable to print out all inventory slots to the screen"));
+#endif
+
 URPGInventory_Component::URPGInventory_Component()
 {
+#if !UE_BUILD_SHIPPING
+	PrimaryComponentTick.bCanEverTick = true;
+#else
 	PrimaryComponentTick.bCanEverTick = false;
-
+#endif
+	
 	InventoryWindowWidget = nullptr;
 	InventoryWindowWidgetClass = nullptr;
 
@@ -39,6 +46,20 @@ void URPGInventory_Component::TickComponent(float DeltaTime, ELevelTick TickType
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+#if !UE_BUILD_SHIPPING
+	if (CvarDebugShowInventoryList.GetValueOnGameThread() > 0)
+	{
+		// Inverted order because how the print system works - the most recent messages are at top
+		for (int i = Inventory.Num() - 1; i >= 0; i--)
+		{
+			FInventorySlot Slot = Inventory[i];
+
+			DEBUGMESSAGE(0.f, FColor::Green, "%s, %i", *Slot.Item.Name.ToString(), Slot.Quantity);
+		}
+
+		DEBUGMESSAGE(0.f, FColor::Green, "Current items in inventory:");
+	}
+#endif
 }
 
 bool URPGInventory_Component::AddToInventory(FInventorySlot ContentToAdd)
@@ -191,21 +212,20 @@ void URPGInventory_Component::PrepareInventory()
 
 void URPGInventory_Component::ToggleInventory()
 {
-	ARPGPlayer_Controller* PC = Cast<ARPGPlayer_Controller>(GetOwner()->GetInstigatorController());
+	auto* PC = Cast<ARPGPlayer_Controller>(GetOwner()->GetInstigatorController());
 	if (!PC)
 	{
-		// Somehow no player controller
 		return;
 	}
 
-	// Check if the window is already open
+	// Close window if it already exists
 	if (InventoryWindowWidget)
 	{
 		InventoryWindowWidget->RemoveFromParent();
 		InventoryWindowWidget = nullptr;
 		
+		PC->SetInputMode(FInputModeGameOnly());
 		PC->bShowMouseCursor = false;
-		UWidgetBlueprintLibrary::SetInputMode_GameOnly(PC);
 
 		UE_LOG(LogRPGInventory, Warning, TEXT("[RPGInventory_Component::ToggleInventory] Inventory window destroyed."));
 		return;
@@ -237,9 +257,8 @@ void URPGInventory_Component::ToggleInventory()
 	InventoryWindowSlot->SetAlignment(Alignment);
 	InventoryWindowSlot->SetAnchors(Anchors);
 
-	// Set input mode
+	PC->SetInputMode(FInputModeUIOnly());
 	PC->bShowMouseCursor = true;
-	UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PC);
 
-	UE_LOG(LogRPGInventory, Warning, TEXT("[RPGInventory_Component::ToggleInventory] Inventory window created."));
+	UE_LOG(LogRPGInventory, Log, TEXT("[RPGInventory_Component::ToggleInventory] Inventory window created."));
 }

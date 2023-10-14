@@ -10,6 +10,8 @@
 class URPGInventory_Component;
 class UImage;
 class UTextBlock;
+class ARPGPlayerCharacter;
+class ARPGPlayer_Controller;
 
 /**
  * Inventory slot widget native class.
@@ -23,7 +25,6 @@ public:
 
 	URPGInventory_Slot_Widget(const FObjectInitializer& ObjectInitializer);
 
-	virtual bool Initialize() override;
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
 	
@@ -41,6 +42,14 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 	URPGInventory_Component* InventoryReference;
+
+	/* MyTODO: Optimize code without using these two variables */
+	UPROPERTY(BlueprintReadOnly)
+	ARPGPlayerCharacter* PlayerCharacterOwner;
+
+	UPROPERTY(BlueprintReadOnly)
+	ARPGPlayer_Controller* PlayerControllerOwner;
+	/***********************************************************/
 
 	UFUNCTION(BlueprintCallable)
 	void UpdateThumbnail();

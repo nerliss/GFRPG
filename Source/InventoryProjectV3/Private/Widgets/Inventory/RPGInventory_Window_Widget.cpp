@@ -7,6 +7,7 @@
 #include "Components/TextBlock.h"
 #include "Components/GridPanel.h"
 #include "AkGameplayStatics.h"
+#include "GameFramework/InputSettings.h"
 
 URPGInventory_Window_Widget::URPGInventory_Window_Widget(const FObjectInitializer& ObjectInitializer) 
 : Super(ObjectInitializer)
@@ -17,18 +18,6 @@ URPGInventory_Window_Widget::URPGInventory_Window_Widget(const FObjectInitialize
 
 	OpenInventorySound = nullptr;
 	CloseInventorySound = nullptr;
-}
-
-bool URPGInventory_Window_Widget::Initialize()
-{
-	bool Success = Super::Initialize();
-
-	if (!Success)
-	{
-		return false;
-	}
-
-	return true;
 }
 
 void URPGInventory_Window_Widget::NativeConstruct()
@@ -57,6 +46,8 @@ void URPGInventory_Window_Widget::NativeConstruct()
 		InventoryTitle->SetText(PlayersInventory->Name);
 	}
 
+	InventoryGrid->ClearChildren();
+
 	for (int i = 0; i < PlayersInventory->Inventory.Num(); i++)
 	{
 		auto* InventorySlot = Cast<URPGInventory_Slot_Widget>(CreateWidget(GetWorld(), InventorySlotWidgetClass));
@@ -66,12 +57,15 @@ void URPGInventory_Window_Widget::NativeConstruct()
 			continue;
 		}
 
+		// Update inventory slot with related data
 		InventorySlot->SlotIndex = i;
 		InventorySlot->SlotContent = PlayersInventory->Inventory[i];
 		InventorySlot->InventoryReference = PlayersInventory;
 
 		InventoryGrid->AddChildToGrid(InventorySlot, i/8, i%8);
 	}
+
+	SetFocus();
 }
 
 void URPGInventory_Window_Widget::NativeDestruct()
@@ -79,4 +73,23 @@ void URPGInventory_Window_Widget::NativeDestruct()
 	Super::NativeDestruct();
 
 	UAkGameplayStatics::PostEvent(CloseInventorySound, nullptr, 0, FOnAkPostEventCallback());
+}
+
+FReply URPGInventory_Window_Widget::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+{
+	Super::NativeOnKeyDown(InGeometry, InKeyEvent);
+
+	TArray<FInputActionKeyMapping> KeyMappings;
+	UInputSettings::GetInputSettings()->GetActionMappingByName("Inventory", KeyMappings);
+
+	for (auto& Key : KeyMappings)
+	{
+		if (Key.Key == InKeyEvent.GetKey())
+		{
+			PlayersInventory->ToggleInventory();
+			break;
+		}
+	}
+
+	return FReply::Handled();
 }

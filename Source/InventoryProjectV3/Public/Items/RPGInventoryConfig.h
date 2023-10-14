@@ -26,14 +26,14 @@ struct FInventoryItem
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory item")
 	bool bStackable;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory item", meta = (EditCondition = "bStackable", EditConditionHides))
+	int32 MaxStackSize;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory item")
 	bool bConsumable;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory item")
-	UTexture2D* Thumbnail;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory item")
-	int32 MaxStackSize;
+	UTexture2D* Thumbnail;	
 
 	/** !!!UNUSED!!! */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory item")
@@ -48,9 +48,9 @@ struct FInventoryItem
 		Description = FText::FromString("Item description. May be a very long text that contains a lot of symbols, perhaps ever color coded in future, or may be even a rich text.");
 		bQuestItem = false;
 		bStackable = true;
+		MaxStackSize = 20;
 		bConsumable = false;
 		Thumbnail = nullptr;
-		MaxStackSize = 20;
 		Durability = 10.f;
 		Class = nullptr;
 	}

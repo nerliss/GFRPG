@@ -12,7 +12,7 @@ DEFINE_LOG_CATEGORY(LogRPGItem);
 
 ARPGItem_Base::ARPGItem_Base()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	// Setup root component
 	RootSceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootSceneComponent"));
@@ -36,19 +36,6 @@ ARPGItem_Base::ARPGItem_Base()
 	StaticMesh->SetupAttachment(RootComponent);
 	StaticMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	StaticMesh->SetCollisionResponseToAllChannels(ECR_Block);
-
-}
-
-void ARPGItem_Base::BeginPlay()
-{
-	Super::BeginPlay();
-
-}
-
-void ARPGItem_Base::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
 }
 
 void ARPGItem_Base::InteractNative(AActor* Interactor)
@@ -67,12 +54,17 @@ void ARPGItem_Base::InteractNative(AActor* Interactor)
 		return;
 	}
 
-	AddToInventory(Interactor, 1); // Add 1 item in Base class, should be overriden in all child classes to give a custom amount
+	AddToInventory(Interactor, GetQuantity()); 
 }
 
 FText ARPGItem_Base::GetNameNative() const
 {
 	return Item.Name;
+}
+
+int32 ARPGItem_Base::GetQuantity_Implementation() const
+{
+	return 1; // Base class, should be overriden in all child classes to give a custom amount
 }
 
 void ARPGItem_Base::AddToInventory(AActor* Interactor, int32 QuantityOfItemsToAdd)

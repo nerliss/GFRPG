@@ -24,15 +24,16 @@ public:
 
 	ARPGItem_Base();
 
-	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaTime) override;
-
 	/* IRPGInteract_Interface */
 	virtual void InteractNative(AActor* Interactor) override;
 	virtual FText GetNameNative() const override;
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void AddToInventory(AActor* Interactor, int32 QuantityOfItemsToAdd);
+
+	/* Blueprint overridable function that determines how many items is given upon picking up */
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Inventory")
+	int32 GetQuantity() const;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Components")
 	USceneComponent* RootSceneComponent;

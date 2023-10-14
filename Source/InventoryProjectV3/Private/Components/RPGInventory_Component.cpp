@@ -121,7 +121,7 @@ bool URPGInventory_Component::CreateStack(FInventorySlot ContentToAdd)
 
 bool URPGInventory_Component::AddToStack(FInventorySlot ContentToAdd, int32 SlotIndex)
 {
-	FInventorySlot ExistingStack = Inventory[SlotIndex];
+	FInventorySlot& ExistingStack = Inventory[SlotIndex];
 	const int32 CurrentQuantity = ExistingStack.Quantity;
 
 	// Check if potential quantity exceeds max stack size

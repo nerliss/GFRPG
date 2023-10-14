@@ -19,14 +19,7 @@ class INVENTORYPROJECTV3_API APhotoModePawn : public APawn
 public:
 	
 	APhotoModePawn();
-
-protected:
 	
-	virtual void BeginPlay() override;
-
-public:	
-	
-	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	/************************************************************************/
@@ -41,20 +34,22 @@ public:
 
 	void CaptureScreenshot();
 
-private:
+protected:
 
 	/* Pawn's camera */
+	UPROPERTY(EditDefaultsOnly, Category = "Camera")
 	UCameraComponent* CameraComponent;
 
 	/* Pawn's movement */
+	UPROPERTY(EditDefaultsOnly, Category = "Movement")
 	UFloatingPawnMovement* FloatingMovementComponent;
 
 	/* Scene capture component. Used for taking screenshots */
+	UPROPERTY(EditDefaultsOnly, Category = "PhotoMode")
 	USceneCaptureComponent2D* SceneCaptureComponent;
-	
-protected:
 
 	/* Render target to save created screenshot to */
 	/*UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Photo mode")*/
+	UPROPERTY(EditDefaultsOnly, Category = "PhotoMode")
 	UTextureRenderTarget2D* ScreenshotRenderTarget;
 };

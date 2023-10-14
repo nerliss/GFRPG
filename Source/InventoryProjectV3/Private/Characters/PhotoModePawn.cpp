@@ -12,7 +12,7 @@
 // Sets default values
 APhotoModePawn::APhotoModePawn()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	// Camera 
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
@@ -23,6 +23,7 @@ APhotoModePawn::APhotoModePawn()
 
 	// Floating movement component
 	FloatingMovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("FloatingMovementComp"));
+	FloatingMovementComponent->UpdatedComponent = CameraComponent;
 
 	// Scene capture component
 	SceneCaptureComponent = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("SceneCaptureComponent"));
@@ -30,18 +31,6 @@ APhotoModePawn::APhotoModePawn()
 	SceneCaptureComponent->bCaptureOnMovement = false;
 
 	ScreenshotRenderTarget = nullptr;
-}
-
-void APhotoModePawn::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-void APhotoModePawn::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
 }
 
 void APhotoModePawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

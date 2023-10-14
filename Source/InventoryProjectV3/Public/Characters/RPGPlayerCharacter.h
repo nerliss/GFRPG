@@ -125,14 +125,14 @@ public:
 
 protected:
 
-	void MoveForward(float Value);
-	void MoveRight(float Value);
+	void OnForwardMoved(float Value);
+	void OnRightMoved(float Value);
 
-	void StartJumping();
-	void StopJumping();
+	void OnJumpStarted();
+	void OnJumpEnded();
 
-	void StartSprinting();
-	void StopSprinting();
+	void OnSprintStarted();
+	void OnSprintStopped();
 
 	/*
 	 * Called via input to turn at a given rate.
@@ -182,10 +182,10 @@ protected:
 
 	/** Switch camera POV to Third Person if in First Person and vise versa */
 	UFUNCTION(BlueprintCallable, Category = "Camera")
-	void SwitchPOV();
+	void OnPOVSwitched();
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Camera")
-	void OnPOVChanged();
+	void OnPOVChangedBlueprint();
 
 private:
 
@@ -212,20 +212,26 @@ protected:
 private:
 
 	/* Attempt to interact with the current InteractActor */
-	void Interact();
+	void OnInteractPressed();
 
 protected:
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	void ToggleInventory();
+	void OnInventoryToggled();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Dialog")
 	bool bInDialog;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Game")
-	URPGGameInstanceBase* GameInstanceReference;
-
 	void LoadLastCharacterModel();
+
+	UFUNCTION(BlueprintCallable)
+	URPGGameInstanceBase* GetRPGGameInstance() const;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement")
+	float DefaultMaxWalkSpeed;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement")
+	float StealthedMaxWalkSpeed;
 
 public:
 

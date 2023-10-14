@@ -65,6 +65,6 @@ public:
 
 	bool CreateStack (FInventorySlot ContentToAdd);
 	bool AddToStack (FInventorySlot ContentToAdd, int32 SlotIndex);
-	bool HasPartialStack(FInventorySlot Slot, int32& OutSlotIndex);
+	bool HasPartialStack (FInventorySlot Slot, int32& OutSlotIndex);
 	
 };

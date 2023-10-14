@@ -83,8 +83,6 @@ ARPGPlayerCharacter::ARPGPlayerCharacter()
 	BaseTurnRate = 45.f;
 	BaseLookUpRate = 45.f;
 
-	GameInstanceReference = nullptr;
-
 	// Camera
 	MaxTargetBoomLength = SpringArmComp->TargetArmLength;
 	MinTargetBoomLength = 0.f;
@@ -103,6 +101,8 @@ ARPGPlayerCharacter::ARPGPlayerCharacter()
 	// Sounds
 	CharacterSoundCollection = nullptr;
 
+	DefaultMaxWalkSpeed = 600.f;
+	StealthedMaxWalkSpeed = 250.f;
 	bStealthed = false;
 }
 
@@ -110,9 +110,10 @@ void ARPGPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	GameInstanceReference = GetWorld()->GetGameInstanceChecked<URPGGameInstanceBase>();
-
 	LoadLastCharacterModel();
+
+	// MyTODO: Collapse to a function when more related variables are added
+	GetCharacterMovement()->MaxWalkSpeed = DefaultMaxWalkSpeed;
 }
 
 void ARPGPlayerCharacter::Tick(float DeltaTime)
@@ -127,25 +128,25 @@ void ARPGPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	// Setup action bindings
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ARPGPlayerCharacter::StartJumping);
-	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ARPGPlayerCharacter::StopJumping);
-	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &ARPGPlayerCharacter::StartSprinting);
-	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &ARPGPlayerCharacter::StopSprinting);
-	PlayerInputComponent->BindAction("SwitchPOV", IE_Pressed, this, &ARPGPlayerCharacter::SwitchPOV);
-	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &ARPGPlayerCharacter::Interact);
-	PlayerInputComponent->BindAction("Inventory", IE_Pressed, this, &ARPGPlayerCharacter::ToggleInventory);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ARPGPlayerCharacter::OnJumpStarted);
+	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ARPGPlayerCharacter::OnJumpEnded);
+	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &ARPGPlayerCharacter::OnSprintStarted);
+	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &ARPGPlayerCharacter::OnSprintStopped);
+	PlayerInputComponent->BindAction("SwitchPOV", IE_Pressed, this, &ARPGPlayerCharacter::OnPOVSwitched);
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &ARPGPlayerCharacter::OnInteractPressed);
+	PlayerInputComponent->BindAction("Inventory", IE_Pressed, this, &ARPGPlayerCharacter::OnInventoryToggled);
 	PlayerInputComponent->BindAction("StealthToggle", IE_Pressed, this, &ARPGPlayerCharacter::OnStealthPressed);
 
 	// Setup axis bindings
-	PlayerInputComponent->BindAxis("MoveForward", this, &ARPGPlayerCharacter::MoveForward);
-	PlayerInputComponent->BindAxis("MoveRight", this, &ARPGPlayerCharacter::MoveRight);
+	PlayerInputComponent->BindAxis("MoveForward", this, &ARPGPlayerCharacter::OnForwardMoved);
+	PlayerInputComponent->BindAxis("MoveRight", this, &ARPGPlayerCharacter::OnRightMoved);
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("TurnRate", this, &ARPGPlayerCharacter::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &ARPGPlayerCharacter::LookUpAtRate);
 }
 
-void ARPGPlayerCharacter::MoveForward(float Value)
+void ARPGPlayerCharacter::OnForwardMoved(float Value)
 {
 	if (!Controller)
 	{	
@@ -168,7 +169,7 @@ void ARPGPlayerCharacter::MoveForward(float Value)
 	AddMovementInput(Direction, Value);
 }
 
-void ARPGPlayerCharacter::MoveRight(float Value)
+void ARPGPlayerCharacter::OnRightMoved(float Value)
 {
 	if (!Controller)
 	{
@@ -191,19 +192,19 @@ void ARPGPlayerCharacter::MoveRight(float Value)
 	AddMovementInput(Direction, Value);
 }
 
-void ARPGPlayerCharacter::StartJumping()
+void ARPGPlayerCharacter::OnJumpStarted()
 {
 	ACharacter::Jump();
 
 	// MyTODO: Make character stop rotating while in air
 }
 
-void ARPGPlayerCharacter::StopJumping()
+void ARPGPlayerCharacter::OnJumpEnded()
 {
 	ACharacter::StopJumping();
 }
 
-void ARPGPlayerCharacter::StartSprinting()
+void ARPGPlayerCharacter::OnSprintStarted()
 {
 	if (bStealthed)
 	{
@@ -213,7 +214,7 @@ void ARPGPlayerCharacter::StartSprinting()
 	GetCharacterMovement()->MaxWalkSpeed = 4500.f;
 }
 
-void ARPGPlayerCharacter::StopSprinting()
+void ARPGPlayerCharacter::OnSprintStopped()
 {
 	if (bStealthed)
 	{
@@ -304,7 +305,7 @@ void ARPGPlayerCharacter::Landed(const FHitResult& Hit)
 	CalculateFallDamage();
 }
 
-void ARPGPlayerCharacter::SwitchPOV()
+void ARPGPlayerCharacter::OnPOVSwitched()
 {
 	switch (PlayerPOV)
 	{
@@ -319,7 +320,6 @@ void ARPGPlayerCharacter::SwitchPOV()
 
 		PlayerPOV = EPlayerPOV::ThirdPerson;
 		
-		OnPOVChanged();
 		break;
 
 	case EPlayerPOV::ThirdPerson:
@@ -333,12 +333,13 @@ void ARPGPlayerCharacter::SwitchPOV()
 
 		TraceLength = 350.f;
 
-		OnPOVChanged();
 		break;
 		
 	default:
 		break;
 	}
+
+	OnPOVChangedBlueprint();
 }
 
 AActor* ARPGPlayerCharacter::TraceForInteractableObjects(float inTraceLength, bool bDrawDebugLine)
@@ -398,7 +399,7 @@ AActor* ARPGPlayerCharacter::TraceForInteractableObjects(float inTraceLength, bo
 	return InteractActor = nullptr;
 }
 
-void ARPGPlayerCharacter::Interact()
+void ARPGPlayerCharacter::OnInteractPressed()
 {
 	if (!InteractActor)
 	{
@@ -423,38 +424,38 @@ void ARPGPlayerCharacter::Interact()
 	InteractActorCasted->InteractNative(this);
 }
 
-void ARPGPlayerCharacter::ToggleInventory()
+void ARPGPlayerCharacter::OnInventoryToggled()
 {
 	InventoryComp->ToggleInventory();
 }
 
 void ARPGPlayerCharacter::LoadLastCharacterModel()
 {
-	check(GameInstanceReference);
+	auto* RPGGameInstance = GetRPGGameInstance();
+	check(RPGGameInstance);
 
-	const auto SaveCharacterData = GameInstanceReference->GetSaveGameObject()->CharacterPlayerData;
-
-	if (SaveCharacterData.SkeletalMesh)
-	{
-		GetMesh()->SetSkeletalMeshAsset(SaveCharacterData.SkeletalMesh);
-		GetMesh()->SetAnimInstanceClass(SaveCharacterData.AssociatedAnimBP);
-
-		UE_LOG(LogRPGPlayerCharacter, Verbose, TEXT("Last character model was loaded"));
+	const auto SaveCharacterData = RPGGameInstance->GetSaveGameObject()->CharacterPlayerData;
+	if (!(SaveCharacterData.SkeletalMesh && SaveCharacterData.AssociatedAnimBP))
+	{	
+		UE_LOG(LogRPGPlayerCharacter, Error, TEXT("[ARPGPlayerCharacter::LoadLastCharacterModel] SaveCharacterData doesn't have SkeletalMesh and/or AssociatedAnimBP!"));
+		return;
 	}
+
+	GetMesh()->SetSkeletalMeshAsset(SaveCharacterData.SkeletalMesh);
+	GetMesh()->SetAnimInstanceClass(SaveCharacterData.AssociatedAnimBP);
+
+	UE_LOG(LogRPGPlayerCharacter, Log, TEXT("Last character model was loaded"));
+}
+
+URPGGameInstanceBase* ARPGPlayerCharacter::GetRPGGameInstance() const
+{
+	return GetWorld()->GetGameInstanceChecked<URPGGameInstanceBase>();
 }
 
 void ARPGPlayerCharacter::OnStealthPressed()
 {
-	if (bStealthed)
-	{
-		// to default state
-		GetCharacterMovement()->MaxWalkSpeed = 600.f;
-	}
-	else
-	{
-		// to stealthed state
-		GetCharacterMovement()->MaxWalkSpeed = 250.f;
-	}
+	const float NewMaxWalkSpeed = bStealthed ? StealthedMaxWalkSpeed : DefaultMaxWalkSpeed;
+	GetCharacterMovement()->MaxWalkSpeed = NewMaxWalkSpeed;
 
 	bStealthed = !bStealthed;
 

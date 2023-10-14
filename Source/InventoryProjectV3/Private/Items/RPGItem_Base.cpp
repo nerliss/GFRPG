@@ -67,6 +67,11 @@ int32 ARPGItem_Base::GetQuantity_Implementation() const
 	return 1; // Base class, should be overriden in all child classes to give a custom amount
 }
 
+bool ARPGItem_Base::UseItem_Implementation() const
+{
+	return true; // Base class, should be overriden in all child classes to give a custom functionality
+}
+
 void ARPGItem_Base::AddToInventory(AActor* Interactor, int32 QuantityOfItemsToAdd)
 {
 	if (!Interactor)

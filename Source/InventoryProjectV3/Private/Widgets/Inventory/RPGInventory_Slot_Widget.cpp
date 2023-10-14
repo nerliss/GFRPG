@@ -5,6 +5,7 @@
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
 #include "Items/RPGItem_Base.h"
+#include "Components/RPGInventory_Component.h"	
 #include "Characters/RPGPlayerCharacter.h"
 #include "PlayerController/RPGPlayer_Controller.h"
 
@@ -32,6 +33,45 @@ void URPGInventory_Slot_Widget::NativeConstruct()
 void URPGInventory_Slot_Widget::NativeDestruct()
 {
 	Super::NativeDestruct();
+
+	// MyTODO: Destroy tooltip
+}
+
+void URPGInventory_Slot_Widget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseLeave(InMouseEvent);
+
+	// MyTODO: Destroy tooltip
+}
+
+void URPGInventory_Slot_Widget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
+
+	// MyTODO: Create tooltip if the slot is not empty
+}
+
+FReply URPGInventory_Slot_Widget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
+
+	if (InMouseEvent.GetEffectingButton() == EKeys::RightMouseButton)
+	{
+		if (InventoryReference == PlayerCharacterOwner->InventoryComp)
+		{
+			if (UseItem())
+			{
+				return FReply::Handled();
+			}
+		}
+		else
+		{
+			// MyTODO: Move item to player's inventory
+			return FReply::Handled();
+		}
+	}
+
+	return FReply::Handled();
 }
 
 void URPGInventory_Slot_Widget::UpdateThumbnail()
@@ -50,7 +90,7 @@ void URPGInventory_Slot_Widget::UpdateThumbnail()
 	}
 }
 
-FText URPGInventory_Slot_Widget::GetItemQuantity()
+FText URPGInventory_Slot_Widget::GetItemQuantity() const
 {
 	if (!IsValid(SlotContent.Item.Class))
 	{
@@ -62,4 +102,63 @@ FText URPGInventory_Slot_Widget::GetItemQuantity()
 	return SlotContent.Item.bStackable ?
 	FText::FromString(FString::FromInt(SlotContent.Quantity)) : 
 	FText::FromString(TEXT(""));
+}
+
+void URPGInventory_Slot_Widget::RefreshSlot()
+{
+	SlotContent = InventoryReference->Inventory[SlotIndex];
+
+	// Reset slot to defaults if empty
+	if (SlotContent.Quantity <= 0)
+	{
+		SlotContent = FInventorySlot();
+		InventoryReference->Inventory[SlotIndex] = SlotContent;
+
+		ItemThumbnail->SetColorAndOpacity(FLinearColor(1.f, 1.f, 1.f)); // MyTODO: Revise this logic since it doesn't properly update slot's thumbnail when used on consumable when quantity is 1
+		return;
+	}
+
+	ItemThumbnail->SetBrushFromTexture(SlotContent.Item.Thumbnail);
+}
+
+bool URPGInventory_Slot_Widget::UseItem() 
+{
+	if (!SlotContent.Item.Class)
+	{
+		return false;
+	}
+
+	// Spawn item in the world to use
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	const FTransform SpawnTransform = FTransform(FRotator::ZeroRotator, FVector::ZeroVector, FVector::ZeroVector);
+
+	auto* ItemToUse = GetWorld()->SpawnActor<ARPGItem_Base>(SlotContent.Item.Class, SpawnTransform, SpawnParams);
+	if (!ItemToUse)
+	{
+		return false;
+	}
+
+	const bool bUsedSuccessfuly = ItemToUse->UseItem();
+	if (!bUsedSuccessfuly)
+	{
+		return false;
+	}
+
+	if (SlotContent.Item.bConsumable)
+	{
+		// Decrease item count if it is a consumable
+		InventoryReference->Inventory[SlotIndex].Quantity--;
+
+		const int NewQuantity = InventoryReference->Inventory[SlotIndex].Quantity;
+		UE_LOG(LogTemp, Log, TEXT("Consumable item used. New quantity is %i"), NewQuantity);
+	}
+
+	ItemToUse->Destroy();
+
+	RefreshSlot();
+
+	// MyTODO: Update Quests here (NYI)
+	return true;
 }

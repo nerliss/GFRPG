@@ -35,6 +35,11 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Inventory")
 	int32 GetQuantity() const;
 
+	// MyTODO: Think how this could be overriden in child C++ classes
+	/* Blueprint overridable function that determines what happens when we use the item */
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Inventory")
+	bool UseItem() const;
+
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Components")
 	USceneComponent* RootSceneComponent;
 

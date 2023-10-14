@@ -27,6 +27,9 @@ public:
 
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
+	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
+	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UImage* ItemThumbnail;
@@ -55,6 +58,9 @@ public:
 	void UpdateThumbnail();
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	FText GetItemQuantity();
+	FText GetItemQuantity() const;
 
+	void RefreshSlot();
+
+	bool UseItem();
 };

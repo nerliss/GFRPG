@@ -22,30 +22,39 @@ public:
 
 	URPGInventory_Component();
 
+	/* Name of the inventory */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory")
 	FText Name;
 
+	/* Quantity of slots in the inventory */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory")
 	int32 SlotsNumber;
 
+	/* Amount of money */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory")
 	int32 Gold;
 
+	/* The inventory container itself */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory")
 	TArray<FInventorySlot> Inventory;
 
+	/* Inventory widget anchors */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory")
 	FAnchors Anchors;
 
+	/* Inventory widget alignment */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory")
 	FVector2D Alignment;
 
+	/* Inventory widget class */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WidgetClassTypes")
 	TSubclassOf<URPGInventory_Window_Widget> InventoryWindowWidgetClass;
 
+	/* Inventory widget instance reference */
 	UPROPERTY(BlueprintReadOnly, Category = "Inventory")
 	URPGInventory_Window_Widget* InventoryWindowWidget;
 
+	/* Creates inventory window if none is present - destroys otherwise */
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void ToggleInventory();
 
@@ -53,6 +62,7 @@ protected:
 
 	virtual void BeginPlay() override;
 
+	/* Resizes inventory and fills the slots with data from Inventory array */
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void PrepareInventory();
 

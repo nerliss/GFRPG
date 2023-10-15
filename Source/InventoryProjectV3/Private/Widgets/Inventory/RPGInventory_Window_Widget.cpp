@@ -8,6 +8,7 @@
 #include "Components/GridPanel.h"
 #include "AkGameplayStatics.h"
 #include "GameFramework/InputSettings.h"
+#include "UMG/Public/Blueprint/WidgetBlueprintLibrary.h"
 
 URPGInventory_Window_Widget::URPGInventory_Window_Widget(const FObjectInitializer& ObjectInitializer) 
 : Super(ObjectInitializer)
@@ -89,6 +90,18 @@ FReply URPGInventory_Window_Widget::NativeOnKeyDown(const FGeometry& InGeometry,
 			PlayersInventory->ToggleInventory();
 			break;
 		}
+	}
+
+	return FReply::Handled();
+}
+
+FReply URPGInventory_Window_Widget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
+
+	if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
+	{
+		return UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton).NativeReply;
 	}
 
 	return FReply::Handled();

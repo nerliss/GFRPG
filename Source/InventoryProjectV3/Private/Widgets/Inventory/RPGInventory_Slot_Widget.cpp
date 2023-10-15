@@ -8,6 +8,7 @@
 #include "Components/RPGInventory_Component.h"	
 #include "Characters/RPGPlayerCharacter.h"
 #include "PlayerController/RPGPlayer_Controller.h"
+#include "UMG/Public/Blueprint/WidgetBlueprintLibrary.h"
 
 URPGInventory_Slot_Widget::URPGInventory_Slot_Widget(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
@@ -71,6 +72,11 @@ FReply URPGInventory_Slot_Widget::NativeOnMouseButtonDown(const FGeometry& InGeo
 		}
 	}
 
+	if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
+	{
+		return UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton).NativeReply;
+	}
+
 	return FReply::Handled();
 }
 
@@ -114,7 +120,8 @@ void URPGInventory_Slot_Widget::RefreshSlot()
 		SlotContent = FInventorySlot();
 		InventoryReference->Inventory[SlotIndex] = SlotContent;
 
-		ItemThumbnail->SetColorAndOpacity(FLinearColor(1.f, 1.f, 1.f)); // MyTODO: Revise this logic since it doesn't properly update slot's thumbnail when used on consumable when quantity is 1
+		// Just hide thumbnail when no items left (default image for slot background is stored elsewhere)
+		ItemThumbnail->SetColorAndOpacity(FLinearColor(1.f, 1.f, 1.f, 0.f));
 		return;
 	}
 
@@ -151,13 +158,14 @@ bool URPGInventory_Slot_Widget::UseItem()
 		// Decrease item count if it is a consumable
 		InventoryReference->Inventory[SlotIndex].Quantity--;
 
+		// Refresh slot only for consumables now, let's see if we need to do it for any item
+		RefreshSlot();
+
 		const int NewQuantity = InventoryReference->Inventory[SlotIndex].Quantity;
 		UE_LOG(LogTemp, Log, TEXT("Consumable item used. New quantity is %i"), NewQuantity);
 	}
 
 	ItemToUse->Destroy();
-
-	RefreshSlot();
 
 	// MyTODO: Update Quests here (NYI)
 	return true;

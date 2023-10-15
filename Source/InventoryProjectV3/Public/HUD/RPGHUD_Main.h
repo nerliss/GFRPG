@@ -1,4 +1,4 @@
-// Destruction Games. 2022
+// Oleksandr Tkachov 2022-2023
 
 #pragma once
 
@@ -7,7 +7,7 @@
 #include "RPGHUD_Main.generated.h"
 
 /**
- * 
+ * Base HUD class
  */
 UCLASS()
 class INVENTORYPROJECTV3_API ARPGHUD_Main : public AHUD

@@ -1,4 +1,4 @@
-// Destruction Games. 2022
+// Oleksandr Tkachov 2022-2023
 
 #pragma once
 
@@ -8,7 +8,7 @@
 #include "RPGSaveGameObject.generated.h"
 
 /**
- * 
+ * Base class for save game object
  */
 UCLASS()
 class INVENTORYPROJECTV3_API URPGSaveGameObject : public USaveGame

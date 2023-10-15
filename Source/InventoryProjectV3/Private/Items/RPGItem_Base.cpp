@@ -1,4 +1,4 @@
-// Destruction Games. 2022
+// Oleksandr Tkachov 2022-2023
 
 
 #include "Items/RPGItem_Base.h"
@@ -19,23 +19,23 @@ ARPGItem_Base::ARPGItem_Base()
 	SetRootComponent(RootSceneComponent);
 
 	// Setup sphere collision component
-	SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollision"));
-	SphereCollision->SetupAttachment(RootComponent);
-	SphereCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	SphereCollision->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
-	SphereCollision->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Block);
+	TraceSphere = CreateDefaultSubobject<USphereComponent>(TEXT("TraceSphere"));
+	TraceSphere->SetupAttachment(RootComponent);
+	TraceSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	TraceSphere->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	TraceSphere->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Block);
 
 	// Setup skeletal mesh
-	SkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMesh"));
-	SkeletalMesh->SetupAttachment(RootComponent);
-	SkeletalMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	SkeletalMesh->SetCollisionResponseToAllChannels(ECR_Block);
+	ItemSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("ItemSkeletalMesh"));
+	ItemSkeletalMesh->SetupAttachment(RootComponent);
+	ItemSkeletalMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	ItemSkeletalMesh->SetCollisionResponseToAllChannels(ECR_Block);
 
 	// Setup static mesh
-	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
-	StaticMesh->SetupAttachment(RootComponent);
-	StaticMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	StaticMesh->SetCollisionResponseToAllChannels(ECR_Block);
+	ItemStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ItemStaticMesh"));
+	ItemStaticMesh->SetupAttachment(RootComponent);
+	ItemStaticMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	ItemStaticMesh->SetCollisionResponseToAllChannels(ECR_Block);
 }
 
 void ARPGItem_Base::InteractNative(AActor* Interactor)

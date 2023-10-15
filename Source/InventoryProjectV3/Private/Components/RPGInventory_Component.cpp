@@ -1,4 +1,4 @@
-// Destruction Games. 2022
+// Oleksandr Tkachov 2022-2023
 
 
 #include "Components/RPGInventory_Component.h"
@@ -29,7 +29,7 @@ URPGInventory_Component::URPGInventory_Component()
 	InventoryWindowWidget = nullptr;
 	InventoryWindowWidgetClass = nullptr;
 
-	Name.GetEmpty();
+	Name = FText::FromString("Default Inventory Name");
 	SlotsNumber = 0;
 	Anchors = 0.5f;
 	Alignment = FVector2D(1.0f, 0.5f);

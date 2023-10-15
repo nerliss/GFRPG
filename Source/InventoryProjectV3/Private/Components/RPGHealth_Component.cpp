@@ -1,4 +1,4 @@
-// Destruction Games. 2022
+// Oleksandr Tkachov 2022-2023
 
 
 #include "Components/RPGHealth_Component.h"

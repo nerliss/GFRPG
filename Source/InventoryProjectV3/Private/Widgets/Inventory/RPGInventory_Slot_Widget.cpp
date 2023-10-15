@@ -1,4 +1,4 @@
-// Destruction Games. 2022
+// Oleksandr Tkachov 2022-2023
 
 
 #include "Widgets/Inventory/RPGInventory_Slot_Widget.h"
@@ -58,6 +58,7 @@ FReply URPGInventory_Slot_Widget::NativeOnMouseButtonDown(const FGeometry& InGeo
 
 	if (InMouseEvent.GetEffectingButton() == EKeys::RightMouseButton)
 	{
+		// Use item
 		if (InventoryReference == PlayerCharacterOwner->InventoryComp)
 		{
 			if (UseItem())
@@ -65,10 +66,17 @@ FReply URPGInventory_Slot_Widget::NativeOnMouseButtonDown(const FGeometry& InGeo
 				return FReply::Handled();
 			}
 		}
+		// Move item from container to player's inventory 
+		// MyTODO: Test this out
 		else
 		{
-			// MyTODO: Move item to player's inventory
-			return FReply::Handled();
+			if (PlayerCharacterOwner->InventoryComp->AddToInventory(SlotContent))
+			{
+				InventoryReference->Inventory[SlotIndex] = FInventorySlot();
+				RefreshSlot();
+
+				return FReply::Handled();
+			}
 		}
 	}
 
@@ -77,7 +85,7 @@ FReply URPGInventory_Slot_Widget::NativeOnMouseButtonDown(const FGeometry& InGeo
 		return UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton).NativeReply;
 	}
 
-	return FReply::Handled();
+	return FReply::Unhandled();
 }
 
 void URPGInventory_Slot_Widget::UpdateThumbnail()
@@ -139,7 +147,7 @@ bool URPGInventory_Slot_Widget::UseItem()
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-	const FTransform SpawnTransform = FTransform(FRotator::ZeroRotator, FVector::ZeroVector, FVector::ZeroVector);
+	const FTransform SpawnTransform = FTransform(FRotator::ZeroRotator, FVector::ZeroVector, FVector::One());
 
 	auto* ItemToUse = GetWorld()->SpawnActor<ARPGItem_Base>(SlotContent.Item.Class, SpawnTransform, SpawnParams);
 	if (!ItemToUse)

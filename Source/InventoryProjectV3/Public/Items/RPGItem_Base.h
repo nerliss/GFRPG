@@ -1,4 +1,4 @@
-// Destruction Games. 2022
+// Oleksandr Tkachov 2022-2023
 
 #pragma once
 
@@ -44,13 +44,13 @@ public:
 	USceneComponent* RootSceneComponent;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Components")
-	USkeletalMeshComponent* SkeletalMesh;
+	USkeletalMeshComponent* ItemSkeletalMesh;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Components")
-	UStaticMeshComponent* StaticMesh;
+	UStaticMeshComponent* ItemStaticMesh;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Components")
-	USphereComponent* SphereCollision;
+	USphereComponent* TraceSphere;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory")
 	FInventoryItem Item;

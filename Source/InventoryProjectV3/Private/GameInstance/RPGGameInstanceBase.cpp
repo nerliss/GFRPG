@@ -1,4 +1,4 @@
-// Destruction Games. 2022
+// Oleksandr Tkachov 2022-2023
 
 
 #include "GameInstance/RPGGameInstanceBase.h"
@@ -21,14 +21,9 @@ void URPGGameInstanceBase::Init()
 
 void URPGGameInstanceBase::InitializeSaveGameObject()
 {
-	if (UGameplayStatics::DoesSaveGameExist(SaveSlotName, 0))
-	{
-		SaveGameObject = Cast<URPGSaveGameObject>(UGameplayStatics::LoadGameFromSlot(SaveSlotName, 0));
-	}
-	else
-	{
-		SaveGameObject = Cast<URPGSaveGameObject>(UGameplayStatics::CreateSaveGameObject(URPGSaveGameObject::StaticClass()));
-	}
+	SaveGameObject = UGameplayStatics::DoesSaveGameExist(SaveSlotName, 0) ? 
+	Cast<URPGSaveGameObject>(UGameplayStatics::LoadGameFromSlot(SaveSlotName, 0)) : 
+	Cast<URPGSaveGameObject>(UGameplayStatics::CreateSaveGameObject(URPGSaveGameObject::StaticClass()));
 }
 
 FString URPGGameInstanceBase::GetSaveSlotName() const

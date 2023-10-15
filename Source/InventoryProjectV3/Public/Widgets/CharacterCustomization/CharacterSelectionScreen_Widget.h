@@ -1,4 +1,4 @@
-// Destruction Games. 2022
+// Oleksandr Tkachov 2022-2023
 
 #pragma once
 
@@ -71,5 +71,4 @@ protected:
 
 	UFUNCTION()
 	void CloseWindow();
-
 };

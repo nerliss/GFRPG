@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Oleksandr Tkachov 2022-2023
 
 
 #include "Characters/RPGPlayerCharacter.h"
@@ -28,6 +28,10 @@
 #include "Save/RPGSaveGameObject.h"
 
 DEFINE_LOG_CATEGORY(LogRPGPlayerCharacter);
+
+#if !UE_BUILD_SHIPPING
+static TAutoConsoleVariable<int32> CvarSuperSprint(TEXT("DebugSuperSprint"), 0, TEXT("Enable to use super sprint speed instead of default one"));
+#endif
 
 // Sets default values
 ARPGPlayerCharacter::ARPGPlayerCharacter()
@@ -102,6 +106,7 @@ ARPGPlayerCharacter::ARPGPlayerCharacter()
 	CharacterSoundCollection = nullptr;
 
 	DefaultMaxWalkSpeed = 600.f;
+	SprintMaxWalkSpeed = 1000.f;
 	StealthedMaxWalkSpeed = 250.f;
 	bStealthed = false;
 }
@@ -211,7 +216,15 @@ void ARPGPlayerCharacter::OnSprintStarted()
 		return;
 	}
 
-	GetCharacterMovement()->MaxWalkSpeed = 4500.f;
+#if !UE_BUILD_SHIPPING
+	if (CvarSuperSprint.GetValueOnGameThread() > 0)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = 5500.f;
+		return;
+	}
+#endif
+
+	GetCharacterMovement()->MaxWalkSpeed = SprintMaxWalkSpeed;
 }
 
 void ARPGPlayerCharacter::OnSprintStopped()
@@ -221,7 +234,19 @@ void ARPGPlayerCharacter::OnSprintStopped()
 		return;
 	}
 	
-	GetCharacterMovement()->MaxWalkSpeed = 600.f;
+	GetCharacterMovement()->MaxWalkSpeed = DefaultMaxWalkSpeed;
+}
+
+void ARPGPlayerCharacter::OnStealthPressed()
+{
+	const float NewMaxWalkSpeed = bStealthed ? DefaultMaxWalkSpeed : StealthedMaxWalkSpeed;
+	GetCharacterMovement()->MaxWalkSpeed = NewMaxWalkSpeed;
+
+	bStealthed = !bStealthed;
+
+	BlueprintOnStealthPressed();
+
+	UE_LOG(LogRPGPlayerCharacter, Warning, TEXT("Stealth mode changed. %s now."), bStealthed ? TEXT("Active") : TEXT("Disabled"));
 }
 
 void ARPGPlayerCharacter::TurnAtRate(float Rate)
@@ -350,6 +375,11 @@ AActor* ARPGPlayerCharacter::TraceForInteractableObjects(float inTraceLength, bo
 		return nullptr;
 	}
 
+	if (!MainHUD_WidgetRef)
+	{
+		return nullptr;
+	}
+
 	const FVector StartLoc = CameraComp->GetComponentLocation();
 	const FVector EndLoc = (StartLoc + (CameraComp->GetForwardVector() * inTraceLength));
 
@@ -360,42 +390,28 @@ AActor* ARPGPlayerCharacter::TraceForInteractableObjects(float inTraceLength, bo
 
 	const bool bHitResult = GetWorld()->LineTraceSingleByChannel(HitResult, StartLoc, EndLoc, ECC_WorldDynamic, CQP);
 
-	if (bHitResult)
+	if (!bHitResult)
 	{
-		// Draw debug line if set to
-		if (bDrawDebugLine)
-		{
-			DrawDebugLine(GetWorld(), StartLoc, EndLoc, FColor::Red, false, 4.f, 0, 2.f);
-		}
+		MainHUD_WidgetRef->DisplayInteractionMessage(false, FText::FromString(""));
+		return InteractActor = nullptr;
+	}
 
-		AActor* HitActor = HitResult.GetActor();
+	// Draw debug line if set to
+	if (bDrawDebugLine)
+	{
+		DrawDebugLine(GetWorld(), StartLoc, EndLoc, FColor::Red, false, 4.f, 0, 2.f);
+	}
 
-		// Show interaction prompt if actor is eligible
-		if (HitActor->GetClass()->ImplementsInterface(URPGInteract_Interface::StaticClass()))
-		{
-			if (MainHUD_WidgetRef)
-			{
-				MainHUD_WidgetRef->DisplayInteractionMessage(true, IRPGInteract_Interface::Execute_GetName(HitActor));
-			}
- 		}
-		// Delete interaction prompt if HitActior doesn't implement the interface (providing it exists)
-		else
-		{
-			if (MainHUD_WidgetRef)
-			{
-				MainHUD_WidgetRef->DisplayInteractionMessage(false, FText::FromString(""));
-			}
-		}
+	AActor* HitActor = HitResult.GetActor();
 
+	// Show interaction prompt if actor is eligible
+	if (HitActor->GetClass()->ImplementsInterface(URPGInteract_Interface::StaticClass()))
+	{
+		MainHUD_WidgetRef->DisplayInteractionMessage(true, IRPGInteract_Interface::Execute_GetName(HitActor));
 		return InteractActor = HitActor;
 	}
 
-	// Delete interaction prompt if no HitActor present
-	if (MainHUD_WidgetRef)
-	{
-		MainHUD_WidgetRef->DisplayInteractionMessage(false, FText::FromString(""));
-	}
-
+	MainHUD_WidgetRef->DisplayInteractionMessage(false, FText::FromString(""));
 	return InteractActor = nullptr;
 }
 
@@ -422,6 +438,7 @@ void ARPGPlayerCharacter::OnInteractPressed()
 	// Interact with the actor 
 	//IRPGInteract_Interface::Execute_Interact(InteractActor, this);
 	InteractActorCasted->InteractNative(this);
+	UE_LOG(LogRPGPlayerCharacter, Log, TEXT("Interacting with %s"), *InteractActor->GetName());
 }
 
 void ARPGPlayerCharacter::OnInventoryToggled()
@@ -450,16 +467,4 @@ void ARPGPlayerCharacter::LoadLastCharacterModel()
 URPGGameInstanceBase* ARPGPlayerCharacter::GetRPGGameInstance() const
 {
 	return GetWorld()->GetGameInstanceChecked<URPGGameInstanceBase>();
-}
-
-void ARPGPlayerCharacter::OnStealthPressed()
-{
-	const float NewMaxWalkSpeed = bStealthed ? StealthedMaxWalkSpeed : DefaultMaxWalkSpeed;
-	GetCharacterMovement()->MaxWalkSpeed = NewMaxWalkSpeed;
-
-	bStealthed = !bStealthed;
-
-	BlueprintOnStealthPressed();
-
-	UE_LOG(LogRPGPlayerCharacter, Warning, TEXT("Stealth mode changed. %s now."), bStealthed ? TEXT("Active") : TEXT("Disabled"));
 }

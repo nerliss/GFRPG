@@ -62,7 +62,39 @@ struct FCharacterSelectionData
 		Portrait = nullptr;
 		PreviewCameraDistanceDelta = FVector::ZeroVector;
 	}
+
+	friend FArchive& operator<<(FArchive& Ar, FCharacterSelectionData& CharacterSelectionData);
 };
+
+// MyTODO: Move all FCharacterSelectionData related info to a separate header
+inline FArchive& operator<<(FArchive& Ar, FCharacterSelectionData& CharacterSelectionData)
+{
+	// For storing asset paths during serialization
+	FString SkeletalMeshPath;
+	FString AnimBPPath;
+
+	if (Ar.IsSaving())
+	{
+		// Convert the raw pointers to asset paths for saving
+		SkeletalMeshPath = CharacterSelectionData.SkeletalMesh ? CharacterSelectionData.SkeletalMesh->GetPathName() : "";
+		AnimBPPath = CharacterSelectionData.AssociatedAnimBP ? CharacterSelectionData.AssociatedAnimBP->GetPathName() : "";
+	}
+
+	// Serialize the asset paths instead of raw pointers
+	Ar << SkeletalMeshPath;
+	Ar << AnimBPPath;
+
+	if (Ar.IsLoading())
+	{
+		// Convert the asset paths back to raw pointers when loading
+		CharacterSelectionData.SkeletalMesh = SkeletalMeshPath.IsEmpty() ? nullptr : LoadObject<USkeletalMesh>(nullptr, *SkeletalMeshPath);
+		CharacterSelectionData.AssociatedAnimBP = AnimBPPath.IsEmpty() ? nullptr : LoadClass<UAnimInstance>(nullptr, *AnimBPPath);
+
+		UE_LOG(LogTemp, Warning, TEXT("Loading SkeletalMesh from path: %s\n ABP from: %s"), *SkeletalMeshPath, *AnimBPPath);
+	}
+
+	return Ar;
+}
 
 UCLASS()
 class INVENTORYPROJECTV3_API ARPGPlayerCharacter : public ACharacter
@@ -80,6 +112,10 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void Landed(const FHitResult& Hit) override;
+
+#if WITH_EDITORONLY_DATA
+	virtual void PreSave(FObjectPreSaveContext ObjectSaveContext) override;
+#endif
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* SpringArmComp;
@@ -223,6 +259,21 @@ protected:
 	bool bInDialog;
 
 	void LoadLastCharacterModel();
+
+#if WITH_EDITORONLY_DATA
+private:
+	/* Editor only selection data to be loaded from */
+	UPROPERTY(Transient)
+	FCharacterSelectionData LastCharacterSelectionDataInternal;
+
+	/* Editor-only function that loads last saved character into character blueprint itself to be displayed in the editor itself, not only in the game */
+	void LoadLastCharacterModelInternal();
+
+public:
+	void SetLastCharacterSelectionDataInternal(FCharacterSelectionData NewData);
+#endif
+
+protected:
 
 	UFUNCTION(BlueprintCallable)
 	URPGGameInstanceBase* GetRPGGameInstance() const;

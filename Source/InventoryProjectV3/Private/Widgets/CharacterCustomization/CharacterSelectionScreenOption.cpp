@@ -43,6 +43,25 @@ void UCharacterSelectionScreenOption::OnOptionsButtonClicked()
 	}
 
 	RPGGameInstance->GetSaveGameObject()->CharacterPlayerData = AssociatedCharacterSelectionData;
+
+#if WITH_EDITORONLY_DATA
+	//PlayerCharacter->SetLastCharacterSelectionDataInternal(AssociatedCharacterSelectionData);
+
+	// Testing serialization
+	FCharacterSelectionData TestCharacterSelectionData;
+	TestCharacterSelectionData.AssociatedAnimBP = AssociatedCharacterSelectionData.AssociatedAnimBP;
+	TestCharacterSelectionData.SkeletalMesh = AssociatedCharacterSelectionData.SkeletalMesh;
+
+	TArray<uint8> Bytes;
+	FMemoryWriter Writer(Bytes);
+	Writer << TestCharacterSelectionData;
+
+	FString FilePath = FPaths::ProjectSavedDir();
+	FilePath += TEXT("TestCharacterSelectionData.bin");
+	FFileHelper::SaveArrayToFile(Bytes, *FilePath);
+
+#endif
+
 	const bool bSaveSuccessful = UGameplayStatics::SaveGameToSlot(RPGGameInstance->GetSaveGameObject(), RPGGameInstance->GetSaveSlotName(), 0);
 
 	FString SaveDebugMessage = bSaveSuccessful ? TEXT("Character saved") : TEXT("An error occured when trying to save selected character");

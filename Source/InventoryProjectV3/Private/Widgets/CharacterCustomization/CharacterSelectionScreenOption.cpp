@@ -45,8 +45,6 @@ void UCharacterSelectionScreenOption::OnOptionsButtonClicked()
 	RPGGameInstance->GetSaveGameObject()->CharacterPlayerData = AssociatedCharacterSelectionData;
 
 #if WITH_EDITORONLY_DATA
-	//PlayerCharacter->SetLastCharacterSelectionDataInternal(AssociatedCharacterSelectionData);
-
 	// Testing serialization
 	FCharacterSelectionData TestCharacterSelectionData;
 	TestCharacterSelectionData.AssociatedAnimBP = AssociatedCharacterSelectionData.AssociatedAnimBP;
@@ -57,9 +55,8 @@ void UCharacterSelectionScreenOption::OnOptionsButtonClicked()
 	Writer << TestCharacterSelectionData;
 
 	FString FilePath = FPaths::ProjectSavedDir();
-	FilePath += TEXT("TestCharacterSelectionData.bin");
+	FilePath += PlayerCharacter->GetLastSavedCharacterFileName();
 	FFileHelper::SaveArrayToFile(Bytes, *FilePath);
-
 #endif
 
 	const bool bSaveSuccessful = UGameplayStatics::SaveGameToSlot(RPGGameInstance->GetSaveGameObject(), RPGGameInstance->GetSaveSlotName(), 0);

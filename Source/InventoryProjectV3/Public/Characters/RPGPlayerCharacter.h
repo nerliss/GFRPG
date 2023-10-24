@@ -114,7 +114,7 @@ public:
 	virtual void Landed(const FHitResult& Hit) override;
 
 #if WITH_EDITORONLY_DATA
-	virtual void PreSave(FObjectPreSaveContext ObjectSaveContext) override;
+	virtual void OnConstruction(const FTransform& Transform) override;
 #endif
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -262,15 +262,17 @@ protected:
 
 #if WITH_EDITORONLY_DATA
 private:
-	/* Editor only selection data to be loaded from */
-	UPROPERTY(Transient)
-	FCharacterSelectionData LastCharacterSelectionDataInternal;
 
 	/* Editor-only function that loads last saved character into character blueprint itself to be displayed in the editor itself, not only in the game */
 	void LoadLastCharacterModelInternal();
 
+	/* Name for an external file to write/read character data from (for editor only) */
+	inline static FString LastSavedCharacterFileName = TEXT("TestCharacterSelectionData.bin");
+
 public:
-	void SetLastCharacterSelectionDataInternal(FCharacterSelectionData NewData);
+
+	FString GetLastSavedCharacterFileName() const { return LastSavedCharacterFileName; }
+
 #endif
 
 protected:

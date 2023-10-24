@@ -154,34 +154,11 @@ void ARPGPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 }
 
 #if WITH_EDITORONLY_DATA
-void ARPGPlayerCharacter::PreSave(FObjectPreSaveContext ObjectSaveContext)
+void ARPGPlayerCharacter::OnConstruction(const FTransform& Transform)
 {
-	Super::PreSave(ObjectSaveContext);
+	Super::OnConstruction(Transform);
 
-	//LoadLastCharacterModelInternal();
-
-	//UE_LOG(LogRPGPlayerCharacter, Warning, TEXT("Saved ABP: %s, Saved SKM: %s"), *GetNameSafe(LastCharacterSelectionDataInternal.AssociatedAnimBP), *GetNameSafe(LastCharacterSelectionDataInternal.SkeletalMesh));
-
-	FCharacterSelectionData LoadedData;
-	TArray<uint8> LoadedBytes;
-	FString FilePath = FPaths::ProjectSavedDir() + "TestCharacterSelectionData.bin";
-	FString FullPath = FPaths::ConvertRelativePathToFull(FilePath);
-	UE_LOG(LogTemp, Warning, TEXT("Full path: %s"), *FullPath);
-
-	if (FFileHelper::LoadFileToArray(LoadedBytes, *FullPath))
-	{
-		FMemoryReader Reader(LoadedBytes);
-		Reader << LoadedData;
-	}
-	else
-	{
-		// Handle the error, e.g., log a message or show a warning to the user
-		UE_LOG(LogTemp, Warning, TEXT("Failed to load data from file. ABP: %s, SKM: %s"), *GetNameSafe(LoadedData.AssociatedAnimBP), *GetNameSafe(LoadedData.SkeletalMesh));
-		return;
-	}
-
-	GetMesh()->SetSkeletalMeshAsset(LoadedData.SkeletalMesh);
-	GetMesh()->SetAnimInstanceClass(LoadedData.AssociatedAnimBP);
+	LoadLastCharacterModelInternal();
 }
 #endif
 
@@ -508,19 +485,20 @@ void ARPGPlayerCharacter::LoadLastCharacterModel()
 #if WITH_EDITORONLY_DATA
 void ARPGPlayerCharacter::LoadLastCharacterModelInternal()
 {
-	if (!(LastCharacterSelectionDataInternal.SkeletalMesh && LastCharacterSelectionDataInternal.AssociatedAnimBP))
+	FCharacterSelectionData LoadedData;
+	TArray<uint8> LoadedBytes;
+	const FString FilePath = FPaths::ProjectSavedDir() + GetLastSavedCharacterFileName();
+
+	if (!FFileHelper::LoadFileToArray(LoadedBytes, *FilePath))
 	{
-		UE_LOG(LogRPGPlayerCharacter, Error, TEXT("[ARPGPlayerCharacter::LoadLastCharacterModel] SaveCharacterData doesn't have SkeletalMesh and/or AssociatedAnimBP!"));
 		return;
 	}
 
-	GetMesh()->SetSkeletalMeshAsset(LastCharacterSelectionDataInternal.SkeletalMesh);
-	GetMesh()->SetAnimInstanceClass(LastCharacterSelectionDataInternal.AssociatedAnimBP);
-}
+	FMemoryReader Reader(LoadedBytes);
+	Reader << LoadedData;
 
-void ARPGPlayerCharacter::SetLastCharacterSelectionDataInternal(FCharacterSelectionData NewData)
-{
-	LastCharacterSelectionDataInternal = NewData;
+	GetMesh()->SetSkeletalMeshAsset(LoadedData.SkeletalMesh);
+	GetMesh()->SetAnimInstanceClass(LoadedData.AssociatedAnimBP);
 }
 #endif
 

@@ -35,3 +35,37 @@ URPGSaveGameObject* URPGGameInstanceBase::GetSaveGameObject() const
 {
 	return SaveGameObject;
 }
+
+void URPGGameInstanceBase::SavePlayer()
+{
+	if (!SaveGameObject)
+	{
+		return;
+	}
+
+	const auto* PlayerCharacter = Cast<ARPGPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	if (!PlayerCharacter)
+	{
+		return;
+	}
+
+	SaveGameObject->PlayerTransform = PlayerCharacter->GetActorTransform();
+
+	UGameplayStatics::SaveGameToSlot(SaveGameObject, SaveSlotName, 0);
+}
+
+void URPGGameInstanceBase::LoadPlayer()
+{
+	if (!SaveGameObject)
+	{
+		return;
+	}
+
+	auto* PlayerCharacter = Cast<ARPGPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	if (!PlayerCharacter)
+	{
+		return;
+	}
+
+	PlayerCharacter->SetActorTransform(SaveGameObject->PlayerTransform);
+}

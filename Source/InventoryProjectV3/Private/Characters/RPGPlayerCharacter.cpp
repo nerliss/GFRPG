@@ -31,6 +31,7 @@ DEFINE_LOG_CATEGORY(LogRPGPlayerCharacter);
 
 #if !UE_BUILD_SHIPPING
 static TAutoConsoleVariable<int32> CvarSuperSprint(TEXT("DebugSuperSprint"), 0, TEXT("Enable to use super sprint speed instead of default one"));
+static TAutoConsoleVariable<int32> CvarSuperJump(TEXT("DebugSuperJump"), 0, TEXT("Enable to use super jump. Gives full free controll of the pawn in air, double jump and force enables DebugIgnoreFallDamage."));
 static TAutoConsoleVariable<int32> CvarIgnoreFallDamage(TEXT("DebugIgnoreFallDamage"), 0, TEXT("Enable to ignore fall damage"));
 #endif
 
@@ -210,13 +211,32 @@ void ARPGPlayerCharacter::OnRightMoved(float Value)
 
 void ARPGPlayerCharacter::OnJumpStarted()
 {
+#if !UE_BUILD_SHIPPING
+	if (CvarSuperJump.GetValueOnGameThread() > 0)
+	{
+		GetCharacterMovement()->JumpZVelocity = 3000.f; 
+		GetCharacterMovement()->AirControl = 1.f;
+		JumpMaxCount = 2;
+		JumpMaxHoldTime = 0.3f;
+
+		CvarIgnoreFallDamage.AsVariable()->Set(1, ECVF_SetByConsole);
+	}
+#endif
+
 	ACharacter::Jump();
 
-	// MyTODO: Make character stop rotating while in air
+	// MyTODO: Make character stop rotating while in air (?)
 }
 
 void ARPGPlayerCharacter::OnJumpEnded()
 {
+#if !UE_BUILD_SHIPPING
+	GetCharacterMovement()->JumpZVelocity = 600.f;
+	GetCharacterMovement()->AirControl = 0.2f;
+	JumpMaxCount = 1;
+	JumpMaxHoldTime = 0.f;
+#endif
+
 	ACharacter::StopJumping();
 }
 

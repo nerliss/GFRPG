@@ -36,4 +36,10 @@ public:
 
 	URPGSaveGameObject* GetSaveGameObject() const;
 
+	UFUNCTION(BlueprintCallable)
+	void SavePlayer();
+
+	UFUNCTION(BlueprintCallable)
+	void LoadPlayer();
+
 };

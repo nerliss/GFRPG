@@ -22,4 +22,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player")
 	FCharacterSelectionData CharacterPlayerData;
 
+	/* MyTODO: Temporary a separate variable, combine with other similar variables in to a FStruct or something */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
+	FTransform PlayerTransform;
+
 };

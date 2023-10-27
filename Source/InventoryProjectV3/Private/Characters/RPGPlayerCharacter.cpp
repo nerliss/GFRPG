@@ -111,7 +111,6 @@ ARPGPlayerCharacter::ARPGPlayerCharacter()
 	SprintMaxWalkSpeed = 1000.f;
 	StealthedMaxWalkSpeed = 250.f;
 	bStealthed = false;
-
 }
 
 void ARPGPlayerCharacter::BeginPlay()
@@ -165,13 +164,7 @@ void ARPGPlayerCharacter::OnConstruction(const FTransform& Transform)
 
 void ARPGPlayerCharacter::OnForwardMoved(float Value)
 {
-	if (!Controller)
-	{	
-		// Controller is invalid
-		return;
-	}
-	
-	if (Value == FLT_EPSILON)
+	if (FMath::IsNearlyZero(Value))
 	{
 		// Value is nearly zero, do nothing
 		return;
@@ -188,13 +181,7 @@ void ARPGPlayerCharacter::OnForwardMoved(float Value)
 
 void ARPGPlayerCharacter::OnRightMoved(float Value)
 {
-	if (!Controller)
-	{
-		// Controller is invalid
-		return;
-	}
-
-	if (Value == FLT_EPSILON)
+	if (FMath::IsNearlyZero(Value))
 	{
 		// Value is nearly zero, do nothing
 		return;
@@ -440,12 +427,21 @@ AActor* ARPGPlayerCharacter::TraceForInteractableObjects(float inTraceLength, bo
 		DrawDebugLine(GetWorld(), StartLoc, EndLoc, FColor::Red, false, 4.f, 0, 2.f);
 	}
 
-	AActor* HitActor = HitResult.GetActor();
+	auto* HitActor = HitResult.GetActor();
+
+	auto* InteractActorCasted = Cast<IRPGInteract_Interface>(HitActor);
+	if (!InteractActorCasted)
+	{
+		MainHUD_WidgetRef->DisplayInteractionMessage(false, FText::FromString(""));
+		return InteractActor = nullptr;;
+	}
 
 	// Show interaction prompt if actor is eligible
 	if (HitActor->GetClass()->ImplementsInterface(URPGInteract_Interface::StaticClass()))
 	{
+		// MyTODO: Figure out a way to use one function that can be overriden both in C++ and BP
 		MainHUD_WidgetRef->DisplayInteractionMessage(true, IRPGInteract_Interface::Execute_GetName(HitActor));
+		MainHUD_WidgetRef->DisplayInteractionMessage(true, InteractActorCasted->GetNameNative());
 		return InteractActor = HitActor;
 	}
 

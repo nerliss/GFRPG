@@ -31,44 +31,46 @@ void URPGHUD_Widget::NativeConstruct()
 void URPGHUD_Widget::DisplayInteractionMessage(bool bShowMessage, FText TargetName)
 {
 	// If class is set in BP
-	if (InteractionPrompt_WidgetClass)
+	if (!InteractionPrompt_WidgetClass)
 	{
-		// Show message
-		if (bShowMessage)
+		return;
+	}
+
+	// Show message
+	if (bShowMessage)
+	{
+		if (!InteractionPrompt_Widget)
 		{
-			if (!InteractionPrompt_Widget)
+			InteractionPrompt_Widget = Cast<URPGInteractionPrompt_Widget>(CreateWidget(GetWorld(), InteractionPrompt_WidgetClass));
+
+			InteractionPrompt_Widget->Text_Target_Name = TargetName;
+
+			// Configure the canvas panel slot for interaction message
+			if (HUDCanvas)
 			{
-				InteractionPrompt_Widget = Cast<URPGInteractionPrompt_Widget>(CreateWidget(GetWorld(), InteractionPrompt_WidgetClass));
+				HUDCanvas->AddChildToCanvas(InteractionPrompt_Widget);
 
-				InteractionPrompt_Widget->Text_Target_Name = TargetName;
+				// This will probably get us the most recently-created slot (last slot)
+				int32 LastSlot = HUDCanvas->GetChildrenCount() - 1;
 
-				// Configure the canvas panel slot for interaction message
-				if (HUDCanvas)
-				{
-					HUDCanvas->AddChildToCanvas(InteractionPrompt_Widget);
+				// Should dynamically find the last slot
+				UCanvasPanelSlot* InteractionPromptSlot = CastChecked<UCanvasPanelSlot>(HUDCanvas->GetSlots()[LastSlot]);
 
-					// This will probably get us the most recently-created slot (last slot)
-					int32 LastSlot = HUDCanvas->GetChildrenCount() - 1;
-
-					// Should dynamically find the last slot
-					UCanvasPanelSlot* InteractionPromptSlot = CastChecked<UCanvasPanelSlot>(HUDCanvas->GetSlots()[LastSlot]);
-
-					// Approximately lower center of the screen
-					InteractionPromptSlot->SetAutoSize(true);
-					InteractionPromptSlot->SetAnchors(FAnchors(0.5f, 0.5f, 0.5f, 0.5f));
-					InteractionPromptSlot->SetAlignment(FVector2D(0.5f, -1.f));
-					InteractionPromptSlot->SetPosition(FVector2D(0.f, 0.f));
-				}
+				// Approximately lower center of the screen
+				InteractionPromptSlot->SetAutoSize(true);
+				InteractionPromptSlot->SetAnchors(FAnchors(0.5f, 0.5f, 0.5f, 0.5f));
+				InteractionPromptSlot->SetAlignment(FVector2D(0.5f, -1.f));
+				InteractionPromptSlot->SetPosition(FVector2D(0.f, 0.f));
 			}
 		}
-		// Delete message
-		else
+	}
+	// Delete message
+	else
+	{
+		if (InteractionPrompt_Widget)
 		{
-			if (InteractionPrompt_Widget)
-			{
-				InteractionPrompt_Widget->RemoveFromParent();
-				InteractionPrompt_Widget = nullptr;
-			}
+			InteractionPrompt_Widget->RemoveFromParent();
+			InteractionPrompt_Widget = nullptr;
 		}
 	}
 }

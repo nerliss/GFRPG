@@ -4,12 +4,16 @@
 #include "Widgets/Inventory/RPGInventory_Slot_Widget.h"
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
+#include "Components/CanvasPanelSlot.h"
+#include "Components/CanvasPanel.h"
 #include "Items/RPGItem_Base.h"
 #include "Components/RPGInventory_Component.h"	
 #include "Characters/RPGPlayerCharacter.h"
 #include "PlayerController/RPGPlayer_Controller.h"
 #include "UMG/Public/Blueprint/WidgetBlueprintLibrary.h"
 #include "Utility/LogDefinitions.h"
+#include "Widgets/Inventory/RPGInventory_Tooltip_Widget.h"
+#include "Widgets/RPGHUD_Widget.h"
 
 URPGInventory_Slot_Widget::URPGInventory_Slot_Widget(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
@@ -17,6 +21,9 @@ URPGInventory_Slot_Widget::URPGInventory_Slot_Widget(const FObjectInitializer& O
 	SlotIndex = 255;
 	SlotContent = FInventorySlot();
 	InventoryReference = nullptr;
+
+	TooltipClass = nullptr;
+	TooltipReference = nullptr;
 
 	PlayerCharacterOwner = nullptr;
 	PlayerControllerOwner = nullptr;
@@ -36,27 +43,28 @@ void URPGInventory_Slot_Widget::NativeDestruct()
 {
 	Super::NativeDestruct();
 
-	// MyTODO: Destroy tooltip
+	RemoveTooltip();
 }
 
 void URPGInventory_Slot_Widget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseLeave(InMouseEvent);
 
-	// MyTODO: Destroy tooltip
+	RemoveTooltip();
 }
 
 void URPGInventory_Slot_Widget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
 
-	// MyTODO: Create tooltip if the slot is not empty
+	CreateTooltip(InGeometry, InMouseEvent);
 }
 
 FReply URPGInventory_Slot_Widget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
 
+	// MyTODO: Collapse to functions and clean it up
 	if (InMouseEvent.GetEffectingButton() == EKeys::RightMouseButton)
 	{
 		// Use item
@@ -68,10 +76,9 @@ FReply URPGInventory_Slot_Widget::NativeOnMouseButtonDown(const FGeometry& InGeo
 			}
 		}
 		// Move item from container to player's inventory 
-		// MyTODO: Test this out
 		else
 		{
-			if (PlayerCharacterOwner->InventoryComp->AddToInventory(SlotContent))
+			if (SlotContent.Quantity > 0 && PlayerCharacterOwner->InventoryComp->AddToInventory(SlotContent))
 			{
 				InventoryReference->Inventory[SlotIndex] = FInventorySlot();
 				RefreshSlot();
@@ -131,6 +138,8 @@ void URPGInventory_Slot_Widget::RefreshSlot()
 
 		// Just hide thumbnail when no items left (default image for slot background is stored elsewhere)
 		ItemThumbnail->SetColorAndOpacity(FLinearColor(1.f, 1.f, 1.f, 0.f));
+
+		RemoveTooltip();
 		return;
 	}
 
@@ -178,4 +187,59 @@ bool URPGInventory_Slot_Widget::UseItem()
 
 	// MyTODO: Update Quests here (NYI)
 	return true;
+}
+
+void URPGInventory_Slot_Widget::CreateTooltip(const FGeometry InGeometry, const FPointerEvent InMouseEvent)
+{
+	if (!TooltipClass)
+	{
+		UE_LOG(LogRPGInventory, Error, TEXT("[URPGInventory_Slot_Widget::CreateTooltip] TooltipClass is not set!"));
+		return;
+	}
+
+	if (SlotContent.Quantity <= 0)
+	{
+		return;
+	}
+
+	TooltipReference = Cast<URPGInventory_Tooltip_Widget>(CreateWidget(GetWorld(), TooltipClass));
+	if (!TooltipReference)
+	{
+		return;
+	}
+
+	TooltipReference->ItemName = SlotContent.Item.Name;
+	TooltipReference->ItemDescription = SlotContent.Item.Description;
+	TooltipReference->ItemThumbnailToSet = SlotContent.Item.Thumbnail;
+
+	auto* PlayerController = GetOwningPlayer<ARPGPlayer_Controller>();
+	if (!PlayerController)
+	{
+		return;
+	}
+
+	auto* CanvasSlot = PlayerController->GetHUDWidget()->HUDCanvas->AddChildToCanvas(TooltipReference);
+	if (!CanvasSlot)
+	{
+		return;
+	}
+
+	const FVector2D MousePosition = InMouseEvent.GetScreenSpacePosition();
+	const FVector2D TooltipPosition = MousePosition - InGeometry.GetLocalSize();
+
+	CanvasSlot->SetAnchors(FAnchors());
+	CanvasSlot->SetAlignment(FVector2D(1.f, 1.f));
+	CanvasSlot->SetAutoSize(true);
+	CanvasSlot->SetPosition(TooltipPosition);
+}
+
+void URPGInventory_Slot_Widget::RemoveTooltip()
+{
+	if (!TooltipReference)
+	{
+		return;
+	}
+
+	TooltipReference->RemoveFromParent();
+	TooltipReference = nullptr;
 }

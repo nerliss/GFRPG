@@ -10,6 +10,7 @@
 class URPGInventory_Component;
 class UImage;
 class UTextBlock;
+class URPGInventory_Tooltip_Widget;
 class ARPGPlayerCharacter;
 class ARPGPlayer_Controller;
 
@@ -46,6 +47,12 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	URPGInventory_Component* InventoryReference;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<URPGInventory_Tooltip_Widget> TooltipClass;
+
+	UPROPERTY(BlueprintReadOnly)
+	URPGInventory_Tooltip_Widget* TooltipReference;
+
 	/* MyTODO: Optimize code without using these two variables */
 	UPROPERTY(BlueprintReadOnly)
 	ARPGPlayerCharacter* PlayerCharacterOwner;
@@ -63,4 +70,9 @@ public:
 	void RefreshSlot();
 
 	bool UseItem();
+
+private:
+
+	void CreateTooltip(const FGeometry InGeometry, const FPointerEvent InMouseEvent);
+	void RemoveTooltip();
 };

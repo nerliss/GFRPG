@@ -48,6 +48,13 @@ void URPGInventory_Component::TickComponent(float DeltaTime, ELevelTick TickType
 #if !UE_BUILD_SHIPPING
 	if (CvarDebugShowInventoryList.GetValueOnGameThread() > 0)
 	{
+		auto* PlayerController = GetOwner()->GetInstigatorController();
+		if (!PlayerController)
+		{
+			// Inventory owner is not a player
+			return;
+		}
+
 		// Inverted order because how the print system works - the most recent messages are at top
 		for (int i = Inventory.Num() - 1; i >= 0; i--)
 		{

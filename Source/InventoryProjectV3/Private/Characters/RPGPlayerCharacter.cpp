@@ -466,8 +466,6 @@ void ARPGPlayerCharacter::OnInteractPressed()
 		return;
 	}
 
-	// Interact with the actor 
-	//IRPGInteract_Interface::Execute_Interact(InteractActor, this);
 	InteractActorCasted->InteractNative(this);
 	UE_LOG(LogRPGPlayerCharacter, Log, TEXT("Interacting with %s"), *InteractActor->GetName());
 }
@@ -479,7 +477,7 @@ void ARPGPlayerCharacter::OnInventoryToggled()
 
 void ARPGPlayerCharacter::LoadLastCharacterModel()
 {
-	auto* RPGGameInstance = GetRPGGameInstance();
+	const auto* RPGGameInstance = GetRPGGameInstance();
 	check(RPGGameInstance);
 
 	const auto SaveCharacterData = RPGGameInstance->GetSaveGameObject()->CharacterPlayerData;

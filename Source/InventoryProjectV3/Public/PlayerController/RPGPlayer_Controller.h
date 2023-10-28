@@ -16,19 +16,32 @@ class INVENTORYPROJECTV3_API ARPGPlayer_Controller : public APlayerController
 
 	ARPGPlayer_Controller();
 
-public:
+protected:
 
 	virtual void BeginPlay() override;
-
-	/* Player controller specific input definitions */
 	virtual void SetupInputComponent() override;
 
+private:
+
+	/* Create HUD widget */
+	void InitializeHUDWidget();
+
+protected:
+
+	// MyTODO: Move to a config or something
 	/* HUD class */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "HUD Widget")
 	TSubclassOf<UUserWidget> MainHUDWidgetClass;
 
 	UPROPERTY(BlueprintReadOnly, Category = "HUD Widget")
 	URPGHUD_Widget* MainHUDWidget;
+
+public:
+
+	UFUNCTION(BlueprintCallable)
+	URPGHUD_Widget* GetHUDWidget() const;
+
+protected:
 
 	/************************************************************************/
 	/*                              Photo mode                              */

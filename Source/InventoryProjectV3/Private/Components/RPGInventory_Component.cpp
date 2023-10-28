@@ -13,6 +13,8 @@
 #include "Components/CanvasPanelSlot.h"
 #include "Characters/RPGPlayerCharacter.h"
 
+#pragma optimize("", off)
+
 #if !UE_BUILD_SHIPPING
 static TAutoConsoleVariable<int32> CvarDebugShowInventoryList(TEXT("DebugShowInventoryList"), 0, TEXT("Enable to print out all inventory slots to the screen"));
 #endif
@@ -211,9 +213,16 @@ void URPGInventory_Component::PrepareInventory()
 
 void URPGInventory_Component::ToggleInventory()
 {
-	auto* PC = Cast<ARPGPlayer_Controller>(GetOwner()->GetInstigatorController());
+	if (!InventoryWindowWidgetClass)
+	{
+		UE_LOG(LogRPGInventory, Error, TEXT("[URPGInventory_Component::ToggleInventory] Inventory window widget class is not set!"));
+		return;
+	}
+
+	auto* PC = Cast<ARPGPlayer_Controller>(UGameplayStatics::GetPlayerController(this, 0));
 	if (!PC)
 	{
+		UE_LOG(LogRPGInventory, Error, TEXT("[URPGInventory_Component::ToggleInventory] Player controller is null! Probably because the owner of this component is not a player..."));
 		return;
 	}
 
@@ -226,30 +235,29 @@ void URPGInventory_Component::ToggleInventory()
 		PC->SetInputMode(FInputModeGameOnly());
 		PC->bShowMouseCursor = false;
 
-		UE_LOG(LogRPGInventory, Warning, TEXT("[RPGInventory_Component::ToggleInventory] Inventory window destroyed."));
+		UE_LOG(LogRPGInventory, Log, TEXT("[URPGInventory_Component::ToggleInventory] Inventory window destroyed."));
 		return;
 	}
+
+	// Prepare inventory again in case we are opening not player's inventory (container, corpse etc.)
+	PrepareInventory();
 
 	// Create inventory window
-	if (!InventoryWindowWidgetClass)
-	{
-		UE_LOG(LogRPGInventory, Error, TEXT("[RPGInventory_Component::ToggleInventory] Inventory window widget class is not set!"));
-		return;
-	}
-
 	InventoryWindowWidget = Cast<URPGInventory_Window_Widget>(CreateWidget(GetWorld(), InventoryWindowWidgetClass));
 	if (!InventoryWindowWidget)
 	{
-		UE_LOG(LogRPGInventory, Error, TEXT("[RPGInventory_Component::ToggleInventory] Inventory window was not created!"));
+		UE_LOG(LogRPGInventory, Error, TEXT("[URPGInventory_Component::ToggleInventory] Inventory window was not created!"));
 		return;
 	}
 
-	PC->MainHUDWidget->HUDCanvas->AddChildToCanvas(InventoryWindowWidget);
+	InventoryWindowWidget->SetAssociatedInventory(this);
+
+	PC->GetHUDWidget()->HUDCanvas->AddChildToCanvas(InventoryWindowWidget);
 
 	// This will probably get us the most recently-created slot (last slot)
-	const int32 LastSlot = PC->MainHUDWidget->HUDCanvas->GetChildrenCount() - 1;
+	const int32 LastSlot = PC->GetHUDWidget()->HUDCanvas->GetChildrenCount() - 1;
 
-	UCanvasPanelSlot* InventoryWindowSlot = CastChecked<UCanvasPanelSlot>(PC->MainHUDWidget->HUDCanvas->GetSlots()[LastSlot]);
+	UCanvasPanelSlot* InventoryWindowSlot = CastChecked<UCanvasPanelSlot>(PC->GetHUDWidget()->HUDCanvas->GetSlots()[LastSlot]);
 
 	// Setup inventory window slot
 	InventoryWindowSlot->SetAutoSize(true);
@@ -259,5 +267,5 @@ void URPGInventory_Component::ToggleInventory()
 	PC->SetInputMode(FInputModeUIOnly());
 	PC->bShowMouseCursor = true;
 
-	UE_LOG(LogRPGInventory, Log, TEXT("[RPGInventory_Component::ToggleInventory] Inventory window created."));
+	UE_LOG(LogRPGInventory, Log, TEXT("[URPGInventory_Component::ToggleInventory] Inventory window created."));
 }

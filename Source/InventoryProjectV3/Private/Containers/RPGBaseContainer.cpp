@@ -45,14 +45,17 @@ void ARPGBaseContainer::BeginPlay()
 
 void ARPGBaseContainer::InteractNative(AActor* Interactor)
 {
+	// MyTODO: Replace this with IsChildOf or something since casting a type without using it confuses
 	const auto* Player = Cast<ARPGPlayerCharacter>(Interactor);
 	if (!Player)
 	{
+		UE_LOG(LogTemp, Error, TEXT("Interactor is not a player"));
 		return;
 	}
 
 	// Open this container's inventory if interactor is player
 	ContainerInventoryComp->ToggleInventory();
+	UE_LOG(LogTemp, Log, TEXT("Interacted with container, its inventory window should be opened"));
 }
 
 FText ARPGBaseContainer::GetNameNative() const

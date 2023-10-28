@@ -26,28 +26,7 @@ void ARPGPlayer_Controller::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// Check if MainHUD_WidgetClass is valid
-	if (MainHUDWidgetClass)
-	{
-		// Create widget derived from URPGHUD_Widget
-		MainHUDWidget = Cast<URPGHUD_Widget>(CreateWidget(GetWorld(), MainHUDWidgetClass));
-
-		if (MainHUDWidget)
-		{
-			// Set player reference
-			ARPGPlayerCharacter* PlayerRef = Cast<ARPGPlayerCharacter>(GetPawn());
-
-			// Set HUD widget reference in Player character
-			if (PlayerRef)
-			{
-				PlayerRef->MainHUD_WidgetRef = MainHUDWidget;
-
-				MainHUDWidget->AddToViewport();
-				
-				UE_LOG(LogRPGPlayerController, Log, TEXT("[RPGPlayer_Controller::BeginPlay] MainHUD reference is set"));
-			}
-		}
-	}
+	InitializeHUDWidget();
 
 	// Save reference to the original player pawn
 	OriginalPlayerPawn = GetPawn();
@@ -60,11 +39,46 @@ void ARPGPlayer_Controller::SetupInputComponent()
 	InputComponent->BindAction("TogglePhotoMode", IE_Pressed, this, &ARPGPlayer_Controller::TogglePhotoMode);
 }
 
+void ARPGPlayer_Controller::InitializeHUDWidget()
+{
+	if (!MainHUDWidgetClass)
+	{
+		UE_LOG(LogRPGUIHUD, Error, TEXT("[ARPGPlayer_Controller::InitializeHUDWidget] Couldn't create a HUD widget: the class to spawn from is unset!"));
+		return;
+	}
+
+	MainHUDWidget = Cast<URPGHUD_Widget>(CreateWidget(GetWorld(), MainHUDWidgetClass));
+	if (!MainHUDWidget)
+	{
+		return;
+	}
+
+	ARPGPlayerCharacter* PlayerRef = Cast<ARPGPlayerCharacter>(GetPawn());
+	if (!PlayerRef)
+	{
+		return;
+	}
+
+	PlayerRef->MainHUD_WidgetRef = MainHUDWidget;
+
+	MainHUDWidget->AddToViewport();
+
+	SetInputMode(FInputModeGameOnly());
+	bShowMouseCursor = false;
+
+	UE_LOG(LogRPGUIHUD, Verbose, TEXT("[ARPGPlayer_Controller::InitializeHUDWidget] HUD Widget successfuly initialized!"));
+}
+
+URPGHUD_Widget* ARPGPlayer_Controller::GetHUDWidget() const
+{
+	return MainHUDWidget;
+}
+
 void ARPGPlayer_Controller::SpawnPhotoModePawn()
 {
 	if (!PhotoModePawnClass)
 	{
-		UE_LOG(LogRPGPlayerController, Error, TEXT("[RPGPlayer_Controller::SpawnPhotoModePawn] Couldn't spawn a photo mode pawn: the class to spawn from is unset!"));
+		UE_LOG(LogRPGPhotoMode, Error, TEXT("[ARPGPlayer_Controller::SpawnPhotoModePawn] Couldn't spawn a photo mode pawn: the class to spawn from is unset!"));
 		return;
 	}
 
@@ -79,7 +93,7 @@ void ARPGPlayer_Controller::SpawnPhotoModePawn()
 	UnPossess();
 	Possess(Cast<APawn>(PhotoModePawn));
 
-	UE_LOG(LogRPGPlayerController, Log, TEXT("[RPGPlayer_Controller::SpawnPhotoModePawn] Photo mode pawn spawned and possessed!"));
+	UE_LOG(LogRPGPhotoMode, Verbose, TEXT("[ARPGPlayer_Controller::SpawnPhotoModePawn] Photo mode pawn spawned and possessed!"));
 }
 
 void ARPGPlayer_Controller::DespawnPhotoModePawn()
@@ -91,7 +105,7 @@ void ARPGPlayer_Controller::DespawnPhotoModePawn()
 	GetWorld()->DestroyActor(PhotoModePawn);
 	PhotoModePawn = nullptr;
 
-	UE_LOG(LogRPGPlayerController, Log, TEXT("[RPGPlayer_Controller::DespawnPhotoModePawn] Photo mode pawn despawned and original pawn possessed!"));
+	UE_LOG(LogRPGPhotoMode, Verbose, TEXT("[ARPGPlayer_Controller::DespawnPhotoModePawn] Photo mode pawn despawned and original pawn possessed!"));
 }
 
 void ARPGPlayer_Controller::TogglePhotoMode()

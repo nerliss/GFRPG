@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Oleksandr Tkachov 2022-2023
 
 #include "InventoryProjectV3.h"
 #include "Modules/ModuleManager.h"

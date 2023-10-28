@@ -133,7 +133,6 @@ void ARPGPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	// Setup action bindings
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ARPGPlayerCharacter::OnJumpStarted);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ARPGPlayerCharacter::OnJumpEnded);
 	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &ARPGPlayerCharacter::OnSprintStarted);
@@ -143,7 +142,6 @@ void ARPGPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	PlayerInputComponent->BindAction("Inventory", IE_Pressed, this, &ARPGPlayerCharacter::OnInventoryToggled);
 	PlayerInputComponent->BindAction("StealthToggle", IE_Pressed, this, &ARPGPlayerCharacter::OnStealthPressed);
 
-	// Setup axis bindings
 	PlayerInputComponent->BindAxis("MoveForward", this, &ARPGPlayerCharacter::OnForwardMoved);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ARPGPlayerCharacter::OnRightMoved);
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
@@ -165,7 +163,6 @@ void ARPGPlayerCharacter::OnForwardMoved(float Value)
 {
 	if (FMath::IsNearlyZero(Value))
 	{
-		// Value is nearly zero, do nothing
 		return;
 	}
 
@@ -182,7 +179,6 @@ void ARPGPlayerCharacter::OnRightMoved(float Value)
 {
 	if (FMath::IsNearlyZero(Value))
 	{
-		// Value is nearly zero, do nothing
 		return;
 	}
 
@@ -292,11 +288,9 @@ void ARPGPlayerCharacter::Death()
 	HPComp->SetCurrentHealth(0.f);
 	HPComp->bDiedAlready = true;
 
-	// Disable collision
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-	// Disable input
 	DisableInput(Cast<APlayerController>(GetController()));
 
 	// Call blueprint event

@@ -41,11 +41,16 @@ public:
 	USphereComponent* TraceSphere;
 
 	/* Inventory component stores data about items */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Inventory")
 	URPGInventory_Component* ContainerInventoryComp;
 
-	/* Items to fill this container's inventory with */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory")
-	TArray<FInventorySlot> Items;
+	// MyTODO: Add some conditions to check and display that the item is stackable or not, if yes - strip the quantity to 1 / or split into several different stacks, by one. 
+	// Give some feedback to designers that the specified quantity exceeds the stack size.
+	/* Items to fill this container's inventory with. Use this to set what items should be in this container. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+	TArray<FContainerItem> ItemToAdd;
 
+private:
+
+	void FillContainerInventory();
 };

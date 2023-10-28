@@ -13,8 +13,6 @@
 #include "Components/CanvasPanelSlot.h"
 #include "Characters/RPGPlayerCharacter.h"
 
-#pragma optimize("", off)
-
 #if !UE_BUILD_SHIPPING
 static TAutoConsoleVariable<int32> CvarDebugShowInventoryList(TEXT("DebugShowInventoryList"), 0, TEXT("Enable to print out all inventory slots to the screen"));
 #endif

@@ -73,3 +73,22 @@ struct FInventorySlot
 		Quantity = 0;
 	}
 };
+
+/* Struct used in containers. Filled in blueprints, then it automatically copies filled data to actual inventory of a container */
+USTRUCT(Blueprintable, BlueprintType)
+struct FContainerItem
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory slot")
+	TSubclassOf<ARPGItem_Base> Item;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory slot")
+	int32 Quantity;
+
+	FContainerItem()
+	{
+		Item = nullptr;
+		Quantity = 1;
+	}
+};

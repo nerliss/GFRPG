@@ -118,6 +118,11 @@ void URPGInventory_Window_Widget::CloseWindow()
 	GetAssociatedInventory()->ToggleInventory();
 }
 
+int32 URPGInventory_Window_Widget::GetGoldAmount() const
+{
+	return GetAssociatedInventory()->Gold;
+}
+
 URPGInventory_Component* URPGInventory_Window_Widget::GetAssociatedInventory() const
 {
 	return AssociatedInventory;

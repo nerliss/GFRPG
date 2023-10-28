@@ -9,6 +9,7 @@
 #include "Characters/RPGPlayerCharacter.h"
 #include "PlayerController/RPGPlayer_Controller.h"
 #include "UMG/Public/Blueprint/WidgetBlueprintLibrary.h"
+#include "Utility/LogDefinitions.h"
 
 URPGInventory_Slot_Widget::URPGInventory_Slot_Widget(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
@@ -170,7 +171,7 @@ bool URPGInventory_Slot_Widget::UseItem()
 		RefreshSlot();
 
 		const int NewQuantity = InventoryReference->Inventory[SlotIndex].Quantity;
-		UE_LOG(LogTemp, Log, TEXT("Consumable item used. New quantity is %i"), NewQuantity);
+		UE_LOG(LogRPGInventory, Verbose, TEXT("Consumable item used. New quantity is %i"), NewQuantity);
 	}
 
 	ItemToUse->Destroy();

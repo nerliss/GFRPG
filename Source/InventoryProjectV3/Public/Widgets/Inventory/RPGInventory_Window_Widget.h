@@ -58,6 +58,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Sounds")
 	UAkAudioEvent* CloseInventorySound;
 
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	int32 GetGoldAmount() const;
+
 public:
 
 	UFUNCTION(BlueprintCallable)

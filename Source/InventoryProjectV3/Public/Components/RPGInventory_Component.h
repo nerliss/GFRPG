@@ -32,8 +32,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory")
 	int32 Gold;
 
-	/* The inventory container itself */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory")
+	/* The inventory container itself. EditAnywhere to be able to change items in inventory per actor. */
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Inventory")
 	TArray<FInventorySlot> Inventory;
 
 	/* Inventory widget anchors */
@@ -45,7 +45,7 @@ public:
 	FVector2D Alignment;
 
 	/* Inventory widget class */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WidgetClassTypes")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory")
 	TSubclassOf<URPGInventory_Window_Widget> InventoryWindowWidgetClass;
 
 	/* Inventory widget instance reference */

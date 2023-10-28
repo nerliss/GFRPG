@@ -11,8 +11,6 @@
 class URPGInventory_Window_Widget;
 class ARPGItem_Base;
 
-DECLARE_LOG_CATEGORY_EXTERN(LogRPGInventory, Log, All);
-
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class INVENTORYPROJECTV3_API URPGInventory_Component : public UActorComponent
 {

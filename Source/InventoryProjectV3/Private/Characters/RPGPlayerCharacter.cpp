@@ -21,13 +21,12 @@
 #include "Widgets/RPGHUD_Widget.h"
 #include "Blueprint/UserWidget.h"
 #include "Utility/Utility.h"
+#include "Utility/LogDefinitions.h"
 #include "Interfaces/RPGInteract_Interface.h"
 #include "DamageTypes/DamageTypeEnviromental.h"
 #include "DataAssets/CharacterSoundCollection.h"
 #include "GameInstance/RPGGameInstanceBase.h"
 #include "Save/RPGSaveGameObject.h"
-
-DEFINE_LOG_CATEGORY(LogRPGPlayerCharacter);
 
 #if !UE_BUILD_SHIPPING
 static TAutoConsoleVariable<int32> CvarSuperSprint(TEXT("DebugSuperSprint"), 0, TEXT("Enable to use super sprint speed instead of default one"));
@@ -211,8 +210,6 @@ void ARPGPlayerCharacter::OnJumpStarted()
 #endif
 
 	ACharacter::Jump();
-
-	// MyTODO: Make character stop rotating while in air (?)
 }
 
 void ARPGPlayerCharacter::OnJumpEnded()

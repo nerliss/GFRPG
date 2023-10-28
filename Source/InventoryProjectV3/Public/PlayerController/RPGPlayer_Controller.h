@@ -9,8 +9,6 @@
 class URPGHUD_Widget;
 class APhotoModePawn;
 
-DECLARE_LOG_CATEGORY_EXTERN(LogRPGPlayerController, Log, All);
-
 UCLASS()
 class INVENTORYPROJECTV3_API ARPGPlayer_Controller : public APlayerController
 {

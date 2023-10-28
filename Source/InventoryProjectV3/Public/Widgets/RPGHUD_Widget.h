@@ -19,8 +19,6 @@ class INVENTORYPROJECTV3_API URPGHUD_Widget : public UUserWidget
 
 public:
 
-	virtual void NativeConstruct() override;
-
 	// Canvas is used to store different user-created widgets
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UCanvasPanel* HUDCanvas;

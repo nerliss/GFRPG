@@ -7,8 +7,7 @@
 #include "Characters/RPGPlayerCharacter.h"
 #include "Characters/PhotoModePawn.h"
 #include "UObject/ConstructorHelpers.h"
-
-DEFINE_LOG_CATEGORY(LogRPGPlayerController);
+#include "Utility/LogDefinitions.h"
 
 ARPGPlayer_Controller::ARPGPlayer_Controller()
 {

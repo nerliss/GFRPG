@@ -7,8 +7,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/SceneComponent.h"
-
-DEFINE_LOG_CATEGORY(LogRPGItem);
+#include "Utility/LogDefinitions.h"
 
 ARPGItem_Base::ARPGItem_Base()
 {

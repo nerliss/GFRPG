@@ -13,8 +13,6 @@ class UStaticMeshComponent;
 class USkeletalMeshComponent;
 class USceneComponent;
 
-DECLARE_LOG_CATEGORY_EXTERN(LogRPGItem, Log, All);
-
 UCLASS()
 class INVENTORYPROJECTV3_API ARPGItem_Base : public AActor, public IRPGInteract_Interface
 {

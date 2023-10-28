@@ -7,12 +7,11 @@
 #include "Widgets/Inventory/RPGInventory_Window_Widget.h"
 #include "Widgets/RPGHUD_Widget.h"
 #include "Utility/Utility.h"
+#include "Utility/LogDefinitions.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Characters/RPGPlayerCharacter.h"
-
-DEFINE_LOG_CATEGORY(LogRPGInventory);
 
 #if !UE_BUILD_SHIPPING
 static TAutoConsoleVariable<int32> CvarDebugShowInventoryList(TEXT("DebugShowInventoryList"), 0, TEXT("Enable to print out all inventory slots to the screen"));

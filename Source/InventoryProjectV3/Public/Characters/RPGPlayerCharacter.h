@@ -22,8 +22,6 @@ class UAnimInstance;
 class USkeletalMesh;
 class URPGGameInstanceBase;
 
-DECLARE_LOG_CATEGORY_EXTERN(LogRPGPlayerCharacter, Log, All);
-
 /* Player camera point of view */
 UENUM(BlueprintType)
 enum class EPlayerPOV : uint8
@@ -89,8 +87,6 @@ inline FArchive& operator<<(FArchive& Ar, FCharacterSelectionData& CharacterSele
 		// Convert the asset paths back to raw pointers when loading
 		CharacterSelectionData.SkeletalMesh = SkeletalMeshPath.IsEmpty() ? nullptr : LoadObject<USkeletalMesh>(nullptr, *SkeletalMeshPath);
 		CharacterSelectionData.AssociatedAnimBP = AnimBPPath.IsEmpty() ? nullptr : LoadClass<UAnimInstance>(nullptr, *AnimBPPath);
-
-		UE_LOG(LogTemp, Warning, TEXT("Loading SkeletalMesh from path: %s\n ABP from: %s"), *SkeletalMeshPath, *AnimBPPath);
 	}
 
 	return Ar;

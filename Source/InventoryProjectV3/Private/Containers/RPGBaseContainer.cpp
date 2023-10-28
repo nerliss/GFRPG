@@ -39,6 +39,42 @@ void ARPGBaseContainer::BeginPlay()
 	FillContainerInventory();
 }
 
+#if WITH_EDITORONLY_DATA
+void ARPGBaseContainer::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+
+	if (PropertyChangedEvent.MemberProperty && PropertyChangedEvent.MemberProperty->GetFName() != GET_MEMBER_NAME_CHECKED(ARPGBaseContainer, ItemToAdd))
+	{
+		// Not a property we care about, update if the need arises
+		return;
+	}
+
+	for (auto& ContainerItem : ItemToAdd)
+	{
+		const auto* ItemCDO = ContainerItem.Item.GetDefaultObject();
+		if (!ItemCDO)
+		{
+			continue;
+		}
+
+		if (!ItemCDO->Item.bStackable && ContainerItem.Quantity > 1)
+		{
+			ContainerItem.Quantity = 1;
+			UE_LOG(LogRPGInventory, Warning, TEXT("The item %s is not stackable. Quantity set to 1. Create a new stack if you want to add more."), *ItemCDO->GetHumanReadableName());
+			return;
+		}
+
+		if (ItemCDO->Item.bStackable && ContainerItem.Quantity > ItemCDO->Item.MaxStackSize)
+		{
+			ContainerItem.Quantity = ItemCDO->Item.MaxStackSize;
+			UE_LOG(LogRPGInventory, Warning, TEXT("The item %s has a stack size of %i. Quantity set to %i. Create a new stack if you want to add more."), *ItemCDO->GetHumanReadableName(), ItemCDO->Item.MaxStackSize, ItemCDO->Item.MaxStackSize);
+			return;
+		}
+	}
+}
+#endif
+
 void ARPGBaseContainer::InteractNative(AActor* Interactor)
 {
 	// MyTODO: Replace this with IsChildOf or something since casting a type without using it confuses
@@ -60,7 +96,6 @@ FText ARPGBaseContainer::GetNameNative() const
 
 void ARPGBaseContainer::FillContainerInventory()
 {
-	// MyTODO: Add some conditions to check and display that the item is stackable or not, if yes - strip the quantity to 1 / or split into several different stacks, by one. 
 	for (int i = 0; i < ItemToAdd.Num(); i++)
 	{
 		const auto ContainerItem = ItemToAdd[i];

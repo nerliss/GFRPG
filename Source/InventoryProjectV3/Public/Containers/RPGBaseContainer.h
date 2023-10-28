@@ -24,6 +24,9 @@ public:
 protected:
 	
 	virtual void BeginPlay() override;
+#if WITH_EDITORONLY_DATA
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
 
 public:
 	
@@ -44,8 +47,6 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Inventory")
 	URPGInventory_Component* ContainerInventoryComp;
 
-	// MyTODO: Add some conditions to check and display that the item is stackable or not, if yes - strip the quantity to 1 / or split into several different stacks, by one. 
-	// Give some feedback to designers that the specified quantity exceeds the stack size.
 	/* Items to fill this container's inventory with. Use this to set what items should be in this container. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
 	TArray<FContainerItem> ItemToAdd;

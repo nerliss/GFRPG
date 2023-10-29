@@ -67,9 +67,6 @@ struct FInventoryItem
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory item")
 	TSubclassOf<ARPGItem_Base> Class;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory item")
-	EEquipmentSlot EquipmentSlot;
-
 	FInventoryItem()
 	{
 		Name = FText::FromString("Item name");
@@ -81,7 +78,6 @@ struct FInventoryItem
 		Thumbnail = nullptr;
 		Durability = 10.f;
 		Class = nullptr;
-		EquipmentSlot = EEquipmentSlot::ES_Max;
 	}
 };
 
@@ -119,5 +115,25 @@ struct FContainerItem
 	{
 		Item = nullptr;
 		Quantity = 1;
+	}
+};
+
+USTRUCT(Blueprintable, BlueprintType)
+struct FEquipableItem
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory slot")
+	FInventoryItem Item;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory slot")
+	EEquipmentSlot EquipmentSlot;
+
+	/* MyTODO: Add some stats and durability here */
+
+	FEquipableItem()
+	{
+		Item = FInventoryItem();
+		EquipmentSlot = EEquipmentSlot::ES_Max;
 	}
 };

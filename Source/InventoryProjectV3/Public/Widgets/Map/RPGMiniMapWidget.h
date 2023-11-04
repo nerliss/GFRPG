@@ -34,19 +34,19 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	UMaterialParameterCollection* MinimapMaterialParameterCollection;
 
+	// Using EditInstanceOnly since the map widget is created in RPGHUD_Widget blueprint and updating data here would not update it in that instance
 	/* Current zoom level */
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditInstanceOnly)
 	float ZoomLevel;
 
 	// MyTODO: Figure out how to update that automatically with the current world bounds
 	/* Should be as big as the current world bounds */
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditInstanceOnly)
 	float Dimensions;
 
-	UPROPERTY(EditDefaultsOnly)
-	UTexture* MapTexture;
+	UPROPERTY(EditInstanceOnly)
+	UTexture* MapTexture = nullptr;
 
-	
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<URPGMapPlayerIconWidget> PlayerIconWidgetClass;
 
@@ -57,5 +57,4 @@ public:
 	void UpdateMapImage(UTexture* NewMapTexture);
 	void AddPlayerIcon();
 	void UpdateScalarParameters();
-
 };

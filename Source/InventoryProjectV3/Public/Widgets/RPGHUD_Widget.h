@@ -9,6 +9,7 @@
 class UCanvasPanel;
 class URPGInteractionPrompt_Widget;
 class URPGXPBar_Widget;
+class URPGMiniMapWidget;
 
 UCLASS()
 class INVENTORYPROJECTV3_API URPGHUD_Widget : public UUserWidget
@@ -30,6 +31,9 @@ public:
  	// Widget reference
 	UPROPERTY()
 	URPGInteractionPrompt_Widget* InteractionPrompt_Widget;
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+	URPGMiniMapWidget* MiniMapWidget;
 
 	/** 
 	* bShowMessage = true creates an InteractionPrompt_Widget,

@@ -28,6 +28,32 @@ void URPGMiniMapWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 	UpdateScalarParameters();
 }
 
+void URPGMiniMapWidget::AddPOI(AActor* POIActor)
+{
+	/*auto* POIComponent = POIActor->FindComponentByClass<URPGPointOfInterestComponent>();
+	if (!POIComponent)
+	{
+		UE_LOG(LogRPGMap, Error, TEXT("[URPGMiniMapWidget::AddPOI] POI component is nullptr!"));
+		return;
+	}*/
+
+	/*auto* POIIcon = CreateWidget<URPGMapPOIIconWidget>(GetWorld(), POIComponent->IconWidgetClass);
+	if (!POIIcon)
+	{
+		UE_LOG(LogRPGMap, Error, TEXT("[URPGMiniMapWidget::AddPOI] POI Icon was not created, please specify IconWidgetClass!"));
+		return;
+	}
+
+	auto* OverlaySlot = MapOverlay->AddChildToOverlay(POIIcon);
+	if (!OverlaySlot)
+	{
+		return;
+	}
+
+	OverlaySlot->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Center);
+	OverlaySlot->SetVerticalAlignment(EVerticalAlignment::VAlign_Center);*/
+}
+
 void URPGMiniMapWidget::UpdateMapImage(UTexture* NewMapTexture)
 {
 	MinimapMaterialInstance = Map->GetDynamicMaterial();

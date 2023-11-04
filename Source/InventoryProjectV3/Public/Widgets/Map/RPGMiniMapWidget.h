@@ -50,6 +50,8 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<URPGMapPlayerIconWidget> PlayerIconWidgetClass;
 
+	void AddPOI(AActor* POIActor);
+
 	URPGMapPlayerIconWidget* PlayerIcon;
 
 	UMaterialInstanceDynamic* MinimapMaterialInstance;

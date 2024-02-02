@@ -1,4 +1,4 @@
-// Oleksandr Tkachov 2022-2023
+// Oleksandr Tkachov 2022-2024
 
 #pragma once
 
@@ -166,6 +166,8 @@ protected:
 	void OnSprintStarted();
 	void OnSprintStopped();
 
+	void OnStealthPressed();
+
 	/*
 	 * Called via input to turn at a given rate.
 	 * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
@@ -290,8 +292,6 @@ public:
 	/* Is currently in stealth mode? */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Movement")
 	bool bStealthed;
-
-	void OnStealthPressed();
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Movement")
 	void BlueprintOnStealthPressed();

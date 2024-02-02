@@ -1,4 +1,4 @@
-// Oleksandr Tkachov 2022-2023
+// Oleksandr Tkachov 2022-2024
 
 
 #include "Components/RPGInventory_Component.h"
@@ -46,25 +46,7 @@ void URPGInventory_Component::TickComponent(float DeltaTime, ELevelTick TickType
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 #if !UE_BUILD_SHIPPING
-	if (CvarDebugShowInventoryList.GetValueOnGameThread() > 0)
-	{
-		auto* PlayerController = GetOwner()->GetInstigatorController();
-		if (!PlayerController)
-		{
-			// Inventory owner is not a player
-			return;
-		}
-
-		// Inverted order because how the print system works - the most recent messages are at top
-		for (int i = Inventory.Num() - 1; i >= 0; i--)
-		{
-			FInventorySlot Slot = Inventory[i];
-
-			DEBUGMESSAGE(0.f, FColor::Green, "%s, %i", *Slot.Item.Name.ToString(), Slot.Quantity);
-		}
-
-		DEBUGMESSAGE(0.f, FColor::Green, "Current items in inventory:");
-	}
+	DebugPrintInventory();
 #endif
 }
 
@@ -187,6 +169,32 @@ bool URPGInventory_Component::HasPartialStack(FInventorySlot Slot, int32& OutSlo
 	OutSlotIndex = ExistingStackSlotIndex; // returns zero if no stack found
 	return bExistingStackFound;
 }
+#if !UE_BUILD_SHIPPING
+void URPGInventory_Component::DebugPrintInventory()
+{
+	if (CvarDebugShowInventoryList.GetValueOnGameThread() <= 0)
+	{
+		return;
+	}
+
+	auto* PlayerController = GetOwner()->GetInstigatorController();
+	if (!PlayerController)
+	{
+		// Inventory owner is not a player
+		return;
+	}
+
+	// Inverted order because how the print system works - the most recent messages are at top
+	for (int i = Inventory.Num() - 1; i >= 0; i--)
+	{
+		FInventorySlot Slot = Inventory[i];
+
+		DEBUGMESSAGE(0.f, FColor::Green, "%s, %i", *Slot.Item.Name.ToString(), Slot.Quantity);
+	}
+
+	DEBUGMESSAGE(0.f, FColor::Green, "Current items in inventory:");
+}
+#endif
 
 void URPGInventory_Component::PrepareInventory()
 {

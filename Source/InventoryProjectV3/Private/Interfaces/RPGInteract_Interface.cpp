@@ -1,4 +1,4 @@
-// Oleksandr Tkachov 2022-2023
+// Oleksandr Tkachov 2022-2024
 
 
 #include "Interfaces/RPGInteract_Interface.h"

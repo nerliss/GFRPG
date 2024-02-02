@@ -1,4 +1,4 @@
-// Oleksandr Tkachov 2022-2023
+// Oleksandr Tkachov 2022-2024
 
 #pragma once
 
@@ -52,17 +52,11 @@ protected:
 
 public:	
 
-	// Called when the game starts
-	virtual void BeginPlay() override;
-
 	virtual void OnRegister() override;
 
 #if WITH_EDITORONLY_DATA
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent) override;
 #endif
-
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION()
 	void TakeDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);

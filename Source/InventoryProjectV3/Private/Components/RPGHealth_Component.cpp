@@ -1,4 +1,4 @@
-// Oleksandr Tkachov 2022-2023
+// Oleksandr Tkachov 2022-2024
 
 
 #include "Components/RPGHealth_Component.h"
@@ -13,12 +13,6 @@ URPGHealth_Component::URPGHealth_Component()
 	MaxHealth = 100.f;
 	CurrentHealth = MaxHealth;
 	bDiedAlready = false;
-}
-
-// Called when the game starts
-void URPGHealth_Component::BeginPlay()
-{
-	Super::BeginPlay();
 }
 
 void URPGHealth_Component::OnRegister()
@@ -42,12 +36,6 @@ void URPGHealth_Component::PostEditChangeProperty(struct FPropertyChangedEvent& 
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 }
 #endif
-
-// Called every frame
-void URPGHealth_Component::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-}
 
 void URPGHealth_Component::TakeDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser)
 {

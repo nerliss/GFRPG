@@ -1,4 +1,4 @@
-// Oleksandr Tkachov 2022-2023
+// Oleksandr Tkachov 2022-2024
 
 
 #include "Characters/RPGPlayerCharacter.h"
@@ -343,6 +343,8 @@ void ARPGPlayerCharacter::CalculateFallDamage()
 
 void ARPGPlayerCharacter::Landed(const FHitResult& Hit)
 {
+	Super::Landed(Hit);
+
 	CalculateFallDamage();
 }
 

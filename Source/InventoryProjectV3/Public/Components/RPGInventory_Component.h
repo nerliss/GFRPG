@@ -1,4 +1,4 @@
-// Oleksandr Tkachov 2022-2023
+// Oleksandr Tkachov 2022-2024
 
 #pragma once
 
@@ -75,4 +75,7 @@ public:
 	bool AddToStack (FInventorySlot ContentToAdd, int32 SlotIndex);
 	bool HasPartialStack (FInventorySlot Slot, int32& OutSlotIndex);
 	
+#if !UE_BUILD_SHIPPING
+	void DebugPrintInventory();
+#endif
 };

@@ -29,9 +29,10 @@
 #include "Save/RPGSaveGameObject.h"
 
 #if !UE_BUILD_SHIPPING
-static TAutoConsoleVariable<int32> CvarSuperSprint(TEXT("DebugSuperSprint"), 0, TEXT("Enable to use super sprint speed instead of default one"));
+static TAutoConsoleVariable<int32> CvarSuperSprint(TEXT("DebugSuperSprint"), 0, TEXT("Enable to use super sprint speed instead of default one."));
 static TAutoConsoleVariable<int32> CvarSuperJump(TEXT("DebugSuperJump"), 0, TEXT("Enable to use super jump. Gives full free controll of the pawn in air, double jump and force enables DebugIgnoreFallDamage."));
-static TAutoConsoleVariable<int32> CvarIgnoreFallDamage(TEXT("DebugIgnoreFallDamage"), 0, TEXT("Enable to ignore fall damage"));
+static TAutoConsoleVariable<int32> CvarIgnoreFallDamage(TEXT("DebugIgnoreFallDamage"), 0, TEXT("Enable to ignore fall damage."));
+static TAutoConsoleVariable<int32> CvarDebugInteractLine(TEXT("DebugInteractLine"), 0, TEXT("Enable to debug interact line."));
 #endif
 
 // Sets default values
@@ -126,7 +127,7 @@ void ARPGPlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	TraceForInteractableObjects(TraceLength, false);
+	TraceForInteractableObjects(TraceLength);
 }
 
 void ARPGPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -385,7 +386,7 @@ void ARPGPlayerCharacter::OnPOVSwitched()
 	OnPOVChangedBlueprint();
 }
 
-AActor* ARPGPlayerCharacter::TraceForInteractableObjects(float inTraceLength, bool bDrawDebugLine)
+AActor* ARPGPlayerCharacter::TraceForInteractableObjects(const float InTraceLength)
 {
 	if (bInDialog)
 	{
@@ -399,7 +400,7 @@ AActor* ARPGPlayerCharacter::TraceForInteractableObjects(float inTraceLength, bo
 	}
 
 	const FVector StartLoc = CameraComp->GetComponentLocation();
-	const FVector EndLoc = (StartLoc + (CameraComp->GetForwardVector() * inTraceLength));
+	const FVector EndLoc = (StartLoc + (CameraComp->GetForwardVector() * InTraceLength));
 
 	FHitResult HitResult;
 
@@ -414,11 +415,13 @@ AActor* ARPGPlayerCharacter::TraceForInteractableObjects(float inTraceLength, bo
 		return InteractActor = nullptr;
 	}
 
-	// Draw debug line if set to
-	if (bDrawDebugLine)
+#if !UE_BUILD_SHIPPING
+	// Draw debug line if set debug enabled
+	if (CvarDebugInteractLine.GetValueOnGameThread() > 0)
 	{
 		DrawDebugLine(GetWorld(), StartLoc, EndLoc, FColor::Red, false, 4.f, 0, 2.f);
 	}
+#endif
 
 	auto* HitActor = HitResult.GetActor();
 
@@ -435,6 +438,15 @@ AActor* ARPGPlayerCharacter::TraceForInteractableObjects(float inTraceLength, bo
 		// MyTODO: Figure out a way to use one function that can be overriden both in C++ and BP
 		MainHUD_WidgetRef->DisplayInteractionMessage(true, IRPGInteract_Interface::Execute_GetName(HitActor));
 		MainHUD_WidgetRef->DisplayInteractionMessage(true, InteractActorCasted->GetNameNative());
+
+#if !UE_BUILD_SHIPPING
+		// Draw debug line if set debug enabled
+		if (CvarDebugInteractLine.GetValueOnGameThread() > 0)
+		{
+			DEBUGMESSAGE(0.f, FColor::Green, "Expected Interactable actor: %s (Class name: %s)", *InteractActorCasted->GetNameNative().ToString(), *HitActor->GetName());
+		}
+#endif
+
 		return InteractActor = HitActor;
 	}
 
@@ -446,12 +458,6 @@ void ARPGPlayerCharacter::OnInteractPressed()
 {
 	if (!InteractActor)
 	{
-		return;
-	}
-
-	if (!InteractActor->GetClass()->ImplementsInterface(URPGInteract_Interface::StaticClass()))
-	{
-		// Actor is not interactable
 		return;
 	}
 

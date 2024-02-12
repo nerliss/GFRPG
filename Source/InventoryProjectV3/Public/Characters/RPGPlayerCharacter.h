@@ -234,7 +234,7 @@ protected:
 	EPlayerPOV PlayerPOV;
 
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
-	AActor* TraceForInteractableObjects(float inTraceLength, bool bDrawDebugLine);
+	AActor* TraceForInteractableObjects(const float InTraceLength);
 
 	UPROPERTY(BlueprintReadOnly, Category = "Interaction")
 	AActor* InteractActor;

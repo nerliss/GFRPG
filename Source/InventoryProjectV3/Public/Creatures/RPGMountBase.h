@@ -35,7 +35,8 @@ protected:
 	void OnRightMoved(const float Value);
 	void TurnAtRate(const float Rate);
 	void LookUpAtRate(const float Rate);
-	void OnMountExit();
+	void OnDismount();
+	void OnMount(AActor* Interactor);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* SpringArmComp;
@@ -43,8 +44,11 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* CameraComp;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Mount")
+	FName AttachmentSocket;
+
 private:
 
-	bool bMounted {false};
+	bool bMounted;
 
 };

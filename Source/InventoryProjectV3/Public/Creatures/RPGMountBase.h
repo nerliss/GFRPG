@@ -7,6 +7,9 @@
 #include "Interfaces/RPGInteract_Interface.h"
 #include "RPGMountBase.generated.h"
 
+class USpringArmComponent;
+class UCameraComponent;
+
 UCLASS()
 class INVENTORYPROJECTV3_API ARPGMountBase : public ACharacter, public IRPGInteract_Interface
 {
@@ -29,6 +32,16 @@ protected:
 	FText Name {FText::FromString(TEXT("Mount"))};
 
 	void OnForwardMoved(const float Value);
+	void OnRightMoved(const float Value);
+	void TurnAtRate(const float Rate);
+	void LookUpAtRate(const float Rate);
+	void OnMountExit();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	USpringArmComponent* SpringArmComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	UCameraComponent* CameraComp;
 
 private:
 

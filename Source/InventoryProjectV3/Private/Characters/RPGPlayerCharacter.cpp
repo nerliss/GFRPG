@@ -111,6 +111,7 @@ ARPGPlayerCharacter::ARPGPlayerCharacter()
 	SprintMaxWalkSpeed = 1000.f;
 	StealthedMaxWalkSpeed = 250.f;
 	bStealthed = false;
+	bMounted = false;
 }
 
 void ARPGPlayerCharacter::BeginPlay()
@@ -167,6 +168,11 @@ void ARPGPlayerCharacter::OnForwardMoved(float Value)
 		return;
 	}
 
+	if (bMounted)
+	{
+		return;
+	}
+
 	// Define rotation to get forward vector from
 	const FRotator Rotation = Controller->GetControlRotation();
 	const FRotator YawRotation(0, Rotation.Yaw, 0);
@@ -179,6 +185,11 @@ void ARPGPlayerCharacter::OnForwardMoved(float Value)
 void ARPGPlayerCharacter::OnRightMoved(float Value)
 {
 	if (FMath::IsNearlyZero(Value))
+	{
+		return;
+	}
+
+	if (bMounted)
 	{
 		return;
 	}
@@ -383,7 +394,17 @@ void ARPGPlayerCharacter::OnPOVSwitched()
 		break;
 	}
 
-	OnPOVChangedBlueprint();
+	OnPOVSwitchedBlueprint();
+}
+
+void ARPGPlayerCharacter::SetPOV(const EPlayerPOV DesiredPOV)
+{
+	if (DesiredPOV == PlayerPOV)
+	{
+		return;
+	}
+
+	OnPOVSwitched();
 }
 
 AActor* ARPGPlayerCharacter::TraceForInteractableObjects(const float InTraceLength)

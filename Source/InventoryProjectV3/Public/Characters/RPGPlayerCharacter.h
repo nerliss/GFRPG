@@ -219,7 +219,11 @@ protected:
 	void OnPOVSwitched();
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Camera")
-	void OnPOVChangedBlueprint();
+	void OnPOVSwitchedBlueprint();
+
+public:
+
+	void SetPOV(const EPlayerPOV DesiredPOV);
 
 private:
 
@@ -230,7 +234,7 @@ private:
 protected:
 
 	/* POV state */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Camera")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Camera")
 	EPlayerPOV PlayerPOV;
 
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
@@ -290,10 +294,12 @@ protected:
 public:
 
 	/* Is currently in stealth mode? */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Movement")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 	bool bStealthed;
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Movement")
 	void BlueprintOnStealthPressed();
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mount")
+	bool bMounted;
 };

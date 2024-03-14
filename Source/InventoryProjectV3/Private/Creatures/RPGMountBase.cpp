@@ -57,7 +57,7 @@ void ARPGMountBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	PlayerInputComponent->BindAction("MountExit", IE_Pressed, this, &ARPGMountBase::OnDismount);
+	PlayerInputComponent->BindAction("Dismount", IE_Pressed, this, &ARPGMountBase::OnDismount);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &ARPGMountBase::OnForwardMoved);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ARPGMountBase::OnRightMoved);

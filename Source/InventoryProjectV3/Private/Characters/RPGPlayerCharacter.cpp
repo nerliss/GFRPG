@@ -422,13 +422,14 @@ AActor* ARPGPlayerCharacter::TraceForInteractableObjects(const float InTraceLeng
 
 	const FVector StartLoc = CameraComp->GetComponentLocation();
 	const FVector EndLoc = (StartLoc + (CameraComp->GetForwardVector() * InTraceLength));
+	constexpr ECollisionChannel ECC_Interact = ECC_GameTraceChannel1;
 
 	FHitResult HitResult;
 
 	FCollisionQueryParams CQP;
 	CQP.AddIgnoredActor(this);
 
-	const bool bHitResult = GetWorld()->LineTraceSingleByChannel(HitResult, StartLoc, EndLoc, ECC_WorldDynamic, CQP);
+	const bool bHitResult = GetWorld()->LineTraceSingleByChannel(HitResult, StartLoc, EndLoc, ECC_Interact, CQP);
 
 	if (!bHitResult)
 	{

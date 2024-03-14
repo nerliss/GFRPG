@@ -14,6 +14,8 @@ ARPGMountBase::ARPGMountBase()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECR_Block);
+
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f);
 	GetCharacterMovement()->JumpZVelocity = 600.f; 

@@ -21,8 +21,9 @@ ARPGItem_Base::ARPGItem_Base()
 	TraceSphere = CreateDefaultSubobject<USphereComponent>(TEXT("TraceSphere"));
 	TraceSphere->SetupAttachment(RootComponent);
 	TraceSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	TraceSphere->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
-	TraceSphere->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Block);
+	TraceSphere->SetCollisionResponseToAllChannels(ECR_Ignore);
+	TraceSphere->SetCollisionResponseToChannel(ECC_Camera, ECR_Block);
+	TraceSphere->SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECR_Block);
 
 	// Setup skeletal mesh
 	ItemSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("ItemSkeletalMesh"));

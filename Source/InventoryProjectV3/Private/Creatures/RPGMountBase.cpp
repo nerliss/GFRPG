@@ -143,7 +143,6 @@ void ARPGMountBase::OnDismount()
 	auto* PC = Cast<APlayerController>(GetController());
 	if (!PC)
 	{
-		UE_LOG(LogTemp, Error, TEXT("PC is invalid"));
 		return;
 	}
 

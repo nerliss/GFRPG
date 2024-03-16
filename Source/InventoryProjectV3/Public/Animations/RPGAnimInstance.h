@@ -59,6 +59,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "IK Feet")
 	float IKInterpolationSpeed;
 
+	/* How far down should we trace to allow feet height adjustment? Value should be around capsule's quarter height (knee height). */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "IK Feet")
+	float IKTraceDifferenceLimit;
+
 	UPROPERTY(BlueprintReadOnly, Category = "IK Feet")
 	float IKHipOffset;
 
@@ -67,6 +71,13 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "IK Feet")
 	FVector IKRightFootEffector;
+
+	/* Should head bone follow control rotation? */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Head Rotation")
+	bool bHeadRotationEnabled;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Head Rotation")
+	FRotator HeadTargetRotation;
 
 private:
 
@@ -83,6 +94,8 @@ private:
 	bool ShouldUpdateIKFeet() const;
 	void CalculateIKFeetAlpha();
 	void UpdateIKFeet();
+
+	void UpdateHeadRotation(const float MaxHeadYawRotation, const float MaxHeadPitchRotation, const float InterpolationSpeed);
 
 	float IKRightFootOffset;
 	float IKLeftFootOffset;

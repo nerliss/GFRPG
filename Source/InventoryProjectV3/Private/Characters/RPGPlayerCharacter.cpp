@@ -29,10 +29,10 @@
 #include "Save/RPGSaveGameObject.h"
 
 #if !UE_BUILD_SHIPPING
-static TAutoConsoleVariable<int32> CvarSuperSprint(TEXT("DebugSuperSprint"), 0, TEXT("Enable to use super sprint speed instead of default one."));
-static TAutoConsoleVariable<int32> CvarSuperJump(TEXT("DebugSuperJump"), 0, TEXT("Enable to use super jump. Gives full free controll of the pawn in air, double jump and force enables DebugIgnoreFallDamage."));
-static TAutoConsoleVariable<int32> CvarIgnoreFallDamage(TEXT("DebugIgnoreFallDamage"), 0, TEXT("Enable to ignore fall damage."));
-static TAutoConsoleVariable<int32> CvarDebugInteractLine(TEXT("DebugInteractLine"), 0, TEXT("Enable to debug interact line."));
+static TAutoConsoleVariable CVarSuperSprint(TEXT("DebugSuperSprint"), 0, TEXT("Enable to use super sprint speed instead of default one."));
+static TAutoConsoleVariable CVarSuperJump(TEXT("DebugSuperJump"), 0, TEXT("Enable to use super jump. Gives full free controll of the pawn in air, double jump and force enables DebugIgnoreFallDamage."));
+static TAutoConsoleVariable CVarIgnoreFallDamage(TEXT("DebugIgnoreFallDamage"), 0, TEXT("Enable to ignore fall damage."));
+static TAutoConsoleVariable CVarDebugInteractLine(TEXT("DebugInteractLine"), 0, TEXT("Enable to debug interact line."));
 #endif
 
 // Sets default values
@@ -206,14 +206,14 @@ void ARPGPlayerCharacter::OnRightMoved(float Value)
 void ARPGPlayerCharacter::OnJumpStarted()
 {
 #if !UE_BUILD_SHIPPING
-	if (CvarSuperJump.GetValueOnGameThread() > 0)
+	if (CVarSuperJump.GetValueOnGameThread() > 0)
 	{
 		GetCharacterMovement()->JumpZVelocity = 3000.f; 
 		GetCharacterMovement()->AirControl = 1.f;
 		JumpMaxCount = 2;
 		JumpMaxHoldTime = 0.3f;
 
-		CvarIgnoreFallDamage.AsVariable()->Set(1, ECVF_SetByConsole);
+		CVarIgnoreFallDamage.AsVariable()->Set(1, ECVF_SetByConsole);
 	}
 #endif
 
@@ -240,7 +240,7 @@ void ARPGPlayerCharacter::OnSprintStarted()
 	}
 
 #if !UE_BUILD_SHIPPING
-	if (CvarSuperSprint.GetValueOnGameThread() > 0)
+	if (CVarSuperSprint.GetValueOnGameThread() > 0)
 	{
 		GetCharacterMovement()->MaxWalkSpeed = 5500.f;
 		return;
@@ -325,7 +325,7 @@ void ARPGPlayerCharacter::Death()
 void ARPGPlayerCharacter::CalculateFallDamage()
 {
 #if !UE_BUILD_SHIPPING
-	if (CvarIgnoreFallDamage.GetValueOnGameThread() > 0)
+	if (CVarIgnoreFallDamage.GetValueOnGameThread() > 0)
 	{
 		return;
 	}
@@ -426,10 +426,10 @@ AActor* ARPGPlayerCharacter::TraceForInteractableObjects(const float InTraceLeng
 
 	FHitResult HitResult;
 
-	FCollisionQueryParams CQP;
-	CQP.AddIgnoredActor(this);
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
 
-	const bool bHitResult = GetWorld()->LineTraceSingleByChannel(HitResult, StartLoc, EndLoc, ECC_Interact, CQP);
+	const bool bHitResult = GetWorld()->LineTraceSingleByChannel(HitResult, StartLoc, EndLoc, ECC_Interact, Params);
 
 	if (!bHitResult)
 	{
@@ -439,7 +439,7 @@ AActor* ARPGPlayerCharacter::TraceForInteractableObjects(const float InTraceLeng
 
 #if !UE_BUILD_SHIPPING
 	// Draw debug line if set debug enabled
-	if (CvarDebugInteractLine.GetValueOnGameThread() > 0)
+	if (CVarDebugInteractLine.GetValueOnGameThread() > 0)
 	{
 		DrawDebugLine(GetWorld(), StartLoc, EndLoc, FColor::Red, false, 4.f, 0, 2.f);
 	}
@@ -463,7 +463,7 @@ AActor* ARPGPlayerCharacter::TraceForInteractableObjects(const float InTraceLeng
 
 #if !UE_BUILD_SHIPPING
 		// Draw debug line if set debug enabled
-		if (CvarDebugInteractLine.GetValueOnGameThread() > 0)
+		if (CVarDebugInteractLine.GetValueOnGameThread() > 0)
 		{
 			DEBUGMESSAGE(0.f, FColor::Green, "Expected Interactable actor: %s (Class name: %s)", *InteractActorCasted->GetNameNative().ToString(), *HitActor->GetName());
 		}

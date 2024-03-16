@@ -14,7 +14,7 @@
 #include "Characters/RPGPlayerCharacter.h"
 
 #if !UE_BUILD_SHIPPING
-static TAutoConsoleVariable<int32> CvarDebugShowInventoryList(TEXT("DebugShowInventoryList"), 0, TEXT("Enable to print out all inventory slots to the screen"));
+static TAutoConsoleVariable CVarDebugShowInventoryList(TEXT("DebugShowInventoryList"), 0, TEXT("Enable to print out all inventory slots to the screen"));
 #endif
 
 URPGInventory_Component::URPGInventory_Component()
@@ -172,7 +172,7 @@ bool URPGInventory_Component::HasPartialStack(FInventorySlot Slot, int32& OutSlo
 #if !UE_BUILD_SHIPPING
 void URPGInventory_Component::DebugPrintInventory()
 {
-	if (CvarDebugShowInventoryList.GetValueOnGameThread() <= 0)
+	if (CVarDebugShowInventoryList.GetValueOnGameThread() <= 0)
 	{
 		return;
 	}

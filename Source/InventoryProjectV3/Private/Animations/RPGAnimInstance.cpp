@@ -7,27 +7,36 @@
 #include "Components/RPGHealth_Component.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
+#if !UE_BUILD_SHIPPING
+static TAutoConsoleVariable CVarDebugDrawIKFeetTraces(TEXT("DebugDrawIKFeetTraces"), 0, TEXT("Enable to draw debug traces for IK Feet system."));
+#endif
+
 URPGAnimInstance::URPGAnimInstance()
 {
+	// Generic
 	Character = nullptr;
 	bDead = false;
 	bMounted = false;
 	bFalling = false;
 	MountedRootOffset = FVector(0.f, 0.f, 55.f);
-
 	MovementSpeed = 0.f;
 
-	// IK Feet settings
+	// IK Feet 
 	bIKFeetEnabled = true;
 	IKHipOffset = 0.f;
 	IKFeetAlpha = 0.f;
 	IKInterpolationSpeed = 15.f;
+	IKTraceDifferenceLimit = 50.f;
 	IKLeftFootEffector = FVector();
 	IKRightFootEffector = FVector();
 	IKRightFootOffset = 0.f;
 	IKLeftFootOffset = 0.f;
 	IKRightFootSocketName = "RightFootSocket";
 	IKLeftFootSocketName = "LeftFootSocket";
+
+	// Head rotation
+	bHeadRotationEnabled = true;
+	HeadTargetRotation = FRotator();
 }
 
 void URPGAnimInstance::NativeInitializeAnimation()
@@ -49,6 +58,9 @@ void URPGAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		MovementSpeed = Character->GetVelocity().Size();
 		
 		UpdateIKFeet();
+
+		// MyTODO: Replace function parameters with BP exposed variables
+		UpdateHeadRotation(70.f, 35.f, 5.f);
 	}
 }
 
@@ -73,6 +85,14 @@ void URPGAnimInstance::CalculateIKFootTrace(const FName SocketName, const float 
 	{
 		OutTraceHitLocation = OutHit.Location;
 		OutFootTraceOffset = (OutHit.Location - CharacterMesh->GetComponentLocation()).Z - IKHipOffset;
+
+#if !UE_BUILD_SHIPPING
+		if (CVarDebugDrawIKFeetTraces.GetValueOnGameThread() > 0)
+		{
+			DrawDebugLine(GetWorld(), StartLoc, EndLoc, FColor::Green, false, 0.f, 0, 1.f);
+			DrawDebugSphere(GetWorld(), OutHit.Location, 5.f, 12, FColor::Green, false, 0.f, 0, 1.f);
+		}
+#endif
 	}
 	else
 	{
@@ -144,7 +164,47 @@ void URPGAnimInstance::UpdateIKFeet()
 	// Adjust Hip Offset
 	const FVector TraceLocationDifference = RightFootTraceLocation - LeftFootTraceLocation;
 	const float TraceLocationDifferenceZ = FMath::Abs(TraceLocationDifference.Z);
-	const float TempHipOffset = (TraceLocationDifferenceZ < 50.f) ? (TraceLocationDifferenceZ * -0.5f) : 0.f;
+	const float TempHipOffset = (TraceLocationDifferenceZ < IKTraceDifferenceLimit) ? (TraceLocationDifferenceZ * -0.5f) : 0.f;
 
 	IKHipOffset = FMath::FInterpTo(IKHipOffset, TempHipOffset, GetDeltaSeconds(), IKInterpolationSpeed);
+}
+
+void URPGAnimInstance::UpdateHeadRotation(const float MaxHeadYawRotation, const float MaxHeadPitchRotation, const float InterpolationSpeed)
+{
+	// MaxHeadYawRotation - left\right
+	// MaxHeadPitchRotation - up\down
+
+	if (!bHeadRotationEnabled)
+	{
+		return;
+	}
+
+	const FRotator CharacterControlRotation = Character->GetControlRotation();
+	const FRotator CharacterRotation = Character->GetActorRotation();
+
+	const float YawDiff = CharacterControlRotation.Yaw - CharacterRotation.Yaw;
+
+	// MyTODO: Find better names
+	const bool bCond1 = FMath::Abs(YawDiff) > MaxHeadYawRotation + 360.f;
+	const bool bCond2 = YawDiff > MaxHeadYawRotation && YawDiff < (360.f - MaxHeadYawRotation);
+	const bool bCond3 = MovementSpeed > 260.f;
+	const bool bCanUpdateHeadRotation = bCond1 || bCond2 || bCond3; 
+
+	if (!bCanUpdateHeadRotation)
+	{
+		const FRotator AngleRotator = FRotator(0.f, YawDiff, CharacterControlRotation.Pitch);
+
+		const float NewPitch = FMath::ClampAngle(AngleRotator.Roll, MaxHeadPitchRotation * -1.f, MaxHeadPitchRotation);
+		const float NewYaw = FMath::ClampAngle(AngleRotator.Yaw, MaxHeadYawRotation * -1.f, MaxHeadYawRotation);
+		const float NewRoll = AngleRotator.Pitch; // 0.f
+
+		const FRotator NewTarget = FRotator(NewPitch, NewYaw, NewRoll);
+
+		HeadTargetRotation = FMath::RInterpTo(HeadTargetRotation, NewTarget, GetDeltaSeconds(), InterpolationSpeed);
+	}
+	else
+	{
+		// Reset head rotation
+		HeadTargetRotation = FMath::RInterpTo(HeadTargetRotation, FRotator(), GetDeltaSeconds(), InterpolationSpeed);
+	}
 }

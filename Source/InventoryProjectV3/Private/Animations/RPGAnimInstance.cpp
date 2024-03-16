@@ -10,21 +10,22 @@
 URPGAnimInstance::URPGAnimInstance()
 {
 	Character = nullptr;
-
 	bDead = false;
 	bMounted = false;
 	bFalling = false;
-	bIKFeetEnabled = true;
+	MountedRootOffset = FVector(0.f, 0.f, 55.f);
 
 	MovementSpeed = 0.f;
-	IKHipOffset = 0.f;
 
+	// IK Feet settings
+	bIKFeetEnabled = true;
+	IKHipOffset = 0.f;
+	IKFeetAlpha = 0.f;
+	IKInterpolationSpeed = 15.f;
 	IKLeftFootEffector = FVector();
 	IKRightFootEffector = FVector();
-
 	IKRightFootOffset = 0.f;
 	IKLeftFootOffset = 0.f;
-
 	IKRightFootSocketName = "RightFootSocket";
 	IKLeftFootSocketName = "LeftFootSocket";
 }
@@ -90,8 +91,26 @@ bool URPGAnimInstance::ShouldUpdateIKFeet() const
 	return true;
 }
 
+void URPGAnimInstance::CalculateIKFeetAlpha()
+{
+	if (!bIKFeetEnabled)
+	{
+		IKFeetAlpha = 0.f;
+		return;
+	}
+
+	// MyTODO: Add interpolation later (in case it is required)
+	IKFeetAlpha = ShouldUpdateIKFeet();
+}
+
 void URPGAnimInstance::UpdateIKFeet()
 {
+	// Ensure IKFeetAlpha is always calculated
+	ON_SCOPE_EXIT
+	{
+		CalculateIKFeetAlpha();
+	};
+
 	if (!bIKFeetEnabled)
 	{
 		return;
@@ -107,17 +126,25 @@ void URPGAnimInstance::UpdateIKFeet()
 	FVector RightFootTraceLocation = FVector();
 	FVector LeftFootTraceLocation = FVector();
 
-	CalculateIKFootTrace(IKRightFootSocketName, TraceDistance, RightFootTraceLocation, IKRightFootOffset);
-	CalculateIKFootTrace(IKLeftFootSocketName, TraceDistance, LeftFootTraceLocation, IKLeftFootOffset);
+	float TempIKRightFootOffset = 0.f;
+	float TempIKLeftFootOffset = 0.f;
 
-	// MyTODO: Implement interpolation
-	//IKRightFootOffset = FMath::FInterpTo(IKRightFootOffset, );
+	// Calculate IK Feet traces
+	CalculateIKFootTrace(IKRightFootSocketName, TraceDistance, RightFootTraceLocation, TempIKRightFootOffset);
+	CalculateIKFootTrace(IKLeftFootSocketName, TraceDistance, LeftFootTraceLocation, TempIKLeftFootOffset);
+
+	// Interpolate between current offset and new offset
+	IKRightFootOffset = FMath::FInterpTo(IKRightFootOffset, TempIKRightFootOffset, GetDeltaSeconds(), IKInterpolationSpeed);
+	IKLeftFootOffset = FMath::FInterpTo(IKLeftFootOffset, TempIKLeftFootOffset, GetDeltaSeconds(), IKInterpolationSpeed);
+
+	// Set effector target to use directly in AnimGraph
 	IKRightFootEffector = FVector(0.f, 0.f, IKRightFootOffset);
 	IKLeftFootEffector = FVector(0.f, 0.f, IKLeftFootOffset);
 
+	// Adjust Hip Offset
 	const FVector TraceLocationDifference = RightFootTraceLocation - LeftFootTraceLocation;
 	const float TraceLocationDifferenceZ = FMath::Abs(TraceLocationDifference.Z);
+	const float TempHipOffset = (TraceLocationDifferenceZ < 50.f) ? (TraceLocationDifferenceZ * -0.5f) : 0.f;
 
-	// MyTODO: Implement interpolation
-	IKHipOffset = (TraceLocationDifferenceZ < 50.f) ? (TraceLocationDifferenceZ * -0.5f) : 0.f;
+	IKHipOffset = FMath::FInterpTo(IKHipOffset, TempHipOffset, GetDeltaSeconds(), IKInterpolationSpeed);
 }

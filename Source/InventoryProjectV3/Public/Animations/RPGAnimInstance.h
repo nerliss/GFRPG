@@ -25,11 +25,6 @@ public:
 
 protected:
 
-	// MyTODO: Add IKFeetAlpha that is calculated in code and used in ABP instead of this
-	/* Should we update IK feet? */ 
-	UFUNCTION(BlueprintPure, Category = "IK Feet")
-	bool ShouldUpdateIKFeet() const;
-
 	UPROPERTY(BlueprintReadOnly, Category = "Character")
 	ARPGPlayerCharacter* Character;
 
@@ -42,11 +37,17 @@ protected:
 	UPROPERTY(BlueprintReadWrite, Category = "Character")
 	bool bFalling;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Character")
+	UPROPERTY(BlueprintReadOnly, Category = "Character")
 	float MovementSpeed;
 
-	UPROPERTY(BlueprintReadWrite, Category = "IK Feet")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Character")
+	FVector MountedRootOffset;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "IK Feet")
 	bool bIKFeetEnabled;
+
+	UPROPERTY(BlueprintReadOnly, Category = "IK Feet")
+	float IKFeetAlpha;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "IK Feet")
 	FName IKRightFootSocketName;
@@ -54,13 +55,17 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "IK Feet")
 	FName IKLeftFootSocketName;
 
-	UPROPERTY(BlueprintReadWrite, Category = "IK Feet")
+	/* Interpolation speed for IK (includes Left and Right feet, and Hip Offset) */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "IK Feet")
+	float IKInterpolationSpeed;
+
+	UPROPERTY(BlueprintReadOnly, Category = "IK Feet")
 	float IKHipOffset;
 
-	UPROPERTY(BlueprintReadWrite, Category = "IK Feet")
+	UPROPERTY(BlueprintReadOnly, Category = "IK Feet")
 	FVector IKLeftFootEffector;
 
-	UPROPERTY(BlueprintReadWrite, Category = "IK Feet")
+	UPROPERTY(BlueprintReadOnly, Category = "IK Feet")
 	FVector IKRightFootEffector;
 
 private:
@@ -73,6 +78,10 @@ private:
 	 * @param OutFootTraceOffset Return value of specified foot offset.
 	 */
 	void CalculateIKFootTrace(const FName SocketName, const float TraceDistance, FVector& OutTraceHitLocation, float& OutFootTraceOffset);
+
+	/* Validates some specific conditions that don't allow us to currently update IK for Feet. */ 
+	bool ShouldUpdateIKFeet() const;
+	void CalculateIKFeetAlpha();
 	void UpdateIKFeet();
 
 	float IKRightFootOffset;

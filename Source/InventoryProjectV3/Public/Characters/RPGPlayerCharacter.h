@@ -297,6 +297,8 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 	bool bStealthed;
 
+	float GetStealthedMaxWalkSpeed() const { return StealthedMaxWalkSpeed; }
+
 	UFUNCTION(BlueprintImplementableEvent, Category = "Movement")
 	void BlueprintOnStealthPressed();
 

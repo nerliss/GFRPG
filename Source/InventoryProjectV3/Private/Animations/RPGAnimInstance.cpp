@@ -36,7 +36,10 @@ URPGAnimInstance::URPGAnimInstance()
 
 	// Head rotation
 	bHeadRotationEnabled = true;
-	HeadTargetRotation = FRotator();
+	HeadTargetRotation = FRotator(0.f);
+	MaxHeadYawRotation = 70.f;
+	MaxHeadPitchRotation = 35.f;
+	HeadRotationInterpolationSpeed = 5.f;
 }
 
 void URPGAnimInstance::NativeInitializeAnimation()
@@ -58,9 +61,7 @@ void URPGAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		MovementSpeed = Character->GetVelocity().Size();
 		
 		UpdateIKFeet();
-
-		// MyTODO: Replace function parameters with BP exposed variables
-		UpdateHeadRotation(70.f, 35.f, 5.f);
+		UpdateHeadRotation();
 	}
 }
 
@@ -169,42 +170,63 @@ void URPGAnimInstance::UpdateIKFeet()
 	IKHipOffset = FMath::FInterpTo(IKHipOffset, TempHipOffset, GetDeltaSeconds(), IKInterpolationSpeed);
 }
 
-void URPGAnimInstance::UpdateHeadRotation(const float MaxHeadYawRotation, const float MaxHeadPitchRotation, const float InterpolationSpeed)
+void URPGAnimInstance::UpdateHeadRotation()
 {
-	// MaxHeadYawRotation - left\right
-	// MaxHeadPitchRotation - up\down
-
 	if (!bHeadRotationEnabled)
 	{
+		// Reset head rotation in case head rotation was disabled in runtime (somehow?)
+		if (HeadTargetRotation != FRotator(0.f))
+		{
+			HeadTargetRotation = FRotator(0.f);
+		}
+		return;
+	}
+
+	if (IsHeadRotationRestricted())
+	{
+		// Reset head rotation
+		HeadTargetRotation = FMath::RInterpTo(HeadTargetRotation, FRotator(0.f), GetDeltaSeconds(), HeadRotationInterpolationSpeed);
 		return;
 	}
 
 	const FRotator CharacterControlRotation = Character->GetControlRotation();
+	const FRotator AngleRotator = FRotator(0.f, GetYawRotationDifference(), CharacterControlRotation.Pitch);
+
+	const float NewPitch = FMath::ClampAngle(AngleRotator.Roll, -MaxHeadPitchRotation, MaxHeadPitchRotation);
+	const float NewYaw = FMath::ClampAngle(AngleRotator.Yaw, -MaxHeadYawRotation, MaxHeadYawRotation);
+
+	const FRotator NewTarget = FRotator(NewPitch, NewYaw, 0.f);
+
+	// Interpolate to new target based on clamped control rotation
+	HeadTargetRotation = FMath::RInterpTo(HeadTargetRotation, NewTarget, GetDeltaSeconds(), HeadRotationInterpolationSpeed);
+}
+
+bool URPGAnimInstance::IsHeadRotationRestricted() const
+{
+	if (FMath::Abs(GetYawRotationDifference()) > MaxHeadYawRotation + 360.f)
+	{
+		// More precise control over head rotation (prevents head rotating when looked back while character is facing the camera)
+		return true;
+	}
+
+	if (GetYawRotationDifference() > MaxHeadYawRotation && GetYawRotationDifference() < (360.f - MaxHeadYawRotation))
+	{
+		// Physically cannot rotate head that much
+		return true;
+	}
+
+	if (MovementSpeed > Character->GetStealthedMaxWalkSpeed())
+	{
+		return true;
+	}
+
+	return false;
+}
+
+float URPGAnimInstance::GetYawRotationDifference() const
+{
+	const FRotator CharacterControlRotation = Character->GetControlRotation();
 	const FRotator CharacterRotation = Character->GetActorRotation();
 
-	const float YawDiff = CharacterControlRotation.Yaw - CharacterRotation.Yaw;
-
-	// MyTODO: Find better names
-	const bool bCond1 = FMath::Abs(YawDiff) > MaxHeadYawRotation + 360.f;
-	const bool bCond2 = YawDiff > MaxHeadYawRotation && YawDiff < (360.f - MaxHeadYawRotation);
-	const bool bCond3 = MovementSpeed > 260.f;
-	const bool bCanUpdateHeadRotation = bCond1 || bCond2 || bCond3; 
-
-	if (!bCanUpdateHeadRotation)
-	{
-		const FRotator AngleRotator = FRotator(0.f, YawDiff, CharacterControlRotation.Pitch);
-
-		const float NewPitch = FMath::ClampAngle(AngleRotator.Roll, MaxHeadPitchRotation * -1.f, MaxHeadPitchRotation);
-		const float NewYaw = FMath::ClampAngle(AngleRotator.Yaw, MaxHeadYawRotation * -1.f, MaxHeadYawRotation);
-		const float NewRoll = AngleRotator.Pitch; // 0.f
-
-		const FRotator NewTarget = FRotator(NewPitch, NewYaw, NewRoll);
-
-		HeadTargetRotation = FMath::RInterpTo(HeadTargetRotation, NewTarget, GetDeltaSeconds(), InterpolationSpeed);
-	}
-	else
-	{
-		// Reset head rotation
-		HeadTargetRotation = FMath::RInterpTo(HeadTargetRotation, FRotator(), GetDeltaSeconds(), InterpolationSpeed);
-	}
+	return CharacterControlRotation.Yaw - CharacterRotation.Yaw;
 }

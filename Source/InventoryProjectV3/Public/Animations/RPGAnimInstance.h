@@ -79,6 +79,17 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Head Rotation")
 	FRotator HeadTargetRotation;
 
+	/* Left\right head rotation limits. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Head Rotation")
+	float MaxHeadYawRotation;
+
+	/* Up\down head rotation limits. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Head Rotation")
+	float MaxHeadPitchRotation;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Head Rotation")
+	float HeadRotationInterpolationSpeed;
+
 private:
 
 	/**
@@ -95,7 +106,11 @@ private:
 	void CalculateIKFeetAlpha();
 	void UpdateIKFeet();
 
-	void UpdateHeadRotation(const float MaxHeadYawRotation, const float MaxHeadPitchRotation, const float InterpolationSpeed);
+	void UpdateHeadRotation();
+	bool IsHeadRotationRestricted() const;
+
+	/* Returns Yaw rotation difference between control rotation and character rotation. */ 
+	float GetYawRotationDifference() const;
 
 	float IKRightFootOffset;
 	float IKLeftFootOffset;

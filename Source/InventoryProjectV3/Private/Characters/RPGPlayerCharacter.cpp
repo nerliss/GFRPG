@@ -112,6 +112,8 @@ ARPGPlayerCharacter::ARPGPlayerCharacter()
 	StealthedMaxWalkSpeed = 250.f;
 	bStealthed = false;
 	bMounted = false;
+
+	CharacterGender = ECharacterGender::Undefined;
 }
 
 void ARPGPlayerCharacter::BeginPlay()
@@ -380,7 +382,7 @@ void ARPGPlayerCharacter::OnPOVSwitched()
 	case EPlayerPOV::ThirdPerson:
 
 		SpringArmComp->TargetArmLength = MinTargetBoomLength;
-		SpringArmComp->SocketOffset = FVector(0.f, 0.f, 0.f);
+		SpringArmComp->SocketOffset = FVector::Zero();
 
 		GetMesh()->SetVisibility(false);
 

@@ -30,6 +30,14 @@ enum class EPlayerPOV : uint8
 	ThirdPerson		UMETA(DisplayName = "Third Person")
 };
 
+UENUM(BlueprintType)
+enum class ECharacterGender : uint8
+{
+	Male,
+	Female,
+	Undefined
+};
+
 /* Character selection data */
 USTRUCT(BlueprintType)
 struct FCharacterSelectionData
@@ -58,7 +66,7 @@ struct FCharacterSelectionData
 		SkeletalMesh = nullptr;
 		AssociatedAnimBP = nullptr;
 		Portrait = nullptr;
-		PreviewCameraDistanceDelta = FVector::ZeroVector;
+		PreviewCameraDistanceDelta = FVector::Zero();
 	}
 
 	friend FArchive& operator<<(FArchive& Ar, FCharacterSelectionData& CharacterSelectionData);
@@ -100,6 +108,8 @@ class INVENTORYPROJECTV3_API ARPGPlayerCharacter : public ACharacter
 
 	friend class ARPGHealth_Component;
 
+	// MyTODO: Reorganize to C++ standards (public -> protected -> private; methods -> variables; see RPGAnimInstance.h)
+
 public:
 
 	ARPGPlayerCharacter();
@@ -112,6 +122,10 @@ public:
 #if WITH_EDITORONLY_DATA
 	virtual void OnConstruction(const FTransform& Transform) override;
 #endif
+
+//protected:
+//
+//private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* SpringArmComp;
@@ -211,6 +225,7 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Health")
 	void OnDied();
 
+	// MyTODO: Move this to RPGAnimInstance
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
 	UAnimMontage* DeathMontage;
 
@@ -274,7 +289,6 @@ private:
 public:
 
 	FString GetLastSavedCharacterFileName() const { return LastSavedCharacterFileName; }
-
 #endif
 
 protected:
@@ -291,7 +305,14 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement")
 	float StealthedMaxWalkSpeed;
 
+	/* Character gender, updated when new character model is set. */
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Character")
+	ECharacterGender CharacterGender;
+
 public:
+
+	UFUNCTION(BlueprintGetter, Category = "Character")
+	ECharacterGender GetCharacterGender() const { return CharacterGender; }
 
 	/* Is currently in stealth mode? */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
@@ -304,4 +325,5 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mount")
 	bool bMounted;
+
 };

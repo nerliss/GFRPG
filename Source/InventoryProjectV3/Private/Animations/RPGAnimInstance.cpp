@@ -27,8 +27,8 @@ URPGAnimInstance::URPGAnimInstance()
 	IKFeetAlpha = 0.f;
 	IKInterpolationSpeed = 15.f;
 	IKTraceDifferenceLimit = 50.f;
-	IKLeftFootEffector = FVector();
-	IKRightFootEffector = FVector();
+	IKLeftFootEffector = FVector::Zero();
+	IKRightFootEffector = FVector::Zero();
 	IKRightFootOffset = 0.f;
 	IKLeftFootOffset = 0.f;
 	IKRightFootSocketName = "RightFootSocket";
@@ -59,7 +59,7 @@ void URPGAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		bMounted = Character->bMounted;
 		bFalling = Character->GetCharacterMovement()->IsFalling();
 		MovementSpeed = Character->GetVelocity().Size();
-		
+
 		UpdateIKFeet();
 		UpdateHeadRotation();
 	}
@@ -97,7 +97,7 @@ void URPGAnimInstance::CalculateIKFootTrace(const FName SocketName, const float 
 	}
 	else
 	{
-		OutTraceHitLocation = FVector();
+		OutTraceHitLocation = FVector::Zero();
 		OutFootTraceOffset = 0.f;
 	}
 }
@@ -144,8 +144,8 @@ void URPGAnimInstance::UpdateIKFeet()
 
 	const float TraceDistance = Character->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
 
-	FVector RightFootTraceLocation = FVector();
-	FVector LeftFootTraceLocation = FVector();
+	FVector RightFootTraceLocation = FVector::Zero();
+	FVector LeftFootTraceLocation = FVector::Zero();
 
 	float TempIKRightFootOffset = 0.f;
 	float TempIKLeftFootOffset = 0.f;
@@ -179,6 +179,7 @@ void URPGAnimInstance::UpdateHeadRotation()
 		{
 			HeadTargetRotation = FRotator(0.f);
 		}
+
 		return;
 	}
 
@@ -205,7 +206,7 @@ bool URPGAnimInstance::IsHeadRotationRestricted() const
 {
 	if (FMath::Abs(GetYawRotationDifference()) > MaxHeadYawRotation + 360.f)
 	{
-		// More precise control over head rotation (prevents head rotating when looked back while character is facing the camera)
+		// More precise control over head rotation (prevents head rotating when looking back while character is facing the camera)
 		return true;
 	}
 

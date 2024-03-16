@@ -90,8 +90,7 @@ ARPGPlayerCharacter::ARPGPlayerCharacter()
 	BaseLookUpRate = 45.f;
 
 	// Camera
-	MaxTargetBoomLength = SpringArmComp->TargetArmLength;
-	MinTargetBoomLength = 0.f;
+	TargetBoomLengthLimits = FVector2D(0.f, SpringArmComp->TargetArmLength);
 
 	// POV
 	PlayerPOV = EPlayerPOV::ThirdPerson;
@@ -368,7 +367,7 @@ void ARPGPlayerCharacter::OnPOVSwitched()
 	{
 	case EPlayerPOV::FirstPerson:
 	
-		SpringArmComp->TargetArmLength = MaxTargetBoomLength;
+		SpringArmComp->TargetArmLength = TargetBoomLengthLimits.Y;
 		SpringArmComp->SocketOffset = FVector(0.f, 80.f, 0.f);
 
 		GetMesh()->SetVisibility(true);
@@ -381,7 +380,7 @@ void ARPGPlayerCharacter::OnPOVSwitched()
 
 	case EPlayerPOV::ThirdPerson:
 
-		SpringArmComp->TargetArmLength = MinTargetBoomLength;
+		SpringArmComp->TargetArmLength = TargetBoomLengthLimits.X;
 		SpringArmComp->SocketOffset = FVector::Zero();
 
 		GetMesh()->SetVisibility(false);
@@ -417,7 +416,7 @@ AActor* ARPGPlayerCharacter::TraceForInteractableObjects(const float InTraceLeng
 		return nullptr;
 	}
 
-	if (!MainHUD_WidgetRef)
+	if (!GetMainHUDWidget())
 	{
 		return nullptr;
 	}
@@ -435,7 +434,7 @@ AActor* ARPGPlayerCharacter::TraceForInteractableObjects(const float InTraceLeng
 
 	if (!bHitResult)
 	{
-		MainHUD_WidgetRef->DisplayInteractionMessage(false, FText::FromString(""));
+		GetMainHUDWidget()->DisplayInteractionMessage(false, FText::FromString(""));
 		return InteractActor = nullptr;
 	}
 
@@ -448,11 +447,10 @@ AActor* ARPGPlayerCharacter::TraceForInteractableObjects(const float InTraceLeng
 #endif
 
 	auto* HitActor = HitResult.GetActor();
-
 	auto* InteractActorCasted = Cast<IRPGInteract_Interface>(HitActor);
 	if (!InteractActorCasted)
 	{
-		MainHUD_WidgetRef->DisplayInteractionMessage(false, FText::FromString(""));
+		GetMainHUDWidget()->DisplayInteractionMessage(false, FText::FromString(""));
 		return InteractActor = nullptr;;
 	}
 
@@ -460,8 +458,8 @@ AActor* ARPGPlayerCharacter::TraceForInteractableObjects(const float InTraceLeng
 	if (HitActor->GetClass()->ImplementsInterface(URPGInteract_Interface::StaticClass()))
 	{
 		// MyTODO: Figure out a way to use one function that can be overriden both in C++ and BP
-		MainHUD_WidgetRef->DisplayInteractionMessage(true, IRPGInteract_Interface::Execute_GetName(HitActor));
-		MainHUD_WidgetRef->DisplayInteractionMessage(true, InteractActorCasted->GetNameNative());
+		GetMainHUDWidget()->DisplayInteractionMessage(true, IRPGInteract_Interface::Execute_GetName(HitActor));
+		GetMainHUDWidget()->DisplayInteractionMessage(true, InteractActorCasted->GetNameNative());
 
 #if !UE_BUILD_SHIPPING
 		// Draw debug line if set debug enabled
@@ -474,7 +472,7 @@ AActor* ARPGPlayerCharacter::TraceForInteractableObjects(const float InTraceLeng
 		return InteractActor = HitActor;
 	}
 
-	MainHUD_WidgetRef->DisplayInteractionMessage(false, FText::FromString(""));
+	GetMainHUDWidget()->DisplayInteractionMessage(false, FText::FromString(""));
 	return InteractActor = nullptr;
 }
 
@@ -493,7 +491,7 @@ void ARPGPlayerCharacter::OnInteractPressed()
 	}
 
 	InteractActorCasted->InteractNative(this);
-	UE_LOG(LogRPGPlayerCharacter, Log, TEXT("Interacting with %s"), *InteractActor->GetName());
+	UE_LOG(LogRPGPlayerCharacter, Verbose, TEXT("Interacting with %s"), *InteractActor->GetName());
 }
 
 void ARPGPlayerCharacter::OnInventoryToggled()

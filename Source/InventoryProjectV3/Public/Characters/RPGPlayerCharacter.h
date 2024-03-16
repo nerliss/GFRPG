@@ -108,8 +108,6 @@ class INVENTORYPROJECTV3_API ARPGPlayerCharacter : public ACharacter
 
 	friend class ARPGHealth_Component;
 
-	// MyTODO: Reorganize to C++ standards (public -> protected -> private; methods -> variables; see RPGAnimInstance.h)
-
 public:
 
 	ARPGPlayerCharacter();
@@ -123,14 +121,30 @@ public:
 	virtual void OnConstruction(const FTransform& Transform) override;
 #endif
 
-//protected:
-//
-//private:
+	UFUNCTION(BlueprintCallable, Category = "Health")
+	void Death();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	void SetPOV(const EPlayerPOV DesiredPOV);
+
+#if WITH_EDITORONLY_DATA
+	FString GetLastSavedCharacterFileName() const { return LastSavedCharacterFileName; }
+#endif
+
+	float GetStealthedMaxWalkSpeed() const { return StealthedMaxWalkSpeed; }
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Movement")
+	void BlueprintOnStealthPressed();
+
+	UFUNCTION(BlueprintGetter, Category = "Character")
+	ECharacterGender GetCharacterGender() const { return CharacterGender; }
+
+	void SetMainHUDWidget(URPGHUD_Widget* NewWidget) { MainHUD_WidgetRef = NewWidget; }
+	URPGHUD_Widget* GetMainHUDWidget() const { return MainHUD_WidgetRef; }
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* SpringArmComp;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* CameraComp;
 
 	/* Experience component stores everything about Experience, Skill Points, Skills and Talents (in future) */
@@ -155,24 +169,20 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UAkComponent* AkComp;
 
-	/* Character sounds collection */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Sounds")
-	UCharacterSoundCollection* CharacterSoundCollection;
+	/* Is currently in stealth mode? */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
+	bool bStealthed;
 
-	/* Reference to HUD Widget - is set in RPGPlayer_Controller */
-	UPROPERTY()
-	URPGHUD_Widget* MainHUD_WidgetRef;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
-	float BaseTurnRate;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
-	float BaseLookUpRate;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mount")
+	bool bMounted;
 
 protected:
 
 	void OnForwardMoved(float Value);
 	void OnRightMoved(float Value);
+
+	void TurnAtRate(float Rate);
+	void LookUpAtRate(float Rate);
 
 	void OnJumpStarted();
 	void OnJumpEnded();
@@ -182,42 +192,10 @@ protected:
 
 	void OnStealthPressed();
 
-	/*
-	 * Called via input to turn at a given rate.
-	 * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
-	 */
-	void TurnAtRate(float Rate);
-
-	/*
-	 * Called via input to turn look up/down at a given rate.
-	 * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
-	 */
-	void LookUpAtRate(float Rate);
-
-public:
-
-	UFUNCTION(BlueprintCallable, Category = "Health")
-	void Death();
-
-protected:
-
 	/* Calculates and applies fall damage. 
 	 * Tweak FallDamageMultiplier and FallDamageMinimalThreshold to customize damage amount. 
 	 */
-	UFUNCTION(BlueprintCallable, Category = "Health")
 	void CalculateFallDamage();
-
-	/* Can this character be damaged by falling? */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health")
-	bool bCanGetDamagedFromFalling;
-
-	/* The value Z velocity's percent is multiplied by. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health", meta=(ClampMin="0.1", ClampMax="6.0"))
-	float FallDamageMultiplier;
-
-	/* The minimal threshold to actually get damage from falling. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health")
-	float FallDamageMinimalThreshold;
 
 	/* Called in blueprints to add some cosmetic stuff that is difficult to implement in C++ to death event
 	 * (i.e. timelines, widgets that are created in BP etc.)
@@ -225,77 +203,63 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Health")
 	void OnDied();
 
-	// MyTODO: Move this to RPGAnimInstance
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
-	UAnimMontage* DeathMontage;
-
 	/** Switch camera POV to Third Person if in First Person and vise versa */
 	UFUNCTION(BlueprintCallable, Category = "Camera")
 	void OnPOVSwitched();
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Camera")
 	void OnPOVSwitchedBlueprint();
+	
+	AActor* TraceForInteractableObjects(const float InTraceLength);
 
-public:
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	void OnInventoryToggled();
 
-	void SetPOV(const EPlayerPOV DesiredPOV);
+	void LoadLastCharacterModel();
 
-private:
+	// MyTODO: Move to RPGGameStatics or something
+	UFUNCTION(BlueprintGetter, Category = "Misc")
+	URPGGameInstanceBase* GetRPGGameInstance() const;
 
-	/* Camera boom lengths */
-	float MaxTargetBoomLength;
-	float MinTargetBoomLength;
-
-protected:
-
-	/* POV state */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Camera")
+	float BaseTurnRate;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Camera")
+	float BaseLookUpRate;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Camera")
 	EPlayerPOV PlayerPOV;
 
-	UFUNCTION(BlueprintCallable, Category = "Interaction")
-	AActor* TraceForInteractableObjects(const float InTraceLength);
+	/* Character sounds collection */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Sounds")
+	UCharacterSoundCollection* CharacterSoundCollection;
+
+	/* Can this character be damaged by falling? */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
+	bool bCanGetDamagedFromFalling;
+
+	/* The value Z velocity's percent is multiplied by. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health", meta=(ClampMin="0.1", ClampMax="6.0"))
+	float FallDamageMultiplier;
+
+	/* The minimal threshold to actually get damage from falling. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
+	float FallDamageMinimalThreshold;
+
+	// MyTODO: Move this to RPGAnimInstance
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
+	UAnimMontage* DeathMontage;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Interaction")
 	AActor* InteractActor;
 
 	/* Linetrace length that changes depending on POV */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Interaction")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Interaction")
 	float TraceLength;
 
-private:
-
-	/* Attempt to interact with the current InteractActor */
-	void OnInteractPressed();
-
-protected:
-
-	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	void OnInventoryToggled();
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Dialog")
+	UPROPERTY(BlueprintReadWrite, Category = "Dialog")
 	bool bInDialog;
-
-	void LoadLastCharacterModel();
-
-#if WITH_EDITORONLY_DATA
-private:
-
-	/* Editor-only function that loads last saved character into character blueprint itself to be displayed in the editor itself, not only in the game */
-	void LoadLastCharacterModelInternal();
-
-	/* Name for an external file to write/read character data from (for editor only) */
-	inline static FString LastSavedCharacterFileName = TEXT("TestCharacterSelectionData.bin");
-
-public:
-
-	FString GetLastSavedCharacterFileName() const { return LastSavedCharacterFileName; }
-#endif
-
-protected:
-
-	UFUNCTION(BlueprintCallable)
-	URPGGameInstanceBase* GetRPGGameInstance() const;
-
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement")
 	float DefaultMaxWalkSpeed;
 
@@ -309,21 +273,26 @@ protected:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Character")
 	ECharacterGender CharacterGender;
 
-public:
+private:
 
-	UFUNCTION(BlueprintGetter, Category = "Character")
-	ECharacterGender GetCharacterGender() const { return CharacterGender; }
+	/* Attempt to interact with the current InteractActor */
+	void OnInteractPressed();
 
-	/* Is currently in stealth mode? */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
-	bool bStealthed;
+	/* Reference to HUD Widget. Set in RPGPlayer_Controller. */
+	UPROPERTY()
+	URPGHUD_Widget* MainHUD_WidgetRef;
 
-	float GetStealthedMaxWalkSpeed() const { return StealthedMaxWalkSpeed; }
+#if WITH_EDITORONLY_DATA
+	/* Editor-only function that loads last saved character into character blueprint itself to be displayed in the editor itself, not only in the game */
+	void LoadLastCharacterModelInternal();
+#endif
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "Movement")
-	void BlueprintOnStealthPressed();
+	/* Camera boom length limits. X = Min, Y = Max*/
+	FVector2D TargetBoomLengthLimits;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mount")
-	bool bMounted;
+#if WITH_EDITORONLY_DATA
+	/* Name for an external file to write/read character data from (for editor only) */
+	inline static FString LastSavedCharacterFileName = TEXT("TestCharacterSelectionData.bin");
+#endif
 
 };

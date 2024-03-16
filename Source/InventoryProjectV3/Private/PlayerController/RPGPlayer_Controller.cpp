@@ -59,7 +59,7 @@ void ARPGPlayer_Controller::InitializeHUDWidget()
 		return;
 	}
 
-	PlayerRef->MainHUD_WidgetRef = MainHUDWidget;
+	PlayerRef->SetMainHUDWidget(MainHUDWidget);
 
 	MainHUDWidget->AddToViewport();
 

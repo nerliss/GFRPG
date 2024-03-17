@@ -48,6 +48,9 @@ struct FCharacterSelectionData
 	FText Name;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Selection")
+	ECharacterGender Gender;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Selection")
 	USkeletalMesh* SkeletalMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Selection")
@@ -63,6 +66,7 @@ struct FCharacterSelectionData
 	FCharacterSelectionData()
 	{
 		Name = FText::FromString("Default");
+		Gender = ECharacterGender::Undefined;
 		SkeletalMesh = nullptr;
 		AssociatedAnimBP = nullptr;
 		Portrait = nullptr;
@@ -78,23 +82,27 @@ inline FArchive& operator<<(FArchive& Ar, FCharacterSelectionData& CharacterSele
 	// For storing asset paths during serialization
 	FString SkeletalMeshPath;
 	FString AnimBPPath;
+	ECharacterGender CharacterGender;
 
 	if (Ar.IsSaving())
 	{
 		// Convert the raw pointers to asset paths for saving
 		SkeletalMeshPath = CharacterSelectionData.SkeletalMesh ? CharacterSelectionData.SkeletalMesh->GetPathName() : "";
 		AnimBPPath = CharacterSelectionData.AssociatedAnimBP ? CharacterSelectionData.AssociatedAnimBP->GetPathName() : "";
+		CharacterGender = CharacterSelectionData.Gender;
 	}
 
 	// Serialize the asset paths instead of raw pointers
 	Ar << SkeletalMeshPath;
 	Ar << AnimBPPath;
+	Ar << CharacterGender;
 
 	if (Ar.IsLoading())
 	{
 		// Convert the asset paths back to raw pointers when loading
 		CharacterSelectionData.SkeletalMesh = SkeletalMeshPath.IsEmpty() ? nullptr : LoadObject<USkeletalMesh>(nullptr, *SkeletalMeshPath);
 		CharacterSelectionData.AssociatedAnimBP = AnimBPPath.IsEmpty() ? nullptr : LoadClass<UAnimInstance>(nullptr, *AnimBPPath);
+		CharacterSelectionData.Gender = CharacterGender;
 	}
 
 	return Ar;
@@ -127,7 +135,7 @@ public:
 	void SetPOV(const EPlayerPOV DesiredPOV);
 
 #if WITH_EDITORONLY_DATA
-	FString GetLastSavedCharacterFileName() const { return LastSavedCharacterFileName; }
+	static FString GetLastSavedCharacterFileName() { return LastSavedCharacterFileName; }
 #endif
 
 	float GetStealthedMaxWalkSpeed() const { return StealthedMaxWalkSpeed; }
@@ -137,6 +145,8 @@ public:
 
 	UFUNCTION(BlueprintGetter, Category = "Character")
 	ECharacterGender GetCharacterGender() const { return CharacterGender; }
+
+	void SetCharacterGender(const ECharacterGender NewGender) { CharacterGender = NewGender; }
 
 	void SetMainHUDWidget(URPGHUD_Widget* NewWidget) { MainHUD_WidgetRef = NewWidget; }
 	URPGHUD_Widget* GetMainHUDWidget() const { return MainHUD_WidgetRef; }

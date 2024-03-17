@@ -6,6 +6,7 @@
 #include "Animation/AnimInstance.h"
 #include "RPGAnimInstance.generated.h"
 
+enum class ECharacterGender : uint8;
 class ARPGPlayerCharacter;
 
 /**
@@ -42,6 +43,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Character")
 	FVector MountedRootOffset;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character")
+	ECharacterGender CharacterGender;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "IK Feet")
 	bool bIKFeetEnabled;

@@ -35,6 +35,8 @@ void UCharacterSelectionScreenOption::OnOptionsButtonClicked()
 	PlayerCharacter->GetMesh()->SetSkeletalMeshAsset(AssociatedCharacterSelectionData.SkeletalMesh);
 	PlayerCharacter->GetMesh()->SetAnimInstanceClass(AssociatedCharacterSelectionData.AssociatedAnimBP);
 
+	PlayerCharacter->SetCharacterGender(AssociatedCharacterSelectionData.Gender);
+
 	auto* RPGGameInstance = Cast<URPGGameInstanceBase>(GetWorld()->GetGameInstance());
 	if (!RPGGameInstance)
 	{	

@@ -20,6 +20,7 @@ URPGAnimInstance::URPGAnimInstance()
 	bFalling = false;
 	MountedRootOffset = FVector(0.f, 0.f, 55.f);
 	MovementSpeed = 0.f;
+	CharacterGender = ECharacterGender::Male;
 
 	// IK Feet 
 	bIKFeetEnabled = true;
@@ -40,6 +41,7 @@ URPGAnimInstance::URPGAnimInstance()
 	MaxHeadYawRotation = 70.f;
 	MaxHeadPitchRotation = 35.f;
 	HeadRotationInterpolationSpeed = 5.f;
+
 }
 
 void URPGAnimInstance::NativeInitializeAnimation()

@@ -514,6 +514,8 @@ void ARPGPlayerCharacter::LoadLastCharacterModel()
 	GetMesh()->SetSkeletalMeshAsset(SaveCharacterData.SkeletalMesh);
 	GetMesh()->SetAnimInstanceClass(SaveCharacterData.AssociatedAnimBP);
 
+	SetCharacterGender(SaveCharacterData.Gender);
+
 	UE_LOG(LogRPGPlayerCharacter, Log, TEXT("[ARPGPlayerCharacter::LoadLastCharacterModel] Last character model was loaded"));
 }
 

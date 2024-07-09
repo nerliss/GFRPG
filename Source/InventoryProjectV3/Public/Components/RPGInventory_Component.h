@@ -20,6 +20,25 @@ public:
 
 	URPGInventory_Component();
 
+	/* TODO: Review these function, encapsulate if required */
+	/* Creates inventory window if none is present - destroys otherwise */
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	void ToggleInventory();
+
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	bool AddToInventory(FInventorySlot ContentToAdd);
+
+	bool CreateStack (FInventorySlot ContentToAdd);
+	bool AddToStack (FInventorySlot ContentToAdd, int32 SlotIndex);
+	bool HasPartialStack (FInventorySlot Slot, int32& OutSlotIndex);
+	
+#if !UE_BUILD_SHIPPING
+	void DebugPrintInventory();
+#endif
+
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	void ExpandInventory(const int32 NewSlotsNumber);
+
 	/* Name of the inventory */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory")
 	FText Name;
@@ -52,30 +71,13 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Inventory")
 	URPGInventory_Window_Widget* InventoryWindowWidget;
 
-	/* Creates inventory window if none is present - destroys otherwise */
-	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	void ToggleInventory();
-
 protected:
 
 	virtual void BeginPlay() override;
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	/* Resizes inventory and fills the slots with data from Inventory array */
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void PrepareInventory();
 
-public:	
-
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-	UFUNCTION(BlueprintCallable)
-	bool AddToInventory(FInventorySlot ContentToAdd);
-
-	bool CreateStack (FInventorySlot ContentToAdd);
-	bool AddToStack (FInventorySlot ContentToAdd, int32 SlotIndex);
-	bool HasPartialStack (FInventorySlot Slot, int32& OutSlotIndex);
-	
-#if !UE_BUILD_SHIPPING
-	void DebugPrintInventory();
-#endif
 };

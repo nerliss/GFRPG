@@ -23,7 +23,8 @@ public:
 
 protected:
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character")
+	/** TODO: Remove BlueprintReadWrite when "magical" BTTask will be moved to code (or when an alternative is created) */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Character")
 	float BreastsScaleMultiplier;
 
 };

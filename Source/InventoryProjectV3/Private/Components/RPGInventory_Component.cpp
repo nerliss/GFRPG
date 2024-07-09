@@ -196,6 +196,12 @@ void URPGInventory_Component::DebugPrintInventory()
 }
 #endif
 
+void URPGInventory_Component::ExpandInventory(const int32 NewSlotsNumber)
+{
+	UE_LOG(LogRPGInventory, Log, TEXT("[RPGInventory_Component::ExpandInventory] Inventory was expanded from %d to %d"), SlotsNumber, NewSlotsNumber);
+	SlotsNumber = NewSlotsNumber;
+}
+
 void URPGInventory_Component::PrepareInventory()
 {
 	Inventory.SetNum(SlotsNumber);

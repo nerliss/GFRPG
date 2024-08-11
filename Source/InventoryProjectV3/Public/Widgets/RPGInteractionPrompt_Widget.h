@@ -16,11 +16,6 @@ class INVENTORYPROJECTV3_API URPGInteractionPrompt_Widget : public UUserWidget
 {
 	GENERATED_BODY()
 
-private:
-
-	// Is used instead of NativePreConstruct()
-	bool Initialize() override;
-
 public:
 
 	virtual void NativeConstruct() override;
@@ -50,6 +45,9 @@ public:
 	FText Text_Target_Name;
 
 private:
+
+	// Is used instead of NativePreConstruct()
+	bool Initialize() override;
 
 	// Returns target name
 	UFUNCTION()

@@ -134,6 +134,7 @@ void ARPGPlayerCharacter::Tick(float DeltaTime)
 
 void ARPGPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
+	// TODO: Move this to EnhancedInputComponent
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ARPGPlayerCharacter::OnJumpStarted);
@@ -457,8 +458,8 @@ AActor* ARPGPlayerCharacter::TraceForInteractableObjects(const float InTraceLeng
 	// Show interaction prompt if actor is eligible
 	if (HitActor->GetClass()->ImplementsInterface(URPGInteract_Interface::StaticClass()))
 	{
-		// MyTODO: Figure out a way to use one function that can be overriden both in C++ and BP
-		GetMainHUDWidget()->DisplayInteractionMessage(true, IRPGInteract_Interface::Execute_GetName(HitActor));
+		// TODO: MyTODO: Figure out a way to use one function that can be overriden both in C++ and BP
+		//GetMainHUDWidget()->DisplayInteractionMessage(true, IRPGInteract_Interface::Execute_GetName(HitActor)); // Why do I even need this??
 		GetMainHUDWidget()->DisplayInteractionMessage(true, InteractActorCasted->GetNameNative());
 
 #if !UE_BUILD_SHIPPING

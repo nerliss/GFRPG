@@ -40,16 +40,13 @@ ARPGPlayerCharacter::ARPGPlayerCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	// Set initial capsule size
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.f);
 
-	// Character movement configuration
 	GetCharacterMovement()->bOrientRotationToMovement = true; 	
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); 
 	GetCharacterMovement()->JumpZVelocity = 600.f; // default is 600
 	GetCharacterMovement()->AirControl = 0.2f; // default is 0.2
 
-	// SpringArm (Camera boom) component configuration
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
 	SpringArmComp->SetupAttachment(GetCapsuleComponent(), "head");
 	SpringArmComp->TargetArmLength = 500.f;
@@ -57,61 +54,40 @@ ARPGPlayerCharacter::ARPGPlayerCharacter()
 	SpringArmComp->SocketOffset = FVector(0.f, 80.f, 0.f); // Give camera more Skyrim-like style
 	SpringArmComp->SetRelativeLocation(FVector(0.f, 0.f, 65.f));
 
-	// Camera component configuration
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
 	CameraComp->SetupAttachment(SpringArmComp);
 	CameraComp->bUsePawnControlRotation = false;
 
-	// Create XP component
 	XPComp = CreateDefaultSubobject<URPGXP_Component>(TEXT("XPComp"));
 
-	// Create HP component
 	HPComp = CreateDefaultSubobject<URPGHealth_Component>(TEXT("HPComp"));
 	HPComp->SetMaxHealth(100.f);
 	HPComp->SetCurrentHealth(HPComp->GetMaxHealth());
 
-	// Create Reputation component
 	ReputationComp = CreateDefaultSubobject<URPGReputation_Component>(TEXT("ReputationComp"));
 
-	// Create inventory component
 	InventoryComp = CreateDefaultSubobject<URPGInventory_Component>(TEXT("InventoryComp"));
 
-	// Create audio component
 	AkComp = CreateDefaultSubobject<UAkComponent>(TEXT("AkComp"));
 	AkComp->SetupAttachment(GetRootComponent()); // Any Ak component must be attached, otherwise it doesn't work
 
-	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
-
-	// Set turn rates
 	BaseTurnRate = 45.f;
 	BaseLookUpRate = 45.f;
-
-	// Camera
 	TargetBoomLengthLimits = FVector2D(0.f, SpringArmComp->TargetArmLength);
-
-	// POV
 	PlayerPOV = EPlayerPOV::ThirdPerson;
-
-	// Dialog
 	bInDialog = false;
-
-	// Fall damage
 	bCanGetDamagedFromFalling = true;
 	FallDamageMinimalThreshold = 1300.f;
 	FallDamageMultiplier = 3.f;
-
-	// Sounds
 	CharacterSoundCollection = nullptr;
-
 	DefaultMaxWalkSpeed = 600.f;
 	SprintMaxWalkSpeed = 1000.f;
 	StealthedMaxWalkSpeed = 250.f;
 	bStealthed = false;
 	bMounted = false;
-
 	CharacterGender = ECharacterGender::Undefined;
 }
 
@@ -121,7 +97,7 @@ void ARPGPlayerCharacter::BeginPlay()
 	
 	LoadLastCharacterModel();
 
-	// MyTODO: Collapse to a function when more related variables are added
+	// TODO: Collapse to a function when more related variables are added
 	GetCharacterMovement()->MaxWalkSpeed = DefaultMaxWalkSpeed;
 }
 
@@ -276,13 +252,11 @@ void ARPGPlayerCharacter::OnStealthPressed()
 
 void ARPGPlayerCharacter::TurnAtRate(float Rate)
 {
-	// calculate delta for this frame from the rate information
 	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
 }
 
 void ARPGPlayerCharacter::LookUpAtRate(float Rate)
 {
-	// calculate delta for this frame from the rate information
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
@@ -295,7 +269,6 @@ void ARPGPlayerCharacter::Death()
 
 	if (HPComp->bDiedAlready)
 	{
-		// We already died
 		return;
 	}
 
@@ -335,7 +308,6 @@ void ARPGPlayerCharacter::CalculateFallDamage()
 
 	if (!bCanGetDamagedFromFalling)
 	{
-		// Can't receive fall damage
 		return;
 	}
 	
@@ -343,7 +315,6 @@ void ARPGPlayerCharacter::CalculateFallDamage()
 	
 	if (InvertedZVelocity < FallDamageMinimalThreshold)
 	{
-		// Not enough velocity to take damage
 		return;
 	}
 
@@ -440,7 +411,6 @@ AActor* ARPGPlayerCharacter::TraceForInteractableObjects(const float InTraceLeng
 	}
 
 #if !UE_BUILD_SHIPPING
-	// Draw debug line if set debug enabled
 	if (CVarDebugInteractLine.GetValueOnGameThread() > 0)
 	{
 		DrawDebugLine(GetWorld(), StartLoc, EndLoc, FColor::Red, false, 4.f, 0, 2.f);
@@ -455,7 +425,6 @@ AActor* ARPGPlayerCharacter::TraceForInteractableObjects(const float InTraceLeng
 		return InteractActor = nullptr;;
 	}
 
-	// Show interaction prompt if actor is eligible
 	if (HitActor->GetClass()->ImplementsInterface(URPGInteract_Interface::StaticClass()))
 	{
 		// TODO: MyTODO: Figure out a way to use one function that can be overriden both in C++ and BP
@@ -463,7 +432,6 @@ AActor* ARPGPlayerCharacter::TraceForInteractableObjects(const float InTraceLeng
 		GetMainHUDWidget()->DisplayInteractionMessage(true, InteractActorCasted->GetNameNative());
 
 #if !UE_BUILD_SHIPPING
-		// Draw debug line if set debug enabled
 		if (CVarDebugInteractLine.GetValueOnGameThread() > 0)
 		{
 			DEBUGMESSAGE(0.f, FColor::Green, "Expected Interactable actor: %s (Class name: %s)", *InteractActorCasted->GetNameNative().ToString(), *HitActor->GetName());
@@ -487,7 +455,6 @@ void ARPGPlayerCharacter::OnInteractPressed()
 	auto* InteractActorCasted = Cast<IRPGInteract_Interface>(InteractActor);
 	if (!InteractActorCasted)
 	{
-		// Interact actor doesn't implement the interface
 		return;
 	}
 

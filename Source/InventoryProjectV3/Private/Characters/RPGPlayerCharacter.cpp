@@ -12,14 +12,10 @@
 #include "Components/RPGHealth_Component.h"
 #include "Components/RPGReputation_Component.h"
 #include "Components/RPGInventory_Component.h"
-#include "Components/PointLightComponent.h"
 #include "AkComponent.h"
-#include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
-#include "Widgets/RPGInteractionPrompt_Widget.h"
 #include "Widgets/RPGHUD_Widget.h"
-#include "Blueprint/UserWidget.h"
 #include "Utility/Utility.h"
 #include "Utility/LogDefinitions.h"
 #include "Interfaces/RPGInteract_Interface.h"
@@ -44,8 +40,8 @@ ARPGPlayerCharacter::ARPGPlayerCharacter()
 
 	GetCharacterMovement()->bOrientRotationToMovement = true; 	
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); 
-	GetCharacterMovement()->JumpZVelocity = 600.f; // default is 600
-	GetCharacterMovement()->AirControl = 0.2f; // default is 0.2
+	GetCharacterMovement()->JumpZVelocity = 600.f; 
+	GetCharacterMovement()->AirControl = 0.2f; 
 
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
 	SpringArmComp->SetupAttachment(GetCapsuleComponent(), "head");
@@ -382,20 +378,17 @@ void ARPGPlayerCharacter::SetPOV(const EPlayerPOV DesiredPOV)
 
 AActor* ARPGPlayerCharacter::TraceForInteractableObjects(const float InTraceLength)
 {
+	ensure(GetMainHUDWidget());
+
 	if (bInDialog)
 	{
 		// Don't trace if we are in dialog
 		return nullptr;
 	}
 
-	if (!GetMainHUDWidget())
-	{
-		return nullptr;
-	}
-
 	const FVector StartLoc = CameraComp->GetComponentLocation();
 	const FVector EndLoc = (StartLoc + (CameraComp->GetForwardVector() * InTraceLength));
-	constexpr ECollisionChannel ECC_Interact = ECC_GameTraceChannel1;
+	constexpr ECollisionChannel ECC_Interact = ECC_GameTraceChannel1; // Interact channel
 
 	FHitResult HitResult;
 
@@ -417,7 +410,7 @@ AActor* ARPGPlayerCharacter::TraceForInteractableObjects(const float InTraceLeng
 	}
 #endif
 
-	auto* HitActor = HitResult.GetActor();
+	AActor* HitActor = HitResult.GetActor();
 	auto* InteractActorCasted = Cast<IRPGInteract_Interface>(HitActor);
 	if (!InteractActorCasted)
 	{
@@ -425,24 +418,24 @@ AActor* ARPGPlayerCharacter::TraceForInteractableObjects(const float InTraceLeng
 		return InteractActor = nullptr;;
 	}
 
-	if (HitActor->GetClass()->ImplementsInterface(URPGInteract_Interface::StaticClass()))
-	{
+	/*if (HitActor->GetClass()->ImplementsInterface(URPGInteract_Interface::StaticClass()))
+	{*/
 		// TODO: MyTODO: Figure out a way to use one function that can be overriden both in C++ and BP
 		//GetMainHUDWidget()->DisplayInteractionMessage(true, IRPGInteract_Interface::Execute_GetName(HitActor)); // Why do I even need this??
-		GetMainHUDWidget()->DisplayInteractionMessage(true, InteractActorCasted->GetNameNative());
+	GetMainHUDWidget()->DisplayInteractionMessage(true, InteractActorCasted->GetNameNative());
 
 #if !UE_BUILD_SHIPPING
-		if (CVarDebugInteractLine.GetValueOnGameThread() > 0)
-		{
-			DEBUGMESSAGE(0.f, FColor::Green, "Expected Interactable actor: %s (Class name: %s)", *InteractActorCasted->GetNameNative().ToString(), *HitActor->GetName());
-		}
+	if (CVarDebugInteractLine.GetValueOnGameThread() > 0)
+	{
+		DEBUGMESSAGE(0.f, FColor::Green, "Expected Interactable actor: %s (Class name: %s)", *InteractActorCasted->GetNameNative().ToString(), *HitActor->GetName());
+	}
 #endif
 
-		return InteractActor = HitActor;
-	}
+	return InteractActor = HitActor;
+		/*}
 
-	GetMainHUDWidget()->DisplayInteractionMessage(false, FText::FromString(""));
-	return InteractActor = nullptr;
+		GetMainHUDWidget()->DisplayInteractionMessage(false, FText::FromString(""));
+		return InteractActor = nullptr;*/
 }
 
 void ARPGPlayerCharacter::OnInteractPressed()

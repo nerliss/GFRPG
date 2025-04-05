@@ -1,9 +1,9 @@
-// Oleksandr Tkachov 2022-2024
+// Oleksandr Tkachov 2022-2025
 
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+#include "RPGCharacter.h"
 #include "RPGPlayerCharacter.generated.h"
 
 class URPGXP_Component;
@@ -28,14 +28,6 @@ enum class EPlayerPOV : uint8
 {
 	FirstPerson		UMETA(DisplayName = "First Person"),
 	ThirdPerson		UMETA(DisplayName = "Third Person")
-};
-
-UENUM(BlueprintType)
-enum class ECharacterGender : uint8
-{
-	Male,
-	Female,
-	Undefined
 };
 
 /* Character selection data */
@@ -76,7 +68,7 @@ struct FCharacterSelectionData
 	friend FArchive& operator<<(FArchive& Ar, FCharacterSelectionData& CharacterSelectionData);
 };
 
-// MyTODO: Move all FCharacterSelectionData related info to a separate header
+// TODO: Move all FCharacterSelectionData related info to a separate header
 inline FArchive& operator<<(FArchive& Ar, FCharacterSelectionData& CharacterSelectionData)
 {
 	// For storing asset paths during serialization
@@ -109,11 +101,9 @@ inline FArchive& operator<<(FArchive& Ar, FCharacterSelectionData& CharacterSele
 }
 
 UCLASS()
-class INVENTORYPROJECTV3_API ARPGPlayerCharacter : public ACharacter
+class INVENTORYPROJECTV3_API ARPGPlayerCharacter : public ARPGCharacter
 {
-	
 	GENERATED_BODY()
-
 	friend class ARPGHealth_Component;
 
 public:

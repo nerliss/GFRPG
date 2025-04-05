@@ -1,4 +1,4 @@
-// Oleksandr Tkachov 2022-2024
+// Oleksandr Tkachov 2022-2025
 
 
 #include "Widgets/RPGHUD_Widget.h"
@@ -59,7 +59,7 @@ void URPGHUD_Widget::DisplayInteractionMessage(bool bShowMessage, FText TargetNa
 		const int32 LastSlot = HUDCanvas->GetChildrenCount() - 1;
 		UCanvasPanelSlot* InteractionPromptSlot = CastChecked<UCanvasPanelSlot>(HUDCanvas->GetSlots()[LastSlot]);
 
-		// MyTODO: Should probably move this to a config or something
+		// TODO: Should probably move this to a config or something
 		// Approximately lower center of the screen
 		InteractionPromptSlot->SetAutoSize(true);
 		InteractionPromptSlot->SetAnchors(FAnchors(0.5f, 0.5f, 0.5f, 0.5f));

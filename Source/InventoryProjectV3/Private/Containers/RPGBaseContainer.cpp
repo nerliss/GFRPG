@@ -1,4 +1,4 @@
-// Oleksandr Tkachov 2022-2024
+// Oleksandr Tkachov 2022-2025
 
 
 #include "Containers/RPGBaseContainer.h"
@@ -78,7 +78,7 @@ void ARPGBaseContainer::PostEditChangeProperty(FPropertyChangedEvent& PropertyCh
 
 void ARPGBaseContainer::InteractNative(AActor* Interactor)
 {
-	// MyTODO: Replace this with IsChildOf or something since casting a type without using it confuses
+	// TODO: Replace this with IsChildOf or something since casting a type without using it confuses
 	const auto* Player = Cast<ARPGPlayerCharacter>(Interactor);
 	if (!Player)
 	{
@@ -99,8 +99,8 @@ void ARPGBaseContainer::FillContainerInventory()
 {
 	for (int i = 0; i < ItemToAdd.Num(); i++)
 	{
-		const auto ContainerItem = ItemToAdd[i];
-		const auto* ItemCDO = ContainerItem.Item.GetDefaultObject();
+		const FContainerItem ContainerItem = ItemToAdd[i];
+		const ARPGItem_Base* ItemCDO = ContainerItem.Item.GetDefaultObject();
 		if (!ItemCDO)
 		{
 			UE_LOG(LogRPGInventory, Error, TEXT("[ARPGBaseContainer::FillContainerInventory] ItemCDO wasn't created."));

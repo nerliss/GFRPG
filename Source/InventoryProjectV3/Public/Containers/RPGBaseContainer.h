@@ -28,11 +28,11 @@ protected:
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 #endif
 
-public:
-	
 	/* IRPGInteract_Interface */
 	virtual void InteractNative(AActor* Interactor) override;
 	virtual FText GetNameNative() const override;
+
+public:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Components")
 	USceneComponent* RootSceneComponent;

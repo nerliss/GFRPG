@@ -1,4 +1,4 @@
-// Oleksandr Tkachov 2022-2024
+// Oleksandr Tkachov 2022-2025
 
 #pragma once
 
@@ -23,11 +23,13 @@ public:
 
 	URPGPointOfInterestComponent();
 
-protected:
+	UFUNCTION(BlueprintCallable)
+	void SpawnPOIOnMap();
 
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	FSlateBrush GetIcon() const { return Icon; }
 
-protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Point of interest")
+	bool bQuestObjective;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Point of interest")
 	EPOIMobility Mobility;
@@ -35,14 +37,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Point of interest")
 	FSlateBrush Icon;
 
+protected:
+
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
 private:
 
 	bool bSpawned;
 
-public:
-
-	UFUNCTION(BlueprintCallable)
-	void SpawnPOIOnMap();
-
-	FSlateBrush GetIcon() const { return Icon; }
 };

@@ -1,4 +1,4 @@
-// Oleksandr Tkachov 2022-2024
+// Oleksandr Tkachov 2022-2025
 
 
 #include "Components/RPGPointOfInterestComponent.h"
@@ -13,6 +13,7 @@ URPGPointOfInterestComponent::URPGPointOfInterestComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	Mobility = EPOIMobility::None;
+	bQuestObjective = false;
 }
 
 void URPGPointOfInterestComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -27,22 +28,22 @@ void URPGPointOfInterestComponent::TickComponent(float DeltaTime, ELevelTick Tic
 
 void URPGPointOfInterestComponent::SpawnPOIOnMap()
 {
-	auto* PlayerController = Cast<ARPGPlayer_Controller>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	const auto* PlayerController = Cast<ARPGPlayer_Controller>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	if (!PlayerController)
 	{
-		// MyTODO: Remove this after everything is done
+		// TODO: Remove this after everything is done
 		UE_LOG(LogRPGMap, Error, TEXT("[URPGPointOfInterestComponent::SpawnPOIOnMap] Player controller is null!"));
 		return;
 	}
 
-	auto* HUD = PlayerController->GetHUDWidget();
+	const URPGHUD_Widget* HUD = PlayerController->GetHUDWidget();
 	if (!HUD)
 	{
 		UE_LOG(LogRPGMap, Error, TEXT("[URPGPointOfInterestComponent::SpawnPOIOnMap] HUD widget is null!"));
 		return;
 	}
 
-	auto* Minimap = HUD->MiniMapWidget;
+	URPGMiniMapWidget* Minimap = HUD->MiniMapWidget;
 	if (!Minimap)
 	{
 		UE_LOG(LogRPGMap, Error, TEXT("[URPGPointOfInterestComponent::SpawnPOIOnMap] Minimap is null!"));

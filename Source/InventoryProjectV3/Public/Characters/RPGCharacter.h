@@ -7,6 +7,8 @@
 #include "Interfaces/RPGInteract_Interface.h"
 #include "RPGCharacter.generated.h"
 
+class URPGQuestLogComponent;
+
 UENUM(BlueprintType)
 enum class ECharacterGender : uint8
 {
@@ -24,6 +26,8 @@ public:
 
 	ARPGCharacter();
 
+protected:
+
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -32,9 +36,10 @@ public:
 	virtual void InteractNative(AActor* Interactor) override;
 	virtual FText GetNameNative() const override;
 
-protected:
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "RPG Character")
 	FText CharacterName;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "RPG Character")
+	URPGQuestLogComponent* QuestLogComponent;
 
 };

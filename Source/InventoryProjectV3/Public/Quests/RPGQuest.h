@@ -14,11 +14,11 @@ class ARPGCharacter;
 UENUM(Blueprintable, BlueprintType)
 enum EObjectiveType
 {
-	OT_Location,
-	OT_Interact,
-	OT_Collect,
-	OT_Kill,
-	OT_Max
+	OT_Location UMETA(DisplayName = "Location"),
+	OT_Interact UMETA(DisplayName = "Interact"),
+	OT_Collect  UMETA(DisplayName = "Collect"),
+	OT_Kill		UMETA(DisplayName = "Kill"),
+	OT_Max		UMETA(Hidden)
 };
 
 USTRUCT(Blueprintable, BlueprintType)
@@ -59,6 +59,20 @@ class INVENTORYPROJECTV3_API ARPGQuest : public AActor
 public:
 
 	ARPGQuest();
+
+	TArray <FObjectiveData> GetObjectives() const { return Objectives; }
+
+	UPROPERTY(EditDefaultsOnly, BlueprintAssignable, Category = "Quest")
+	FOnTargetInteracted OnTargetInteracted;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Quest")
+	FOnLocationReached OnLocationReached;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Quest")
+	FOnItemCollected OnItemCollected;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Quest")
+	FOnEnemyKilled OnEnemyKilled;
 
 protected:
 
@@ -119,16 +133,18 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
 	TSoftObjectPtr<ARPGPlayer_Controller> PCRef;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Quest")
-	FOnTargetInteracted OnTargetInteracted;
+	UFUNCTION()
+	void CheckInteractionObjective(AActor* InteractionTarget);
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Quest")
-	FOnEnemyKilled OnEnemyKilled;
+	UFUNCTION()
+	void CheckLocationObjective(ARPGQuestMarkerLocation* LocationTarget);
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Quest")
-	FOnItemCollected OnItemCollected;
+	UFUNCTION()
+	void CheckItemObjective(ARPGItem_Base* ItemTarget);
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Quest")
-	FOnLocationReached OnLocationReached;
+	UFUNCTION()
+	void CheckKillObjective(ARPGCharacter* KillTarget);
+
+	void MakeNearestObjectiveAvailable(int32 ObjectiveIndex);
 
 };

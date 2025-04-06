@@ -152,7 +152,7 @@ public:
 	URPGXP_Component* XPComp;
 
 	/* Health component responds for actors hit points, damage behavior etc. 
-	 * MyTODO: Turn this component into Stat component that will be storing different player stats such as HP, MP, Strength, Agility etc.  
+	 * TODO: Turn this component into Stat component that will be storing different player stats such as HP, MP, Strength, Agility etc.  
 	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	URPGHealth_Component* HPComp;

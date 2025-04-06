@@ -18,3 +18,7 @@ void URPGQuestLogComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
+void URPGQuestLogComponent::SetActiveQuest(ARPGQuest* Quest, bool bPlaySound)
+{
+	// Some logic from BPs
+}

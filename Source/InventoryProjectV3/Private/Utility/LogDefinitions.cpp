@@ -1,4 +1,4 @@
-// Oleksandr Tkachov 2022-2024
+// Oleksandr Tkachov 2022-2025
 
 
 #include "Utility/LogDefinitions.h"
@@ -11,3 +11,4 @@ DEFINE_LOG_CATEGORY(LogRPGUIHUD);
 DEFINE_LOG_CATEGORY(LogRPGPhotoMode);
 DEFINE_LOG_CATEGORY(LogRPGMap);
 DEFINE_LOG_CATEGORY(LogRPGMount);
+DEFINE_LOG_CATEGORY(LogQuests);

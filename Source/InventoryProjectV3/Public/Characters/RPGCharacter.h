@@ -26,6 +26,8 @@ public:
 
 	ARPGCharacter();
 
+	URPGQuestLogComponent* GetQuestLogComponent() const { return QuestLogComponent; }
+
 protected:
 
 	virtual void BeginPlay() override;

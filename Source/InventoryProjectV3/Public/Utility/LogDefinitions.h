@@ -1,4 +1,4 @@
-// Oleksandr Tkachov 2022-2024
+// Oleksandr Tkachov 2022-2025
 
 #pragma once
 
@@ -12,3 +12,4 @@ DECLARE_LOG_CATEGORY_EXTERN(LogRPGUIHUD, Log, All);
 DECLARE_LOG_CATEGORY_EXTERN(LogRPGPhotoMode, Log, All);
 DECLARE_LOG_CATEGORY_EXTERN(LogRPGMap, Log, All);
 DECLARE_LOG_CATEGORY_EXTERN(LogRPGMount, Log, All);
+DECLARE_LOG_CATEGORY_EXTERN(LogQuests, Log, All);

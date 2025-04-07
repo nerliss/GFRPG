@@ -62,6 +62,8 @@ public:
 
 	TArray <FObjectiveData> GetObjectives() const { return Objectives; }
 
+	bool GetActiveObjective(int32& ObjectiveIndex, FObjectiveData& Objective) const;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintAssignable, Category = "Quest")
 	FOnTargetInteracted OnTargetInteracted;
 

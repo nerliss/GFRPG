@@ -4,6 +4,7 @@
 #include "Quests/RPGQuest.h"
 
 #include "Characters/RPGPlayerCharacter.h"
+#include "Components/RPGInventory_Component.h"
 #include "Components/RPGQuestLogComponent.h"
 #include "Items/RPGItem_Base.h"
 #include "Kismet/GameplayStatics.h"
@@ -47,9 +48,9 @@ void ARPGQuest::CheckLocationObjective(ARPGQuestMarkerLocation* LocationTarget)
 			UE_LOG(LogQuests, Verbose, TEXT("[ARPGQuest::CheckLocationObjective] Found required Location Objective, %s is now marked as completed"), *ObjectiveTargetCasted->GetName());
 			MakeNearestObjectiveAvailable(ObjectiveIndex);
 
+			// TODO: It seems it can be replace with simple array index access, without creating a copy and then replacing the index
 			FObjectiveData UpdatedObjective = Objectives[ObjectiveIndex];
 			UpdatedObjective.bCompleted = true;
-
 			Objectives[ObjectiveIndex] = UpdatedObjective;
 
 			bUpdateUI = true;
@@ -104,13 +105,26 @@ void ARPGQuest::MakeNearestObjectiveAvailable(int32 ObjectiveIndex)
 
 	if (bObjectiveFound)
 	{
+		// TODO: It seems it can be replace with simple array index access, without creating a copy and then replacing the index
 		FObjectiveData UpdatedObjective = Objectives[NearestIncompleteObjectiveIndex];
 		UpdatedObjective.bCanBeCompleted = true;
 		Objectives[NearestIncompleteObjectiveIndex] = UpdatedObjective;
 
 		UE_LOG(LogQuests, Verbose, TEXT("[ARPGQuest::MakeNearestObjectiveAvailable] Objective %s is now active"), *GetNameSafe(UpdatedObjective.Target.Get()));
 
-		// TODO: Some other unmoved from BP function continuation that queries items in player's inventory and calls itself again if we have right amount of items already collected
+		auto ObjectiveItem = Cast<ARPGItem_Base>(Objectives[NearestIncompleteObjectiveIndex].Target.Get());
+		if (ObjectiveItem)
+		{
+			auto PlayerCharacter = Cast<ARPGPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+			if (PlayerCharacter)
+			{
+				int32 LocalA, LocalB;
+				if (PlayerCharacter->InventoryComp->QueryInventory(ObjectiveItem->GetClass(), Objectives[NearestIncompleteObjectiveIndex].Amount, LocalA, LocalB))
+				{
+					// TODO: Set this new objective to completed, and call MakeNearestObjectiveAvailable againg
+				}
+			}
+		}
 	}
 	else
 	{

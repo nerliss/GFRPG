@@ -1,4 +1,4 @@
-// Oleksandr Tkachov 2022-2024
+// Oleksandr Tkachov 2022-2025
 
 #pragma once
 
@@ -25,13 +25,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void ToggleInventory();
 
+	/* Add specified item to the inventory. Creates new stack if there is room for it. */
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	bool AddToInventory(FInventorySlot ContentToAdd);
 
-	bool CreateStack (FInventorySlot ContentToAdd);
-	bool AddToStack (FInventorySlot ContentToAdd, int32 SlotIndex);
-	bool HasPartialStack (FInventorySlot Slot, int32& OutSlotIndex);
-	
+	/* Query specific item in the inventory. Usually used for quests or dialogues */
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	bool QueryInventory(TSubclassOf<ARPGItem_Base> QueryItem, int32 QueryAmount, int32& FirstItemInstance, int32& ItemsAmount) const;
+
 #if !UE_BUILD_SHIPPING
 	void DebugPrintInventory();
 #endif
@@ -79,5 +80,11 @@ protected:
 	/* Resizes inventory and fills the slots with data from Inventory array */
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void PrepareInventory();
+
+private:
+
+	bool CreateStack(FInventorySlot ContentToAdd);
+	bool AddToStack (FInventorySlot ContentToAdd, int32 SlotIndex);
+	bool HasPartialStack (FInventorySlot Slot, int32& OutSlotIndex);
 
 };

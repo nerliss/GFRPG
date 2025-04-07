@@ -1,4 +1,4 @@
-// Oleksandr Tkachov 2022-2024
+// Oleksandr Tkachov 2022-2025
 
 
 #include "Components/RPGInventory_Component.h"
@@ -11,7 +11,6 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
-#include "Characters/RPGPlayerCharacter.h"
 
 #if !UE_BUILD_SHIPPING
 static TAutoConsoleVariable CVarDebugShowInventoryList(TEXT("DebugShowInventoryList"), 0, TEXT("Enable to print out all inventory slots to the screen"));
@@ -169,6 +168,28 @@ bool URPGInventory_Component::HasPartialStack(FInventorySlot Slot, int32& OutSlo
 	OutSlotIndex = ExistingStackSlotIndex; // returns zero if no stack found
 	return bExistingStackFound;
 }
+
+bool URPGInventory_Component::QueryInventory(TSubclassOf<ARPGItem_Base> QueryItem, int32 QueryAmount, int32& FirstItemInstance, int32& ItemsAmount) const
+{
+	for (int i = 0; i < Inventory.Num(); i++)
+	{
+		const FInventorySlot& Slot = Inventory[i];
+
+		// TODO: This implementation doesn't take in account that the next slot can have the same item and the amount of those items there can be more than in the previous (FirstItemInstance), recheck and fix when this all can be tested
+		if (Slot.Item.Class == QueryItem)
+		{
+			FirstItemInstance = i;
+			ItemsAmount = Slot.Quantity;
+
+			if (ItemsAmount >= QueryAmount)
+			{
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 #if !UE_BUILD_SHIPPING
 void URPGInventory_Component::DebugPrintInventory()
 {

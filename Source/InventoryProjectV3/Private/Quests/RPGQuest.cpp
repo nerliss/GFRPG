@@ -6,6 +6,7 @@
 #include "Characters/RPGPlayerCharacter.h"
 #include "Components/RPGInventory_Component.h"
 #include "Components/RPGQuestLogComponent.h"
+#include "Components/RPGXP_Component.h"
 #include "Items/RPGItem_Base.h"
 #include "Kismet/GameplayStatics.h"
 #include "Quests/RPGQuestMarkerLocation.h"
@@ -15,6 +16,22 @@ ARPGQuest::ARPGQuest()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
+	Name = FText::FromString("Quest Name");
+	Description = FText::FromString("Quest Description");
+	Objectives.Empty();
+	bStoryQuest = false;
+	bCompleted = false;
+	KillCountCurrent = -1;
+	XPReward = 10.f;
+	XPRewardMultiplier = 1.f;
+	MoneyReward = 1.f;
+	TurnInText = FText::FromString("Turn In Text");
+	Prerequisite = nullptr;
+	QuestGiver = nullptr;
+	bCanBeTurnedInToSomeoneElse = false;
+	QuestTurnInTarget = nullptr;
+	PlayerRef = nullptr;
+	PCRef = nullptr;
 }
 
 void ARPGQuest::BeginPlay()
@@ -40,12 +57,12 @@ void ARPGQuest::CheckLocationObjective(ARPGQuestMarkerLocation* LocationTarget)
 	for (int i = 0; i < Objectives.Num(); i++)
 	{
 		FObjectiveData Objective = Objectives[i];
-		int32 ObjectiveIndex = i;
+		const int32 ObjectiveIndex = i;
 
-		auto ObjectiveTargetCasted = Cast<ARPGQuestMarkerLocation>(Objective.Target.Get());
-		if (!Objective.bCompleted && Objective.bCanBeCompleted && ObjectiveTargetCasted == LocationTarget)
+		const auto LocationObjective = Cast<ARPGQuestMarkerLocation>(Objective.Target.Get());
+		if (!Objective.bCompleted && Objective.bCanBeCompleted && LocationObjective == LocationTarget)
 		{
-			UE_LOG(LogQuests, Verbose, TEXT("[ARPGQuest::CheckLocationObjective] Found required Location Objective, %s is now marked as completed"), *ObjectiveTargetCasted->GetName());
+			UE_LOG(LogQuests, Verbose, TEXT("[ARPGQuest::CheckLocationObjective] Found required Location Objective, %s is now marked as completed"), *LocationObjective->GetName());
 			MakeNearestObjectiveAvailable(ObjectiveIndex);
 
 			// TODO: It seems it can be replace with simple array index access, without creating a copy and then replacing the index
@@ -61,7 +78,7 @@ void ARPGQuest::CheckLocationObjective(ARPGQuestMarkerLocation* LocationTarget)
 	if (bUpdateUI)
 	{
 		// TODO: Create a static library with getters for project-specific classes (like a quick access to RPGPlayerCharacter)
-		auto PlayerCharacter = Cast<ARPGPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+		const auto PlayerCharacter = Cast<ARPGPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 		if (PlayerCharacter)
 		{
 			UE_LOG(LogQuests, Verbose, TEXT("[ARPGQuest::CheckLocationObjective] Updating UI for Quest %s"), *GetName());
@@ -112,16 +129,22 @@ void ARPGQuest::MakeNearestObjectiveAvailable(int32 ObjectiveIndex)
 
 		UE_LOG(LogQuests, Verbose, TEXT("[ARPGQuest::MakeNearestObjectiveAvailable] Objective %s is now active"), *GetNameSafe(UpdatedObjective.Target.Get()));
 
-		auto ObjectiveItem = Cast<ARPGItem_Base>(Objectives[NearestIncompleteObjectiveIndex].Target.Get());
+		const auto ObjectiveItem = Cast<ARPGItem_Base>(Objectives[NearestIncompleteObjectiveIndex].Target.Get());
 		if (ObjectiveItem)
 		{
-			auto PlayerCharacter = Cast<ARPGPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+			const auto PlayerCharacter = Cast<ARPGPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 			if (PlayerCharacter)
 			{
 				int32 LocalA, LocalB;
 				if (PlayerCharacter->InventoryComp->QueryInventory(ObjectiveItem->GetClass(), Objectives[NearestIncompleteObjectiveIndex].Amount, LocalA, LocalB))
 				{
-					// TODO: Set this new objective to completed, and call MakeNearestObjectiveAvailable againg
+					// TODO: Test this when possible
+					Objectives[NearestIncompleteObjectiveIndex].bCompleted = true;
+					Objectives[NearestIncompleteObjectiveIndex].bCanBeCompleted = true;
+
+					UE_LOG(LogQuests, Verbose, TEXT("[ARPGQuest::MakeNearestObjectiveAvailable] Objective's target is item (%s) and player has enough these items (%d) to automatically complete this objective"), *GetNameSafe(ObjectiveItem), Objectives[NearestIncompleteObjectiveIndex].Amount)
+
+					MakeNearestObjectiveAvailable(ObjectiveIndex); // Probably needs to be ObjectiveIndex + 1 or something
 				}
 			}
 		}
@@ -134,6 +157,58 @@ void ARPGQuest::MakeNearestObjectiveAvailable(int32 ObjectiveIndex)
 
 bool ARPGQuest::GetActiveObjective(int32& ObjectiveIndex, FObjectiveData& Objective) const
 {
-	// TODO: Continue here
+	for (int i = 0; i < Objectives.Num(); i++)
+	{
+		FObjectiveData LocalObjective = Objectives[i];
+		if (!LocalObjective.bCompleted && LocalObjective.bCanBeCompleted)
+		{
+			ObjectiveIndex = i;
+			Objective = LocalObjective;
+
+			UE_LOG(LogQuests, Verbose, TEXT("[ARPGQuest::GetActiveObjective] Found active objective %s at %d index"), *GetNameSafe(Objective.Target.Get()), ObjectiveIndex);
+
+			return true;
+		}
+	}
+
+	UE_LOG(LogQuests, Error, TEXT("[ARPGQuest::GetActiveObjective] No active objectives found"));
 	return false;
+}
+
+bool ARPGQuest::GetNextObjective(int32& ObjectiveIndex, FObjectiveData& Objective) const
+{
+	int LocalObjectiveIndex = 0;
+	FObjectiveData LocalObjective = FObjectiveData();
+
+	if (GetActiveObjective(LocalObjectiveIndex, LocalObjective))
+	{
+		if (Objectives.IsValidIndex(LocalObjectiveIndex + 1))
+		{
+			ObjectiveIndex = LocalObjectiveIndex + 1;
+			Objective = Objectives[LocalObjectiveIndex + 1];
+
+			UE_LOG(LogQuests, Verbose, TEXT("[ARPGQuest::GetNextObjective] Found next objective %s at %d index"), *GetNameSafe(Objective.Target.Get()), ObjectiveIndex);
+
+			return true;
+		}
+	}
+
+	ObjectiveIndex = 0;
+	Objective = FObjectiveData();
+
+	UE_LOG(LogQuests, Error, TEXT("[ARPGQuest::GetNextObjective] No next objective found"));
+
+	return false;
+}
+
+void ARPGQuest::CalculateXP()
+{
+	const auto PlayerCharacter = Cast<ARPGPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	if (!PlayerCharacter)
+	{
+		return;
+	}
+
+	XPReward = FMath::CeilToFloat(PlayerCharacter->XPComp->CalculateXPReward(true, XPRewardMultiplier));
+	UE_LOG(LogQuests, Verbose, TEXT("[ARPGQuest::CalculateXP] Quest %s (object %s) now has updated XP Reward: %f"), *Name.ToString(), *GetName(), XPReward);
 }

@@ -44,6 +44,15 @@ struct FObjectiveData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 Amount;
 
+	FObjectiveData()
+	{
+		Description = FText::GetEmpty();
+		Type = OT_Max;
+		bCompleted = false;
+		bCanBeCompleted = false;
+		Target = nullptr;
+		Amount = 0;
+	};
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetInteracted, AActor*, InteractionTarget);
@@ -64,6 +73,14 @@ public:
 
 	bool GetActiveObjective(int32& ObjectiveIndex, FObjectiveData& Objective) const;
 
+	bool GetNextObjective(int32& ObjectiveIndex, FObjectiveData& Objective) const;
+
+	/* In BP version this was called when player gained new level to adjust XP reward for the new level thus making quests always relevant
+	 * TODO: Review this logic and adjust - change it to delegates or something (because this is called in Player Character class when player levels up)
+	 */
+	void CalculateXP();
+
+	// TODO: Check blueprint access specifiers - may be we don't need any
 	UPROPERTY(EditDefaultsOnly, BlueprintAssignable, Category = "Quest")
 	FOnTargetInteracted OnTargetInteracted;
 
@@ -111,7 +128,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
 	FText TurnInText;
 
-	// QuestLogEntryRef - Requires Widget C++ Class
+	// QuestLogEntryRef - TODO: Requires Widget C++ Class
 
 	// TODO: Maybe use TSubclassOf<ARPGQuest> or TSoftObjectPtr/TSoftClassPtr?
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
@@ -127,6 +144,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
 	TSoftObjectPtr<AActor> QuestTurnInTarget;
 
+	// TODO: Never used these two below, probably will not use, so remove later
 	// TODO: Not sure if this is supposed to be a soft obj since player is always loaded
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
 	TSoftObjectPtr<ACharacter> PlayerRef;

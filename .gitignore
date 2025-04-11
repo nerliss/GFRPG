@@ -77,3 +77,6 @@ DerivedDataCache/*
 # Subtree for Assets
 Content/*
 assets/*
+
+# Rider intermediate files
+.idea/*

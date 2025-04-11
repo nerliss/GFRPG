@@ -8,7 +8,7 @@ public class InventoryProjectV3EditorTarget : TargetRules
 	public InventoryProjectV3EditorTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Editor;
-		DefaultBuildSettings = BuildSettingsVersion.V2;
+		DefaultBuildSettings = BuildSettingsVersion.Latest;
 
 		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_2;
 

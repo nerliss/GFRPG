@@ -177,15 +177,17 @@ bool ARPGQuest::GetActiveObjective(int32& ObjectiveIndex, FObjectiveData& Object
 
 bool ARPGQuest::GetNextObjective(int32& ObjectiveIndex, FObjectiveData& Objective) const
 {
-	int LocalObjectiveIndex = 0;
-	FObjectiveData LocalObjective = FObjectiveData();
+	int LocalObjectiveIndex;
+	FObjectiveData LocalObjective;
 
 	if (GetActiveObjective(LocalObjectiveIndex, LocalObjective))
 	{
-		if (Objectives.IsValidIndex(LocalObjectiveIndex + 1))
+		const int32 NextObjectiveIndex = LocalObjectiveIndex + 1;
+
+		if (Objectives.IsValidIndex(NextObjectiveIndex))
 		{
-			ObjectiveIndex = LocalObjectiveIndex + 1;
-			Objective = Objectives[LocalObjectiveIndex + 1];
+			ObjectiveIndex = NextObjectiveIndex;
+			Objective = Objectives[NextObjectiveIndex];
 
 			UE_LOG(LogQuests, Verbose, TEXT("[ARPGQuest::GetNextObjective] Found next objective %s at %d index"), *GetNameSafe(Objective.Target.Get()), ObjectiveIndex);
 

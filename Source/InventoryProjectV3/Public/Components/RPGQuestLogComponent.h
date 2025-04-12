@@ -20,11 +20,25 @@ public:
 	URPGQuestLogComponent();
 
 	TArray<ARPGQuest*> GetActiveQuests() const { return ActiveQuests; }
+	
+	TArray<ARPGQuest*> GetCompleteQuests() const { return CompleteQuests; }
 
 	ARPGQuest* GetCurrentActiveQuest() const { return CurrentActiveQuest; }
 
 	void SetActiveQuest(ARPGQuest* Quest, bool bPlaySound);
 
+	void AddQuest(ARPGQuest* Quest);
+
+	bool IsQuestAccepted(TSubclassOf<ARPGQuest> QuestClass) const;
+
+	bool IsQuestComplete(TSubclassOf<ARPGQuest> QuestClass) const;
+	
+	void CheckPlayerInventory(ARPGQuest* Quest);
+
+	bool MarkQuestComplete(TSubclassOf<ARPGQuest> QuestClass) const;
+
+	void ToggleQuestLog();
+	
 protected:
 
 	virtual void BeginPlay() override;
@@ -34,7 +48,7 @@ protected:
 	TArray<ARPGQuest*> ActiveQuests;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
-	TArray<ARPGQuest*> CompletedQuests;
+	TArray<ARPGQuest*> CompleteQuests;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Quest")
 	ARPGQuest* CurrentActiveQuest;
@@ -44,4 +58,11 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Quest")
 	ARPGCharacter* PlayerRef;
 
+private:
+
+	/* Returns first quest actor in world
+	 * TODO: Temporary function that should be replaced when there is a better way to access spawned quest  
+	 */
+	ARPGQuest* GetSpawnedQuest(TSubclassOf<ARPGQuest> QuestClass) const;
+	
 };

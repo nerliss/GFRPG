@@ -68,7 +68,7 @@ FReply URPGInventory_Slot_Widget::NativeOnMouseButtonDown(const FGeometry& InGeo
 	if (InMouseEvent.GetEffectingButton() == EKeys::RightMouseButton)
 	{
 		// Use item
-		if (InventoryReference == PlayerCharacterOwner->InventoryComp)
+		if (InventoryReference == PlayerCharacterOwner->GetInventoryComponent())
 		{
 			if (UseItem())
 			{
@@ -78,7 +78,7 @@ FReply URPGInventory_Slot_Widget::NativeOnMouseButtonDown(const FGeometry& InGeo
 		// Move item from container to player's inventory 
 		else
 		{
-			if (SlotContent.Quantity > 0 && PlayerCharacterOwner->InventoryComp->AddToInventory(SlotContent))
+			if (SlotContent.Quantity > 0 && PlayerCharacterOwner->GetInventoryComponent()->AddToInventory(SlotContent))
 			{
 				InventoryReference->Inventory[SlotIndex] = FInventorySlot();
 				RefreshSlot();

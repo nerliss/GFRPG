@@ -152,18 +152,29 @@ public:
 	URPGXP_Component* XPComp;
 
 	/* Health component responds for actors hit points, damage behavior etc. 
-	 * TODO: Turn this component into Stat component that will be storing different player stats such as HP, MP, Strength, Agility etc.  
+	 * TODO: Turn this component into Stat component that will be storing different player stats such as HP, MP, Strength, Agility etc.
+	 * TODO: Move to protected and replace direct references with getter
 	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	URPGHealth_Component* HPComp;
 
-	/* Reputation component stores all the data about factions and their possible rewards */
+	UFUNCTION(BlueprintCallable, Category = "Components")
+	URPGHealth_Component* GetHealthComponent() const { return HPComp; }
+	
+	/* Reputation component stores all the data about factions and their possible rewards
+	 * TODO: Expand this - currently does nothing and has nothing
+	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	URPGReputation_Component* ReputationComp;
 
-	/* Inventory component stores data about items */
+	/* Inventory component stores data about items
+	 * TODO: Move to protected and replace direct references with getter
+	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	URPGInventory_Component* InventoryComp;
+
+	UFUNCTION(BlueprintCallable, Category = "Components")
+	URPGInventory_Component* GetInventoryComponent() const { return InventoryComp; }
 
 	/* Ak audio component */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")

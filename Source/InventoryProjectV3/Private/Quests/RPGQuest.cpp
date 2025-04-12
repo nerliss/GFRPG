@@ -46,56 +46,101 @@ void ARPGQuest::BeginPlay()
 
 void ARPGQuest::CheckInteractionObjective(AActor* InteractionTarget)
 {
+	bool bUpdateUI = false;
+	
+	for (int i = 0; i < Objectives.Num(); i++)
+	{
+		FObjectiveData Objective = Objectives[i];
 
+		if (!Objective.bCompleted && Objective.bCanBeCompleted && InteractionTarget == Objective.Target.Get())
+		{
+			MakeNearestObjectiveAvailable(i);
+			Objectives[i].bCompleted = true;
+			bUpdateUI = true;
+			break;
+		}
+	}
+	
+	UpdateUI(bUpdateUI);
 }
 
 void ARPGQuest::CheckLocationObjective(ARPGQuestMarkerLocation* LocationTarget)
 {
-	//int32 ObjectiveIndex = 0;
 	bool bUpdateUI = false;
 
 	for (int i = 0; i < Objectives.Num(); i++)
 	{
 		FObjectiveData Objective = Objectives[i];
-		const int32 ObjectiveIndex = i;
 
-		const auto LocationObjective = Cast<ARPGQuestMarkerLocation>(Objective.Target.Get());
+		const ARPGQuestMarkerLocation* LocationObjective = Cast<ARPGQuestMarkerLocation>(Objective.Target.Get());
 		if (!Objective.bCompleted && Objective.bCanBeCompleted && LocationObjective == LocationTarget)
 		{
 			UE_LOG(LogQuests, Verbose, TEXT("[ARPGQuest::CheckLocationObjective] Found required Location Objective, %s is now marked as completed"), *LocationObjective->GetName());
-			MakeNearestObjectiveAvailable(ObjectiveIndex);
-
-			// TODO: It seems it can be replace with simple array index access, without creating a copy and then replacing the index
-			FObjectiveData UpdatedObjective = Objectives[ObjectiveIndex];
-			UpdatedObjective.bCompleted = true;
-			Objectives[ObjectiveIndex] = UpdatedObjective;
-
+			MakeNearestObjectiveAvailable(i);
+			Objectives[i].bCompleted = true;
 			bUpdateUI = true;
-			break; // Not sure if required here
+			break; 
 		}
 	}
-
-	if (bUpdateUI)
-	{
-		// TODO: Create a static library with getters for project-specific classes (like a quick access to RPGPlayerCharacter)
-		const auto PlayerCharacter = Cast<ARPGPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-		if (PlayerCharacter)
-		{
-			UE_LOG(LogQuests, Verbose, TEXT("[ARPGQuest::CheckLocationObjective] Updating UI for Quest %s"), *GetName());
-			PlayerCharacter->GetQuestLogComponent()->SetActiveQuest(this, true);
-		}
-	}
+	
+	UpdateUI(bUpdateUI);
 }
 
 void ARPGQuest::CheckItemObjective(ARPGItem_Base* ItemTarget)
 {
-	
+	bool bUpdateUI = false;
 
+	for (int i = 0; i < Objectives.Num(); i++)
+	{
+		FObjectiveData Objective = Objectives[i];
+
+		if (!Objective.bCompleted && Objective.bCanBeCompleted && ItemTarget->GetClass() == Objective.Target->GetClass())
+		{
+			// TODO: WBP_QuestHUDObjectives::UpdateObjectivesList() - not yet implemented
+
+			const ARPGPlayerCharacter* PlayerCharacter = Cast<ARPGPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
+			if (PlayerCharacter)
+			{
+				int32 LocalA, LocalB;
+				if (PlayerCharacter->GetInventoryComponent()->QueryInventory(ItemTarget->GetClass(), Objective.Amount, LocalA, LocalB))
+				{
+					MakeNearestObjectiveAvailable(i);
+					Objectives[i].bCompleted = true;
+					bUpdateUI = true;
+					break;
+				}
+			}
+		}
+	}
+
+	UpdateUI(bUpdateUI);
 }
 
 void ARPGQuest::CheckKillObjective(ARPGCharacter* KillTarget)
 {
+	bool bUpdateUI = false;
 
+	for (int i = 0; i < Objectives.Num(); i++)
+	{
+		FObjectiveData Objective = Objectives[i];
+		
+		if (!Objective.bCompleted && Objective.bCanBeCompleted && KillTarget->GetClass() == Objective.Target->GetClass())
+		{
+			KillCountCurrent++;
+
+			// TODO: WBP_QuestHUDObjectives::UpdateObjectivesList() - not yet implemented
+
+			if (KillCountCurrent >= Objective.Amount)
+			{
+				MakeNearestObjectiveAvailable(i);
+				Objectives[i].bCompleted = true;
+				bUpdateUI = true;
+				break;
+			}
+		}
+	}
+
+	UpdateUI(bUpdateUI);
 }
 
 void ARPGQuest::MakeNearestObjectiveAvailable(int32 ObjectiveIndex)
@@ -129,14 +174,14 @@ void ARPGQuest::MakeNearestObjectiveAvailable(int32 ObjectiveIndex)
 
 		UE_LOG(LogQuests, Verbose, TEXT("[ARPGQuest::MakeNearestObjectiveAvailable] Objective %s is now active"), *GetNameSafe(UpdatedObjective.Target.Get()));
 
-		const auto ObjectiveItem = Cast<ARPGItem_Base>(Objectives[NearestIncompleteObjectiveIndex].Target.Get());
+		const ARPGItem_Base* ObjectiveItem = Cast<ARPGItem_Base>(Objectives[NearestIncompleteObjectiveIndex].Target.Get());
 		if (ObjectiveItem)
 		{
-			const auto PlayerCharacter = Cast<ARPGPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+			const ARPGPlayerCharacter* PlayerCharacter = Cast<ARPGPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 			if (PlayerCharacter)
 			{
 				int32 LocalA, LocalB;
-				if (PlayerCharacter->InventoryComp->QueryInventory(ObjectiveItem->GetClass(), Objectives[NearestIncompleteObjectiveIndex].Amount, LocalA, LocalB))
+				if (PlayerCharacter->GetInventoryComponent()->QueryInventory(ObjectiveItem->GetClass(), Objectives[NearestIncompleteObjectiveIndex].Amount, LocalA, LocalB))
 				{
 					// TODO: Test this when possible
 					Objectives[NearestIncompleteObjectiveIndex].bCompleted = true;
@@ -205,7 +250,7 @@ bool ARPGQuest::GetNextObjective(int32& ObjectiveIndex, FObjectiveData& Objectiv
 
 void ARPGQuest::CalculateXP()
 {
-	const auto PlayerCharacter = Cast<ARPGPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	const ARPGPlayerCharacter* PlayerCharacter = Cast<ARPGPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	if (!PlayerCharacter)
 	{
 		return;
@@ -213,4 +258,18 @@ void ARPGQuest::CalculateXP()
 
 	XPReward = FMath::CeilToFloat(PlayerCharacter->XPComp->CalculateXPReward(true, XPRewardMultiplier));
 	UE_LOG(LogQuests, Verbose, TEXT("[ARPGQuest::CalculateXP] Quest %s (object %s) now has updated XP Reward: %f"), *Name.ToString(), *GetName(), XPReward);
+}
+
+void ARPGQuest::UpdateUI(bool bNeedsUIUpdate)
+{
+	if (!bNeedsUIUpdate)
+	{
+		return;
+	}
+	
+	const ARPGPlayerCharacter* PlayerCharacter = Cast<ARPGPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
+	if (PlayerCharacter)
+	{
+		PlayerCharacter->GetQuestLogComponent()->SetActiveQuest(this, true);
+	}
 }

@@ -57,7 +57,7 @@ void URPGAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	if (Character)
 	{
-		bDead = Character->HPComp->bDiedAlready;
+		bDead = Character->GetHealthComponent()->bDiedAlready;
 		bMounted = Character->bMounted;
 		bFalling = Character->GetCharacterMovement()->IsFalling();
 		MovementSpeed = Character->GetVelocity().Size();

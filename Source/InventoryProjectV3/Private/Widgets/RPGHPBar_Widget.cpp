@@ -53,12 +53,12 @@ const ARPGPlayerCharacter* URPGHPBar_Widget::GetPlayerReference()
 
 const float URPGHPBar_Widget::GetCurrentHP()
 {
-	return GetPlayerReference() ? PlayerRef->HPComp->GetCurrentHealth() : -1.f;
+	return GetPlayerReference() ? PlayerRef->GetHealthComponent()->GetCurrentHealth() : -1.f;
 }
 
 const float URPGHPBar_Widget::GetMaxHP()
 {
-	return GetPlayerReference() ? PlayerRef->HPComp->GetMaxHealth() : -1.f;
+	return GetPlayerReference() ? PlayerRef->GetHealthComponent()->GetMaxHealth() : -1.f;
 }
 
 const float URPGHPBar_Widget::GetCurrentHPPercent()

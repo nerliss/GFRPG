@@ -57,8 +57,8 @@ ARPGPlayerCharacter::ARPGPlayerCharacter()
 	XPComp = CreateDefaultSubobject<URPGXP_Component>(TEXT("XPComp"));
 
 	HPComp = CreateDefaultSubobject<URPGHealth_Component>(TEXT("HPComp"));
-	HPComp->SetMaxHealth(100.f);
-	HPComp->SetCurrentHealth(HPComp->GetMaxHealth());
+	GetHealthComponent()->SetMaxHealth(100.f);
+	GetHealthComponent()->SetCurrentHealth(HPComp->GetMaxHealth());
 
 	ReputationComp = CreateDefaultSubobject<URPGReputation_Component>(TEXT("ReputationComp"));
 
@@ -258,18 +258,18 @@ void ARPGPlayerCharacter::LookUpAtRate(float Rate)
 
 void ARPGPlayerCharacter::Death()
 {
-	if (!HPComp)
+	if (!GetHealthComponent())
 	{
 		return;
 	}
 
-	if (HPComp->bDiedAlready)
+	if (GetHealthComponent()->bDiedAlready)
 	{
 		return;
 	}
 
-	HPComp->SetCurrentHealth(0.f);
-	HPComp->bDiedAlready = true;
+	GetHealthComponent()->SetCurrentHealth(0.f);
+	GetHealthComponent()->bDiedAlready = true;
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -457,7 +457,7 @@ void ARPGPlayerCharacter::OnInteractPressed()
 
 void ARPGPlayerCharacter::OnInventoryToggled()
 {
-	InventoryComp->ToggleInventory();
+	GetInventoryComponent()->ToggleInventory();
 }
 
 void ARPGPlayerCharacter::LoadLastCharacterModel()

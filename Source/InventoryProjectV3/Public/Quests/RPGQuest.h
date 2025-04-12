@@ -167,4 +167,8 @@ protected:
 
 	void MakeNearestObjectiveAvailable(int32 ObjectiveIndex);
 
+private:
+
+	void UpdateUI(bool bNeedsUIUpdate);
+	
 };

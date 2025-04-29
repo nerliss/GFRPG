@@ -6,8 +6,11 @@
 #include "Characters/RPGPlayerCharacter.h"
 #include "Components/RPGQuestLogComponent.h"
 #include "Components/ScrollBox.h"
+#include "Components/VerticalBox.h"
 #include "GameFramework/InputSettings.h"
 #include "Quests/RPGQuest.h"
+#include "Widgets/Quests/RPGQuestLogEntryWidget.h"
+#include "Widgets/Quests/RPGQuestObjectiveItemWidget.h"
 
 void URPGQuestLogWidget::NativeConstruct()
 {
@@ -38,18 +41,35 @@ void URPGQuestLogWidget::OnActiveQuestChanged()
 	ObjectiveList->ClearChildren();
 
 	const ARPGPlayerCharacter* RPGCharacter = Cast<ARPGPlayerCharacter>(GetOwningPlayerPawn());
-	if (RPGCharacter)
+	if (!RPGCharacter)
 	{
-		ActiveQuest = RPGCharacter->GetQuestLogComponent()->GetCurrentActiveQuest();
-		if (ActiveQuest)
+		return;
+	}
+
+	ActiveQuest = RPGCharacter->GetQuestLogComponent()->GetCurrentActiveQuest();
+	if (!ActiveQuest)
+	{
+		return;
+	}
+	
+	for (FObjectiveData Objective : ActiveQuest->GetObjectives())
+	{
+		// TODO: Retest the condition since I don't really understand why Collect type can be shown while completed 
+		if (Objective.bCanBeCompleted || (Objective.Type == OT_Collect && Objective.bCompleted))
 		{
-			for (auto Objective : ActiveQuest->GetObjectives())
+			URPGQuestObjectiveItemWidget* ObjectiveItemWidget = Cast<URPGQuestObjectiveItemWidget>(CreateWidget(GetWorld(), ObjectiveItemClass));
+			if (ObjectiveItemWidget)
 			{
-				if (Objective.bCanBeCompleted || (Objective.Type == OT_Collect && Objective.bCompleted))
-				{
-					// TODO: Spawn QuestObjectiveItemWidget
-				}
+				// TODO: Remove this since we probably don't need this
+				// ObjectiveItemWidget->ObjectiveText = Objective.Description;
+				// ObjectiveItemWidget->bCompleted = Objective.bCompleted;
+				ObjectiveItemWidget->Objective = Objective;
+
+				ObjectiveList->AddChild(ObjectiveItemWidget);
 			}
+
+			// TODO: Should it really be here and not after the loop?
+			RewardBox->SetVisibility(ActiveQuest ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 		}
 	}
 }
@@ -61,9 +81,29 @@ void URPGQuestLogWidget::RefreshQuestLogUI()
 	{
 		PlayerQuestLog = RPGCharacter->GetQuestLogComponent();
 	}
+	
+	for (ARPGQuest* Quest : PlayerQuestLog->GetActiveQuests())
+	{
+		if (Quest)
+		{
+			URPGQuestLogEntryWidget* QuestLogEntryWidget = CreateWidget<URPGQuestLogEntryWidget>(GetWorld(), QuestLogEntryWidgetClass);
+			if (QuestLogEntryWidget)
+			{
+				QuestLogEntryWidget->Quest = Quest;
+				Quest->QuestLogEntryRef = QuestLogEntryWidget;
 
-	// TODO: QuestLogEntryWidget creation for each loop
-
+				if (Quest->bStoryQuest)
+				{
+					StoryQuestList->AddChild(QuestLogEntryWidget);
+				}
+				else
+				{
+					SideQuestList->AddChild(QuestLogEntryWidget);
+				}
+			}
+		}
+	}
+	
 	OnActiveQuestChanged();
 	PlayConstructionFX();
 }

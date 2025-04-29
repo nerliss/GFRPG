@@ -6,6 +6,9 @@
 #include "Blueprint/UserWidget.h"
 #include "RPGQuestLogWidget.generated.h"
 
+class URPGQuestLogEntryWidget;
+class UVerticalBox;
+class URPGQuestObjectiveItemWidget;
 class UScrollBox;
 class URPGQuestLogComponent;
 class ARPGQuest;
@@ -29,12 +32,27 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget), Category = "Quest")
 	UScrollBox* ObjectiveList;
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget), Category = "Quest")
+	UScrollBox* StoryQuestList;
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget), Category = "Quest")
+	UScrollBox* SideQuestList;
+	
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget), Category = "Quest")
+	UVerticalBox* RewardBox; 
 	
 	UPROPERTY(BlueprintReadOnly, Category = "Quest")
 	URPGQuestLogComponent* PlayerQuestLog;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Quest")
 	ARPGQuest* ActiveQuest;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Quest")
+	TSubclassOf<URPGQuestObjectiveItemWidget> ObjectiveItemClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Quest")
+	TSubclassOf<URPGQuestLogEntryWidget> QuestLogEntryWidgetClass;
 
 private:
 

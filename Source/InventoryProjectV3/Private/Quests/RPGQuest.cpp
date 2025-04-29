@@ -27,7 +27,7 @@ ARPGQuest::ARPGQuest()
 	XPRewardMultiplier = 1.f;
 	MoneyReward = 1.f;
 	TurnInText = FText::FromString("Turn In Text");
-	QuestLogWidget = nullptr;
+	QuestLogEntryRef = nullptr;
 	Prerequisite = nullptr;
 	QuestGiver = nullptr;
 	bCanBeTurnedInToSomeoneElse = false;

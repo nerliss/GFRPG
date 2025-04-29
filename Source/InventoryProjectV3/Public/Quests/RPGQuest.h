@@ -6,11 +6,11 @@
 #include "GameFramework/Actor.h"
 #include "RPGQuest.generated.h"
 
+class URPGQuestLogEntryWidget;
 class ARPGPlayer_Controller;
 class ARPGQuestMarkerLocation;
 class ARPGItem_Base;
 class ARPGCharacter;
-class URPGQuestLogWidget;
 
 UENUM(Blueprintable, BlueprintType)
 enum EObjectiveType
@@ -96,10 +96,30 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Quest")
 	FOnEnemyKilled OnEnemyKilled;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
+	bool bStoryQuest;
+	
+	UPROPERTY(BlueprintReadOnly, Category = "Quest")
+	URPGQuestLogEntryWidget* QuestLogEntryRef;
+	
 protected:
 
 	virtual void BeginPlay() override;
 
+	UFUNCTION()
+	void CheckInteractionObjective(AActor* InteractionTarget);
+
+	UFUNCTION()
+	void CheckLocationObjective(ARPGQuestMarkerLocation* LocationTarget);
+
+	UFUNCTION()
+	void CheckItemObjective(ARPGItem_Base* ItemTarget);
+
+	UFUNCTION()
+	void CheckKillObjective(ARPGCharacter* KillTarget);
+
+	void MakeNearestObjectiveAvailable(int32 ObjectiveIndex);
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
 	FText Name;
 
@@ -108,9 +128,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
 	TArray <FObjectiveData> Objectives;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
-	bool bStoryQuest;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Quest")
 	bool bCompleted;
@@ -130,9 +147,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
 	FText TurnInText;
-	
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Quest")
-	URPGQuestLogWidget* QuestLogWidget;
 
 	// TODO: Maybe use TSubclassOf<ARPGQuest> or TSoftObjectPtr/TSoftClassPtr?
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
@@ -156,20 +170,6 @@ protected:
 	// TODO: Not sure about soft obj
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
 	TSoftObjectPtr<ARPGPlayer_Controller> PCRef;
-
-	UFUNCTION()
-	void CheckInteractionObjective(AActor* InteractionTarget);
-
-	UFUNCTION()
-	void CheckLocationObjective(ARPGQuestMarkerLocation* LocationTarget);
-
-	UFUNCTION()
-	void CheckItemObjective(ARPGItem_Base* ItemTarget);
-
-	UFUNCTION()
-	void CheckKillObjective(ARPGCharacter* KillTarget);
-
-	void MakeNearestObjectiveAvailable(int32 ObjectiveIndex);
 
 private:
 

@@ -16,6 +16,17 @@ UCLASS()
 class INVENTORYPROJECTV3_API URPGQuestObjectiveItemWidget : public UUserWidget
 {
 	GENERATED_BODY()
+
+public:
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Quest")
+	FObjectiveData Objective;
+	
+	// TODO: Remove this since we can directly access the text from Objective above
+	// UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Quest")
+	// bool bCompleted;
+	// UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Quest")
+	// FText ObjectiveText;
 	
 protected:
 
@@ -31,14 +42,11 @@ protected:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Quest")
 	UTextBlock* ObjectiveTrackerText;
-	
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Quest")
-	FObjectiveData Objective;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Quest")
-	bool bCompleted;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
+	FSlateColor CompleteColor;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Quest")
-	FText ObjectiveText;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
+	FSlateColor ActiveColor;
 	
 };

@@ -13,14 +13,13 @@ void URPGQuestObjectiveItemWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	if (bCompleted)
-	{
-		// TODO: Change text color to grey
-	}
-	else
-	{
-		// TODO: Change text color to white
-	}
+	// TODO: Replace with string table entity for future localization
+	const FText StatusText = Objective.bCompleted ? FText::FromString("Completed: ") : FText::FromString("- ");
+	ObjectiveStatusText->SetText(StatusText);
+	ObjectiveStatusText->SetColorAndOpacity(Objective.bCompleted ? CompleteColor : ActiveColor);
+	ObjectiveTrackerText->SetColorAndOpacity(Objective.bCompleted ? CompleteColor : ActiveColor);
+	ObjectiveDescriptionText->SetColorAndOpacity(Objective.bCompleted ? CompleteColor : ActiveColor);
+	ObjectiveDescriptionText->SetText(Objective.Description);
 
 	UpdateTrackerData();
 }
@@ -38,7 +37,9 @@ void URPGQuestObjectiveItemWidget::UpdateTrackerData()
 	case OT_Max:
 	case OT_Location:
 	case OT_Interact:
-		ObjectiveTrackerText->SetText(FText::GetEmpty());
+		{
+			ObjectiveTrackerText->SetText(FText::GetEmpty());
+		}
 		break;
 	case OT_Collect:
 		{

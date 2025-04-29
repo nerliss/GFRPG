@@ -1,4 +1,4 @@
-// Oleksandr Tkachov 2022-2024
+// Oleksandr Tkachov 2022-2025
 
 #pragma once
 
@@ -14,38 +14,38 @@ class INVENTORYPROJECTV3_API ARPGPlayer_Controller : public APlayerController
 {
 	GENERATED_BODY()
 
+public:
+	
 	ARPGPlayer_Controller();
 
+	UFUNCTION(BlueprintCallable)
+	URPGHUD_Widget* GetHUDWidget() const;
+
+	/* Sets input mode game only and hides cursor */
+	void SetDefaultInputMode();
+
+	/* Sets input mode UI only and shows cursor */
+	void SetUIInputMode();
+	
 protected:
 
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 
-private:
+	void SpawnPhotoModePawn();
+	void DespawnPhotoModePawn();
 
-	/* Create HUD widget */
-	void InitializeHUDWidget();
-
-protected:
-
-	// MyTODO: Move to a config or something
+	/* Spawns and possesses photo mode pawn if not in photo mode already, despawns and unpossesses otherwise */
+	UFUNCTION(BlueprintCallable, Category = "PhotoMode")
+	void TogglePhotoMode();
+	
+	// TODO: Move to a config or something
 	/* HUD class */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "HUD Widget")
 	TSubclassOf<UUserWidget> MainHUDWidgetClass;
 
 	UPROPERTY(BlueprintReadOnly, Category = "HUD Widget")
 	URPGHUD_Widget* MainHUDWidget;
-
-public:
-
-	UFUNCTION(BlueprintCallable)
-	URPGHUD_Widget* GetHUDWidget() const;
-
-protected:
-
-	/************************************************************************/
-	/*                              Photo mode                              */
-	/************************************************************************/
 
 	/* Photo mode pawn to spawn */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "PhotoMode")
@@ -56,12 +56,9 @@ protected:
 
 	UPROPERTY()
 	APawn* OriginalPlayerPawn;
+	
+private:
 
-	void SpawnPhotoModePawn();
-	void DespawnPhotoModePawn();
-
-	/* Spawns and possesses photo mode pawn if not in photo mode already, despawns and unpossesses otherwise */
-	UFUNCTION(BlueprintCallable, Category = "PhotoMode")
-	void TogglePhotoMode();
-
+	/* Create HUD widget */
+	void InitializeHUDWidget();
 };

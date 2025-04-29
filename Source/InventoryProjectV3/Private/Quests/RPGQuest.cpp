@@ -11,6 +11,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Quests/RPGQuestMarkerLocation.h"
 #include "Utility/LogDefinitions.h"
+#include "Widgets/Quests/RPGQuestLogWidget.h"
 
 ARPGQuest::ARPGQuest()
 {
@@ -26,6 +27,7 @@ ARPGQuest::ARPGQuest()
 	XPRewardMultiplier = 1.f;
 	MoneyReward = 1.f;
 	TurnInText = FText::FromString("Turn In Text");
+	QuestLogWidget = nullptr;
 	Prerequisite = nullptr;
 	QuestGiver = nullptr;
 	bCanBeTurnedInToSomeoneElse = false;
@@ -167,12 +169,9 @@ void ARPGQuest::MakeNearestObjectiveAvailable(int32 ObjectiveIndex)
 
 	if (bObjectiveFound)
 	{
-		// TODO: It seems it can be replace with simple array index access, without creating a copy and then replacing the index
-		FObjectiveData UpdatedObjective = Objectives[NearestIncompleteObjectiveIndex];
-		UpdatedObjective.bCanBeCompleted = true;
-		Objectives[NearestIncompleteObjectiveIndex] = UpdatedObjective;
+		Objectives[NearestIncompleteObjectiveIndex].bCanBeCompleted = true;
 
-		UE_LOG(LogQuests, Verbose, TEXT("[ARPGQuest::MakeNearestObjectiveAvailable] Objective %s is now active"), *GetNameSafe(UpdatedObjective.Target.Get()));
+		UE_LOG(LogQuests, Verbose, TEXT("[ARPGQuest::MakeNearestObjectiveAvailable] Objective %s is now active"), *GetNameSafe(Objectives[NearestIncompleteObjectiveIndex].Target.Get()));
 
 		const ARPGItem_Base* ObjectiveItem = Cast<ARPGItem_Base>(Objectives[NearestIncompleteObjectiveIndex].Target.Get());
 		if (ObjectiveItem)

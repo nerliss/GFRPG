@@ -11,15 +11,33 @@
 
 ARPGPlayer_Controller::ARPGPlayer_Controller()
 {
-	// Widgets
-	// Find the HUD widget class
 	//static ConstructorHelpers::FClassFinder<UUserWidget> MainHUDObject(TEXT("/Game/InventoryProject/Core/UI/WBP_HUD_Cpp"));
 	//MainHUDWidgetClass = MainHUDObject.Class;
 	MainHUDWidget = nullptr;
 
-	// Photo mode
 	OriginalPlayerPawn = nullptr;
 	PhotoModePawn = nullptr;
+}
+
+URPGHUD_Widget* ARPGPlayer_Controller::GetHUDWidget() const
+{
+	return MainHUDWidget;
+}
+
+void ARPGPlayer_Controller::SetDefaultInputMode()
+{
+	const FInputModeGameOnly InputMode;
+	SetInputMode(InputMode);
+	
+	bShowMouseCursor = false;
+}
+
+void ARPGPlayer_Controller::SetUIInputMode()
+{
+	const FInputModeUIOnly InputMode;
+	SetInputMode(InputMode);
+	
+	bShowMouseCursor = true;
 }
 
 void ARPGPlayer_Controller::BeginPlay()
@@ -28,7 +46,6 @@ void ARPGPlayer_Controller::BeginPlay()
 
 	InitializeHUDWidget();
 
-	// Save reference to the original player pawn
 	OriginalPlayerPawn = GetPawn();
 }
 
@@ -67,11 +84,6 @@ void ARPGPlayer_Controller::InitializeHUDWidget()
 	bShowMouseCursor = false;
 
 	UE_LOG(LogRPGUIHUD, Verbose, TEXT("[ARPGPlayer_Controller::InitializeHUDWidget] HUD Widget successfuly initialized!"));
-}
-
-URPGHUD_Widget* ARPGPlayer_Controller::GetHUDWidget() const
-{
-	return MainHUDWidget;
 }
 
 void ARPGPlayer_Controller::SpawnPhotoModePawn()

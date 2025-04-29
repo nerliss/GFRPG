@@ -9,6 +9,7 @@
 
 class ARPGCharacter;
 class ARPGQuest;
+class URPGQuestLogWidget;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class INVENTORYPROJECTV3_API URPGQuestLogComponent : public UActorComponent
@@ -53,8 +54,12 @@ protected:
 	UPROPERTY(BlueprintReadWrite, Category = "Quest")
 	ARPGQuest* CurrentActiveQuest;
 
-	// QuestLogRef
-
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
+	TSubclassOf<URPGQuestLogWidget> QuestLogWidgetClass;
+	
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Quest")
+	URPGQuestLogWidget* QuestLogWidget;
+	
 	UPROPERTY(BlueprintReadOnly, Category = "Quest")
 	ARPGCharacter* PlayerRef;
 

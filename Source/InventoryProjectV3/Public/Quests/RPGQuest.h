@@ -10,6 +10,7 @@ class ARPGPlayer_Controller;
 class ARPGQuestMarkerLocation;
 class ARPGItem_Base;
 class ARPGCharacter;
+class URPGQuestLogWidget;
 
 UENUM(Blueprintable, BlueprintType)
 enum EObjectiveType
@@ -68,7 +69,7 @@ class INVENTORYPROJECTV3_API ARPGQuest : public AActor
 public:
 
 	ARPGQuest();
-
+	
 	TArray <FObjectiveData> GetObjectives() const { return Objectives; }
 
 	bool GetActiveObjective(int32& ObjectiveIndex, FObjectiveData& Objective) const;
@@ -109,10 +110,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
 	bool bStoryQuest;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
+	UPROPERTY(BlueprintReadOnly, Category = "Quest")
 	bool bCompleted;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
+	UPROPERTY(BlueprintReadOnly, Category = "Quest")
 	int32 KillCountCurrent;
 
 	// TODO: Next bottom three should be a struct called QuestRewards or something. Could also include some Item rewards or any other custom reward
@@ -127,8 +128,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
 	FText TurnInText;
-
-	// QuestLogEntryRef - TODO: Requires Widget C++ Class
+	
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Quest")
+	URPGQuestLogWidget* QuestLogWidget;
 
 	// TODO: Maybe use TSubclassOf<ARPGQuest> or TSoftObjectPtr/TSoftClassPtr?
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")

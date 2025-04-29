@@ -4,8 +4,10 @@
 #include "Components/RPGQuestLogComponent.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "PlayerController/RPGPlayer_Controller.h"
 #include "Quests/RPGQuest.h"
 #include "Utility/LogDefinitions.h"
+#include "Widgets/Quests/RPGQuestLogWidget.h"
 
 URPGQuestLogComponent::URPGQuestLogComponent()
 {
@@ -14,6 +16,8 @@ URPGQuestLogComponent::URPGQuestLogComponent()
 	ActiveQuests.Empty();
 	CompleteQuests.Empty();
 	CurrentActiveQuest = nullptr;
+	QuestLogWidgetClass = nullptr;
+	QuestLogWidget = nullptr;
 	PlayerRef = nullptr;
 }
 
@@ -33,7 +37,10 @@ void URPGQuestLogComponent::SetActiveQuest(ARPGQuest* Quest, bool bPlaySound)
 
 	// TODO: WBP_Quest_HUD_Objectives::Update Objectives List - to be implemented
 
-	// TODO: WBP_Quest_Log::OnActiveQuestChanged - to be implemented
+	if (QuestLogWidget)
+	{
+		QuestLogWidget->OnActiveQuestChanged();
+	}
 
 	CheckPlayerInventory(Quest);
 	MarkQuestComplete(Quest->GetClass());
@@ -76,7 +83,27 @@ void URPGQuestLogComponent::CheckPlayerInventory(ARPGQuest* Quest)
 
 void URPGQuestLogComponent::ToggleQuestLog()
 {
-	// TODO: Move from BP - Requires QuestLogRef creation
+	ARPGPlayer_Controller* RPGPlayerController = Cast<ARPGPlayer_Controller>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	ensure(RPGPlayerController);
+	
+	if (QuestLogWidget)
+	{
+		QuestLogWidget->RemoveFromParent();
+		QuestLogWidget = nullptr;
+
+		RPGPlayerController->SetDefaultInputMode();
+		return;
+	}
+
+	QuestLogWidget = Cast<URPGQuestLogWidget>(CreateWidget(GetWorld(), QuestLogWidgetClass));
+	if (!QuestLogWidget)
+	{
+		UE_LOG(LogQuests, Error, TEXT("[URPGQuestLogComponent::ToggleQuestLog] QuestLogWidget was not created, probably because QuestLogWidgetClass is nullptr"));
+	}
+
+	QuestLogWidget->AddToViewport();
+
+	RPGPlayerController->SetUIInputMode();
 }
 
 bool URPGQuestLogComponent::MarkQuestComplete(TSubclassOf<ARPGQuest> QuestClass) const

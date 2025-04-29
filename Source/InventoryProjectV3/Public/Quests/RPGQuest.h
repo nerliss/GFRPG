@@ -72,10 +72,12 @@ public:
 	
 	TArray <FObjectiveData> GetObjectives() const { return Objectives; }
 
+	int32 GetKillCountCurrent() const { return KillCountCurrent; }
+	
 	bool GetActiveObjective(int32& ObjectiveIndex, FObjectiveData& Objective) const;
 
 	bool GetNextObjective(int32& ObjectiveIndex, FObjectiveData& Objective) const;
-
+	
 	/* In BP version this was called when player gained new level to adjust XP reward for the new level thus making quests always relevant
 	 * TODO: Review this logic and adjust - change it to delegates or something (because this is called in Player Character class when player levels up)
 	 */

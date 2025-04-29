@@ -37,7 +37,7 @@ void URPGQuestLogWidget::OnActiveQuestChanged()
 {
 	ObjectiveList->ClearChildren();
 
-	const auto RPGCharacter = Cast<ARPGPlayerCharacter>(GetOwningPlayerPawn());
+	const ARPGPlayerCharacter* RPGCharacter = Cast<ARPGPlayerCharacter>(GetOwningPlayerPawn());
 	if (RPGCharacter)
 	{
 		ActiveQuest = RPGCharacter->GetQuestLogComponent()->GetCurrentActiveQuest();
@@ -56,7 +56,7 @@ void URPGQuestLogWidget::OnActiveQuestChanged()
 
 void URPGQuestLogWidget::RefreshQuestLogUI()
 {
-	const auto RPGCharacter = Cast<ARPGPlayerCharacter>(GetOwningPlayerPawn());
+	const ARPGPlayerCharacter* RPGCharacter = Cast<ARPGPlayerCharacter>(GetOwningPlayerPawn());
 	if (RPGCharacter)
 	{
 		PlayerQuestLog = RPGCharacter->GetQuestLogComponent();

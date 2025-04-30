@@ -7,6 +7,9 @@
 #include "RPGQuestLogEntryWidget.generated.h"
 
 class ARPGQuest;
+class USlateBrushAsset;
+class UButton;
+class UBorder;
 
 /**
  * 
@@ -20,5 +23,26 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Quest")
 	ARPGQuest* Quest;
+
+protected:
+
+	virtual void NativeConstruct() override;
+
+	UFUNCTION()
+	void OnEntryButtonClicked();
+	
+	FSlateBrush GetBorderStatus() const;
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget), Category = "Quest")
+	UBorder* EntryBorder;
+	
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget), Category = "Quest")
+	UButton* EntryButton;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Quest")
+	USlateBrushAsset* ActiveSlateBrush;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Quest")
+	USlateBrushAsset* InactiveSlateBrush;
 	
 };

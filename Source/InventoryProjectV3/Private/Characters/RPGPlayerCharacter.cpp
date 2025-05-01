@@ -15,6 +15,7 @@
 #include "AkComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
+#include "Components/RPGQuestLogComponent.h"
 #include "Widgets/RPGHUD_Widget.h"
 #include "Utility/Utility.h"
 #include "Utility/LogDefinitions.h"
@@ -116,6 +117,7 @@ void ARPGPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	PlayerInputComponent->BindAction("SwitchPOV", IE_Pressed, this, &ARPGPlayerCharacter::OnPOVSwitched);
 	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &ARPGPlayerCharacter::OnInteractPressed);
 	PlayerInputComponent->BindAction("Inventory", IE_Pressed, this, &ARPGPlayerCharacter::OnInventoryToggled);
+	PlayerInputComponent->BindAction("ToggleQuestLog", IE_Pressed, this, &ARPGPlayerCharacter::OnQuestLogToggled);
 	PlayerInputComponent->BindAction("StealthToggle", IE_Pressed, this, &ARPGPlayerCharacter::OnStealthPressed);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &ARPGPlayerCharacter::OnForwardMoved);
@@ -458,6 +460,11 @@ void ARPGPlayerCharacter::OnInteractPressed()
 void ARPGPlayerCharacter::OnInventoryToggled()
 {
 	GetInventoryComponent()->ToggleInventory();
+}
+
+void ARPGPlayerCharacter::OnQuestLogToggled()
+{
+	GetQuestLogComponent()->ToggleQuestLog();
 }
 
 void ARPGPlayerCharacter::LoadLastCharacterModel()

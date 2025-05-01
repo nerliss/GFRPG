@@ -28,6 +28,8 @@ public:
 
 	URPGQuestLogComponent* GetQuestLogComponent() const { return QuestLogComponent; }
 
+	FText GetCharacterName() const { return CharacterName; }
+	
 protected:
 
 	virtual void BeginPlay() override;

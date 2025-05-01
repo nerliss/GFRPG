@@ -223,12 +223,12 @@ protected:
 	
 	AActor* TraceForInteractableObjects(const float InTraceLength);
 
-	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void OnInventoryToggled();
-
+	void OnQuestLogToggled();
+	
 	void LoadLastCharacterModel();
 
-	// MyTODO: Move to RPGGameStatics or something
+	// TODO: Move to RPGGameStatics or something
 	UFUNCTION(BlueprintGetter, Category = "Misc")
 	URPGGameInstanceBase* GetRPGGameInstance() const;
 

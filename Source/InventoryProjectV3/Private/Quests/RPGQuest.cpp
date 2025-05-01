@@ -17,6 +17,10 @@ ARPGQuest::ARPGQuest()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
+	QuestMarkComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("QuestMarkComponent"));
+	QuestMarkComponent->SetupAttachment(RootComponent);
+	QuestMarkComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	
 	Name = FText::FromString("Quest Name");
 	Description = FText::FromString("Quest Description");
 	Objectives.Empty();

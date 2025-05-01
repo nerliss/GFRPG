@@ -85,6 +85,7 @@ void URPGQuestLogComponent::ToggleQuestLog()
 {
 	ARPGPlayer_Controller* RPGPlayerController = Cast<ARPGPlayer_Controller>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	ensure(RPGPlayerController);
+	check(QuestLogWidgetClass);
 	
 	if (QuestLogWidget)
 	{
@@ -102,6 +103,7 @@ void URPGQuestLogComponent::ToggleQuestLog()
 	}
 
 	QuestLogWidget->AddToViewport();
+	QuestLogWidget->SetFocus();
 
 	RPGPlayerController->SetUIInputMode();
 }

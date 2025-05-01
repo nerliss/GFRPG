@@ -11,6 +11,7 @@ class ARPGPlayer_Controller;
 class ARPGQuestMarkerLocation;
 class ARPGItem_Base;
 class ARPGCharacter;
+class UStaticMeshComponent;
 
 UENUM(Blueprintable, BlueprintType)
 enum EObjectiveType
@@ -77,6 +78,8 @@ public:
 	bool GetActiveObjective(int32& ObjectiveIndex, FObjectiveData& Objective) const;
 
 	bool GetNextObjective(int32& ObjectiveIndex, FObjectiveData& Objective) const;
+
+	FText GetQuestName() const { return Name; }
 	
 	/* In BP version this was called when player gained new level to adjust XP reward for the new level thus making quests always relevant
 	 * TODO: Review this logic and adjust - change it to delegates or something (because this is called in Player Character class when player levels up)
@@ -98,6 +101,16 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
 	bool bStoryQuest;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
+	bool bCanBeTurnedInToSomeoneElse;
+
+	// TODO: Probably should only be available if bCanBeTurnedInToSomeoneElse is true. Also set this to autofill with QuestGiver if set to false
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
+	TSoftObjectPtr<AActor> QuestTurnInTarget;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
+	TSoftObjectPtr<AActor> QuestGiver;
 	
 	UPROPERTY(BlueprintReadOnly, Category = "Quest")
 	URPGQuestLogEntryWidget* QuestLogEntryRef;
@@ -119,6 +132,9 @@ protected:
 	void CheckKillObjective(ARPGCharacter* KillTarget);
 
 	void MakeNearestObjectiveAvailable(int32 ObjectiveIndex);
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Quest")
+	UStaticMeshComponent* QuestMarkComponent;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
 	FText Name;
@@ -126,7 +142,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
 	FText Description;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Quest")
 	TArray <FObjectiveData> Objectives;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Quest")
@@ -151,16 +167,6 @@ protected:
 	// TODO: Maybe use TSubclassOf<ARPGQuest> or TSoftObjectPtr/TSoftClassPtr?
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
 	ARPGQuest* Prerequisite;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
-	TSoftObjectPtr<AActor> QuestGiver;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
-	bool bCanBeTurnedInToSomeoneElse;
-
-	// TODO: Probably should only be available if bCanBeTurnedInToSomeoneElse is true. Also set this to autofill with QuestGiver if set to false
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
-	TSoftObjectPtr<AActor> QuestTurnInTarget;
 
 	// TODO: Never used these two below, probably will not use, so remove later
 	// TODO: Not sure if this is supposed to be a soft obj since player is always loaded

@@ -17,6 +17,8 @@ void URPGQuestLogWidget::NativeConstruct()
 	Super::NativeConstruct();
 
 	RefreshQuestLogUI();
+
+	// TODO: Check Abandon Quest Button visibility (if abandon feature is present at all)
 }
 
 FReply URPGQuestLogWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)

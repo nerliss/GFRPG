@@ -6,6 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "RPGQuestDialogBoxWidget.generated.h"
 
+class ARPGQuest;
+
 /**
  * 
  */
@@ -17,5 +19,17 @@ class INVENTORYPROJECTV3_API URPGQuestDialogBoxWidget : public UUserWidget
 protected:
 
 	virtual void NativeConstruct() override;
+
+	bool CheckPlayerInventory() const;
+
+	void RemoveQuestItemsFromInventory();
+	
+	void OnTurnedInClicked();
+	void OnAcceptClicked();
+
+	void RemoveWidget();
+	
+	UPROPERTY(BlueprintReadOnly, Category = "Quest")
+	ARPGQuest* Quest;
 	
 };

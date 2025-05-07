@@ -190,6 +190,16 @@ bool URPGInventory_Component::QueryInventory(TSubclassOf<ARPGItem_Base> QueryIte
 	return false;
 }
 
+void URPGInventory_Component::RemoveItem(TSubclassOf<ARPGItem_Base> ItemToRemove, int32 AmountToRemove)
+{
+	int32 FirstItemInstance = 0;
+	int32 ItemsAmount = 0;
+	if (QueryInventory(ItemToRemove, AmountToRemove, FirstItemInstance, ItemsAmount))
+	{
+		Inventory[FirstItemInstance].Quantity -= AmountToRemove;
+	}
+}
+
 #if !UE_BUILD_SHIPPING
 void URPGInventory_Component::DebugPrintInventory()
 {
@@ -201,7 +211,6 @@ void URPGInventory_Component::DebugPrintInventory()
 	auto* PlayerController = GetOwner()->GetInstigatorController();
 	if (!PlayerController)
 	{
-		// Inventory owner is not a player
 		return;
 	}
 

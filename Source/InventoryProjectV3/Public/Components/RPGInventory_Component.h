@@ -33,6 +33,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	bool QueryInventory(TSubclassOf<ARPGItem_Base> QueryItem, int32 QueryAmount, int32& FirstItemInstance, int32& ItemsAmount) const;
 
+	void RemoveItem(TSubclassOf<ARPGItem_Base> ItemToRemove, int32 AmountToRemove);
+	
 #if !UE_BUILD_SHIPPING
 	void DebugPrintInventory();
 #endif

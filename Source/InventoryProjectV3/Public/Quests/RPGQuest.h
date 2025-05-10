@@ -80,12 +80,16 @@ public:
 	bool GetNextObjective(int32& ObjectiveIndex, FObjectiveData& Objective) const;
 
 	FText GetQuestName() const { return Name; }
+
+	float GetXPReward() const { return XPReward; }
 	
 	/* In BP version this was called when player gained new level to adjust XP reward for the new level thus making quests always relevant
 	 * TODO: Review this logic and adjust - change it to delegates or something (because this is called in Player Character class when player levels up)
 	 */
 	void CalculateXP();
 
+	void OnQuestCompeted();
+	
 	// TODO: Check blueprint access specifiers - may be we don't need any
 	UPROPERTY(EditDefaultsOnly, BlueprintAssignable, Category = "Quest")
 	FOnTargetInteracted OnTargetInteracted;
@@ -105,6 +109,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
 	bool bCanBeTurnedInToSomeoneElse;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Quest")
+	bool bCompleted;
+	
 	// TODO: Probably should only be available if bCanBeTurnedInToSomeoneElse is true. Also set this to autofill with QuestGiver if set to false
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
 	TSoftObjectPtr<AActor> QuestTurnInTarget;
@@ -144,9 +151,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Quest")
 	TArray <FObjectiveData> Objectives;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Quest")
-	bool bCompleted;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Quest")
 	int32 KillCountCurrent;

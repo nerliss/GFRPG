@@ -35,7 +35,7 @@ void URPGQuestLogEntryWidget::OnEntryButtonClicked()
 
 	if (RPGPlayer->GetQuestLogComponent()->GetCurrentActiveQuest() == Quest)
 	{
-		RPGPlayer->GetQuestLogComponent()->SetActiveQuest(Quest, false);
+		RPGPlayer->GetQuestLogComponent()->SetActiveQuest(Quest);
 		
 		// TODO: Post AK Button Click sound
 	}

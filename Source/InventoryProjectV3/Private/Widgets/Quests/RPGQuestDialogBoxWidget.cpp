@@ -6,6 +6,7 @@
 #include "Characters/RPGPlayerCharacter.h"
 #include "Components/RPGInventory_Component.h"
 #include "Components/RPGQuestLogComponent.h"
+#include "Components/RPGXP_Component.h"
 #include "Items/RPGItem_Base.h"
 #include "PlayerController/RPGPlayer_Controller.h"
 #include "Quests/RPGQuest.h"
@@ -82,7 +83,47 @@ void URPGQuestDialogBoxWidget::OnTurnedInClicked()
 	{
 		return;
 	}
+
+	const ARPGPlayer_Controller* RPGPC = Cast<ARPGPlayer_Controller>(GetOwningPlayer());
+	if (!RPGPC)
+	{
+		return;
+	}
 	
+	const URPGHUD_Widget* HUDWidget = Cast<URPGHUD_Widget>(RPGPC->GetHUDWidget());
+	if (!HUDWidget)
+	{
+		return;
+	}
+	
+	const ARPGPlayerCharacter* PlayerCharacter = Cast<ARPGPlayerCharacter>(GetOwningPlayerPawn());
+	if (!PlayerCharacter)
+	{
+		return;
+	}
+
+	URPGQuestLogComponent* QuestLog = PlayerCharacter->GetQuestLogComponent();
+	if (!QuestLog)
+	{
+		return;
+	}
+	
+	Quest->OnQuestCompeted();
+	
+	PlayerCharacter->XPComp->AddXP(Quest->GetXPReward());
+	// TODO: Add money reward
+	QuestLog->DeleteQuest(Quest);
+
+	// TODO: Post sound
+	
+	RemoveQuestItemsFromInventory();
+
+	if (QuestLog->GetCurrentActiveQuest() == Quest || QuestLog->GetActiveQuests().IsEmpty())
+	{
+		// TODO: Set QuestName text to empty in HUDWidget->QuestHUDObjectives->QuestName
+	}
+
+	RemoveWidget();
 }
 
 void URPGQuestDialogBoxWidget::OnAcceptClicked()
@@ -108,7 +149,7 @@ void URPGQuestDialogBoxWidget::OnAcceptClicked()
 	if (!CompletedQuests.Find(Quest) && !ActiveQuests.Find(Quest))
 	{
 		PlayerCharacter->GetQuestLogComponent()->AddQuest(Quest);
-		PlayerCharacter->GetQuestLogComponent()->SetActiveQuest(Quest, false);
+		PlayerCharacter->GetQuestLogComponent()->SetActiveQuest(Quest);
 		// TODO: Play accept quest sound
 		RemoveWidget();
 	}

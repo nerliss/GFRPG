@@ -26,7 +26,7 @@ public:
 
 	ARPGQuest* GetCurrentActiveQuest() const { return CurrentActiveQuest; }
 
-	void SetActiveQuest(ARPGQuest* Quest, bool bPlaySound);
+	void SetActiveQuest(ARPGQuest* Quest, bool bPlaySound = false);
 
 	void AddQuest(ARPGQuest* Quest);
 
@@ -37,6 +37,8 @@ public:
 	void CheckPlayerInventory(ARPGQuest* Quest);
 
 	bool MarkQuestComplete(TSubclassOf<ARPGQuest> QuestClass) const;
+
+	void DeleteQuest (ARPGQuest* Quest, bool bAbandonQuest = false);
 
 	void ToggleQuestLog();
 	

@@ -263,6 +263,13 @@ void ARPGQuest::CalculateXP()
 	UE_LOG(LogQuests, Verbose, TEXT("[ARPGQuest::CalculateXP] Quest %s (object %s) now has updated XP Reward: %f"), *Name.ToString(), *GetName(), XPReward);
 }
 
+void ARPGQuest::OnQuestCompeted()
+{
+	bCompleted = true;
+
+	// TODO: Decide if quest mark is present and update its visibility here
+}
+
 void ARPGQuest::UpdateUI(bool bNeedsUIUpdate)
 {
 	if (!bNeedsUIUpdate)

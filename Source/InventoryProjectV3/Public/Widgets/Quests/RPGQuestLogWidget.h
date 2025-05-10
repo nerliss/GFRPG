@@ -24,14 +24,6 @@ class INVENTORYPROJECTV3_API URPGQuestLogWidget : public UUserWidget
 public:
 
 	void OnActiveQuestChanged();
-	
-protected:
-
-	virtual void NativeConstruct() override;
-	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
-
-	UPROPERTY(BlueprintReadOnly, meta = (BindWidget), Category = "Quest")
-	UScrollBox* ObjectiveList;
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget), Category = "Quest")
 	UScrollBox* StoryQuestList;
@@ -40,13 +32,24 @@ protected:
 	UScrollBox* SideQuestList;
 	
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget), Category = "Quest")
+	UVerticalBox* QuestInfoBox;
+	
+	UPROPERTY(BlueprintReadOnly, Category = "Quest")
+	ARPGQuest* ActiveQuest;
+	
+protected:
+
+	virtual void NativeConstruct() override;
+	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget), Category = "Quest")
+	UScrollBox* ObjectiveList;
+	
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget), Category = "Quest")
 	UVerticalBox* RewardBox; 
 	
 	UPROPERTY(BlueprintReadOnly, Category = "Quest")
 	URPGQuestLogComponent* PlayerQuestLog;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Quest")
-	ARPGQuest* ActiveQuest;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Quest")
 	TSubclassOf<URPGQuestObjectiveItemWidget> ObjectiveItemClass;

@@ -190,6 +190,12 @@ bool URPGInventory_Component::QueryInventory(TSubclassOf<ARPGItem_Base> QueryIte
 	return false;
 }
 
+bool URPGInventory_Component::QueryInventory(TSubclassOf<ARPGItem_Base> QueryItem, int32 QueryAmount) const
+{
+	int32 TempA, TempB;
+	return QueryInventory(QueryItem, QueryAmount, TempA, TempB);
+}
+
 void URPGInventory_Component::RemoveItem(TSubclassOf<ARPGItem_Base> ItemToRemove, int32 AmountToRemove)
 {
 	int32 FirstItemInstance = 0;

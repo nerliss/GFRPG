@@ -3,8 +3,11 @@
 
 #include "Components/RPGQuestLogComponent.h"
 
+#include "Characters/RPGPlayerCharacter.h"
+#include "Components/RPGInventory_Component.h"
 #include "Components/ScrollBox.h"
 #include "Components/VerticalBox.h"
+#include "Items/RPGItem_Base.h"
 #include "Kismet/GameplayStatics.h"
 #include "PlayerController/RPGPlayer_Controller.h"
 #include "Quests/RPGQuest.h"
@@ -84,8 +87,55 @@ bool URPGQuestLogComponent::IsQuestComplete(TSubclassOf<ARPGQuest> QuestClass) c
 
 void URPGQuestLogComponent::CheckPlayerInventory(ARPGQuest* Quest)
 {
-	// TODO: Move from BP
+	if (!Quest)
+	{
+		return;
+	}
+
+	ARPGPlayerCharacter* PlayerCharacter = Cast<ARPGPlayerCharacter>(GetOuter()); // TODO: Check this getter
+	if (!PlayerCharacter)
+	{
+		return;
+	}
 	
+	TArray<FObjectiveData> ObjectiveElement;
+	TMap<int32, bool> IndicesOfSuccessfullyQuerriedObjectives;
+	
+	for (int i = 0; i < Quest->GetObjectives().Num(); i++)
+	{
+		const FObjectiveData Objective = Quest->GetObjectives()[i];
+		if (Objective.Type == OT_Collect)
+		{
+			const ARPGItem_Base* ObjectiveItem = Cast<ARPGItem_Base>(Objective.Target.Get());
+			if (ObjectiveItem)
+			{
+				ObjectiveElement.Add(Objective);
+
+				int32 TempA, TempB;				
+				if (bool bSuccessfullyQuerried = PlayerCharacter->GetInventoryComponent()->QueryInventory(ObjectiveItem->GetClass(), Objective.Amount, TempA, TempB))
+				{
+					IndicesOfSuccessfullyQuerriedObjectives.Add(i, bSuccessfullyQuerried);
+				}
+			}
+		}
+	}
+
+	// There is at least one successfully querried objective
+	// TODO: Recheck this since I don't know what's going on (this code was written 4 years ago)
+	if (IndicesOfSuccessfullyQuerriedObjectives.Num() > 0)
+	{
+		TArray<int32> Keys;
+		IndicesOfSuccessfullyQuerriedObjectives.GetKeys(Keys);
+
+		TArray<bool> Values;
+		IndicesOfSuccessfullyQuerriedObjectives.GenerateValueArray(Values);
+
+		for (int i = 0; i < Keys.Num(); i++)
+		{
+			Quest->GetObjectives()[i].bCompleted = Values[i];
+			Quest->GetObjectives()[i].bCanBeCompleted = Values[i];
+		}
+	}
 }
 
 void URPGQuestLogComponent::ToggleQuestLog()

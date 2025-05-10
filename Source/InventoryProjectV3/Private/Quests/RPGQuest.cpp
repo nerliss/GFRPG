@@ -263,7 +263,7 @@ void ARPGQuest::CalculateXP()
 	UE_LOG(LogQuests, Verbose, TEXT("[ARPGQuest::CalculateXP] Quest %s (object %s) now has updated XP Reward: %f"), *Name.ToString(), *GetName(), XPReward);
 }
 
-void ARPGQuest::OnQuestCompeted()
+void ARPGQuest::OnQuestCompleted()
 {
 	bCompleted = true;
 

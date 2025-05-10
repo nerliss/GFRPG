@@ -7,16 +7,39 @@
 #include "Components/RPGInventory_Component.h"
 #include "Components/RPGQuestLogComponent.h"
 #include "Components/RPGXP_Component.h"
+#include "Components/ScrollBox.h"
 #include "Items/RPGItem_Base.h"
 #include "PlayerController/RPGPlayer_Controller.h"
 #include "Quests/RPGQuest.h"
 #include "Widgets/RPGHUD_Widget.h"
+#include "Widgets/Quests/RPGQuestObjectiveItemWidget.h"
 
 void URPGQuestDialogBoxWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	// TODO: Move from BP
+	// TODO: Collapse into a function
+	ARPGPlayer_Controller* RPGPC = Cast<ARPGPlayer_Controller>(GetOwningPlayer());
+	if (RPGPC)
+	{
+		RPGPC->SetUIInputMode();
+	}
+
+	ensure(QuestObjectiveItemWidgetClass);
+	
+	for (FObjectiveData Objective : Quest->GetObjectives())
+	{
+		URPGQuestObjectiveItemWidget* QuestObjectiveItemWidget = Cast<URPGQuestObjectiveItemWidget>(CreateWidget(GetWorld(), QuestObjectiveItemWidgetClass));
+		if (QuestObjectiveItemWidget)
+		{
+			QuestObjectiveItemWidget->Objective.Description = Objective.Description;
+			ObjectiveListBox->AddChild(QuestObjectiveItemWidget);
+		}
+	}
+
+	PlayConstructFX();
+
+	CheckPlayerInventory();
 }
 
 bool URPGQuestDialogBoxWidget::CheckPlayerInventory() const
@@ -77,7 +100,7 @@ void URPGQuestDialogBoxWidget::RemoveQuestItemsFromInventory()
 	}
 }
 
-void URPGQuestDialogBoxWidget::OnTurnedInClicked()
+void URPGQuestDialogBoxWidget::OnTurnInClicked()
 {
 	if (!Quest)
 	{
@@ -108,7 +131,7 @@ void URPGQuestDialogBoxWidget::OnTurnedInClicked()
 		return;
 	}
 	
-	Quest->OnQuestCompeted();
+	Quest->OnQuestCompleted();
 	
 	PlayerCharacter->XPComp->AddXP(Quest->GetXPReward());
 	// TODO: Add money reward
@@ -144,8 +167,8 @@ void URPGQuestDialogBoxWidget::OnAcceptClicked()
 		PlayerCharacter->GetQuestLogComponent()->CheckPlayerInventory(Quest);
 	}
 
-	auto CompletedQuests = PlayerCharacter->GetQuestLogComponent()->GetCompleteQuests();
-	auto ActiveQuests = PlayerCharacter->GetQuestLogComponent()->GetActiveQuests();
+	TArray<ARPGQuest*> CompletedQuests = PlayerCharacter->GetQuestLogComponent()->GetCompleteQuests();
+	TArray<ARPGQuest*> ActiveQuests = PlayerCharacter->GetQuestLogComponent()->GetActiveQuests();
 	if (!CompletedQuests.Find(Quest) && !ActiveQuests.Find(Quest))
 	{
 		PlayerCharacter->GetQuestLogComponent()->AddQuest(Quest);
@@ -165,4 +188,14 @@ void URPGQuestDialogBoxWidget::RemoveWidget()
 	RPGPC->SetDefaultInputMode();
 	
 	RemoveFromParent();
+}
+
+void URPGQuestDialogBoxWidget::PlayConstructFX()
+{
+	// TODO: Post quest log open sound
+}
+
+void URPGQuestDialogBoxWidget::PlayDestructFX()
+{
+	// TODO: Post quest log close sound
 }

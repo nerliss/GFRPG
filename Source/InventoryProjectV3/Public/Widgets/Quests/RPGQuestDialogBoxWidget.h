@@ -6,6 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "RPGQuestDialogBoxWidget.generated.h"
 
+class UScrollBox;
+class URPGQuestObjectiveItemWidget;
 class ARPGQuest;
 
 /**
@@ -23,13 +25,26 @@ protected:
 	bool CheckPlayerInventory() const;
 
 	void RemoveQuestItemsFromInventory();
-	
-	void OnTurnedInClicked();
+
+	UFUNCTION(BlueprintCallable)
+	void OnTurnInClicked();
+
+	UFUNCTION(BlueprintCallable)
 	void OnAcceptClicked();
 
+	UFUNCTION(BlueprintCallable)
 	void RemoveWidget();
+
+	void PlayConstructFX();
+	void PlayDestructFX();
+	
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "Quest")
+	UScrollBox* ObjectiveListBox;
 	
 	UPROPERTY(BlueprintReadOnly, Category = "Quest")
 	ARPGQuest* Quest;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Quest")
+	TSubclassOf<URPGQuestObjectiveItemWidget> QuestObjectiveItemWidgetClass;
 	
 };

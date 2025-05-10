@@ -32,6 +32,7 @@ public:
 	/* Query specific item in the inventory. Usually used for quests or dialogues */
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	bool QueryInventory(TSubclassOf<ARPGItem_Base> QueryItem, int32 QueryAmount, int32& FirstItemInstance, int32& ItemsAmount) const;
+	bool QueryInventory(TSubclassOf<ARPGItem_Base> QueryItem, int32 QueryAmount) const;
 
 	void RemoveItem(TSubclassOf<ARPGItem_Base> ItemToRemove, int32 AmountToRemove);
 	

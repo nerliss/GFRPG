@@ -88,7 +88,7 @@ public:
 	 */
 	void CalculateXP();
 
-	void OnQuestCompeted();
+	void OnQuestCompleted();
 	
 	// TODO: Check blueprint access specifiers - may be we don't need any
 	UPROPERTY(EditDefaultsOnly, BlueprintAssignable, Category = "Quest")

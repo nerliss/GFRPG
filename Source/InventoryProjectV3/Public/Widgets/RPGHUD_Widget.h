@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "RPGHUD_Widget.generated.h"
 
+class URPGQuestHUDObjectivesWidget;
 class UCanvasPanel;
 class URPGInteractionPrompt_Widget;
 class URPGXPBar_Widget;
@@ -20,27 +21,34 @@ class INVENTORYPROJECTV3_API URPGHUD_Widget : public UUserWidget
 
 public:
 
-	// Canvas is used to store different user-created widgets
+	/** 
+	* bShowMessage = true creates an InteractionPrompt_Widget,
+	* bShowMessage = false destroys the widget and nullifies its reference
+	* Use bShowMessage = false if you want to destroy already existing message
+	*/
+	// TODO: Not sure this is supposed to be a public exposed to blueprints
+	UFUNCTION(BlueprintCallable, Category = "Widget")
+	void DisplayInteractionMessage(bool bShowMessage, FText TargetName);
+	
+	/* Main canvas */
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UCanvasPanel* HUDCanvas;
 
-	// In BP set to BP child of RPGInteractionPrompt_Widget
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WidgetClassTypes")
-	TSubclassOf<UUserWidget> InteractionPrompt_WidgetClass;
-
- 	// Widget reference
+	/* Interaction Prompt Widget Class to spawn from */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WidgetClass")
+	TSubclassOf<URPGInteractionPrompt_Widget> InteractionPrompt_WidgetClass;
+	
 	UPROPERTY()
 	URPGInteractionPrompt_Widget* InteractionPrompt_Widget;
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	URPGMiniMapWidget* MiniMapWidget;
 
-	/** 
-	* bShowMessage = true creates an InteractionPrompt_Widget,
-	* bShowMessage = false destroys the widget and nullifies its reference
-	* Use bShowMessage = false if you want to destroy already existing message
-	*/
-	UFUNCTION(BlueprintCallable, Category = "Widget")
-	void DisplayInteractionMessage(bool bShowMessage, FText TargetName);
+	/* Quest HUD Objectives Class to spawn from */
+	UPROPERTY(EditDefaultsOnly, Category = "WidgetClass")
+	TSubclassOf<URPGQuestHUDObjectivesWidget> QuestHUDObjectivesWidgetClass;
+	
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+	URPGQuestHUDObjectivesWidget* QuestHUDObjectivesWidget;
 	
 };

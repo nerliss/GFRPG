@@ -26,6 +26,7 @@ void URPGQuestDialogBoxWidget::NativeConstruct()
 	}
 
 	ensure(QuestObjectiveItemWidgetClass);
+	ensure(Quest);
 	
 	for (FObjectiveData Objective : Quest->GetObjectives())
 	{

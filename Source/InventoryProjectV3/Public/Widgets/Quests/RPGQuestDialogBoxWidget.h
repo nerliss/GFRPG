@@ -41,7 +41,7 @@ protected:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "Quest")
 	UScrollBox* ObjectiveListBox;
 	
-	UPROPERTY(BlueprintReadOnly, Category = "Quest")
+	UPROPERTY(BlueprintReadWrite, Category = "Quest")
 	ARPGQuest* Quest;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Quest")

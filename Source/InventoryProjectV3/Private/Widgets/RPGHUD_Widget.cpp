@@ -17,7 +17,7 @@ bool URPGHUD_Widget::Initialize()
 		return false;
 	}
 
-	// MyTODO: Create references to multiple user-created widgets that still need to be implemented via C++
+	// TODO: Create references to multiple user-created widgets that still need to be implemented via C++
 
 	return true;
 }

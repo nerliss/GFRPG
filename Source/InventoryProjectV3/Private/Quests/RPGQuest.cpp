@@ -107,8 +107,7 @@ void ARPGQuest::CheckItemObjective(ARPGItem_Base* ItemTarget)
 			const ARPGPlayerCharacter* PlayerCharacter = Cast<ARPGPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
 			if (PlayerCharacter)
 			{
-				int32 LocalA, LocalB;
-				if (PlayerCharacter->GetInventoryComponent()->QueryInventory(ItemTarget->GetClass(), Objective.Amount, LocalA, LocalB))
+				if (PlayerCharacter->GetInventoryComponent()->QueryInventory(ItemTarget->GetClass(), Objective.Amount))
 				{
 					MakeNearestObjectiveAvailable(i);
 					Objectives[i].bCompleted = true;
@@ -183,8 +182,7 @@ void ARPGQuest::MakeNearestObjectiveAvailable(int32 ObjectiveIndex)
 			const ARPGPlayerCharacter* PlayerCharacter = Cast<ARPGPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 			if (PlayerCharacter)
 			{
-				int32 LocalA, LocalB;
-				if (PlayerCharacter->GetInventoryComponent()->QueryInventory(ObjectiveItem->GetClass(), Objectives[NearestIncompleteObjectiveIndex].Amount, LocalA, LocalB))
+				if (PlayerCharacter->GetInventoryComponent()->QueryInventory(ObjectiveItem->GetClass(), Objectives[NearestIncompleteObjectiveIndex].Amount))
 				{
 					// TODO: Test this when possible
 					Objectives[NearestIncompleteObjectiveIndex].bCompleted = true;

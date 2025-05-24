@@ -12,6 +12,8 @@
 #include "PlayerController/RPGPlayer_Controller.h"
 #include "Quests/RPGQuest.h"
 #include "Utility/LogDefinitions.h"
+#include "Widgets/RPGHUD_Widget.h"
+#include "Widgets/Quests/RPGQuestHUDObjectivesWidget.h"
 #include "Widgets/Quests/RPGQuestLogEntryWidget.h"
 #include "Widgets/Quests/RPGQuestLogWidget.h"
 
@@ -40,9 +42,13 @@ void URPGQuestLogComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 void URPGQuestLogComponent::SetActiveQuest(ARPGQuest* Quest, bool bPlaySound /* = false */)
 {
 	CurrentActiveQuest = Quest;
-
-	// TODO: WBP_Quest_HUD_Objectives::Update Objectives List - to be implemented
-
+	
+	ARPGPlayer_Controller* RPGPlayerController = Cast<ARPGPlayer_Controller>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (RPGPlayerController)
+	{
+		RPGPlayerController->GetHUDWidget()->QuestHUDObjectivesWidget->UpdateObjectiveList();
+	}
+	
 	if (QuestLogWidget)
 	{
 		QuestLogWidget->OnActiveQuestChanged();
@@ -110,11 +116,10 @@ void URPGQuestLogComponent::CheckPlayerInventory(ARPGQuest* Quest)
 			if (ObjectiveItem)
 			{
 				ObjectiveElement.Add(Objective);
-
-				int32 TempA, TempB;				
-				if (bool bSuccessfullyQuerried = PlayerCharacter->GetInventoryComponent()->QueryInventory(ObjectiveItem->GetClass(), Objective.Amount, TempA, TempB))
+				
+				if (bool bSuccessfullyQueried = PlayerCharacter->GetInventoryComponent()->QueryInventory(ObjectiveItem->GetClass(), Objective.Amount))
 				{
-					IndicesOfSuccessfullyQuerriedObjectives.Add(i, bSuccessfullyQuerried);
+					IndicesOfSuccessfullyQuerriedObjectives.Add(i, bSuccessfullyQueried);
 				}
 			}
 		}

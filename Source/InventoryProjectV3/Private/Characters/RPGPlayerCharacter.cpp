@@ -16,6 +16,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
 #include "Components/RPGQuestLogComponent.h"
+#include "Components/RPGStatsComponent.h"
 #include "Widgets/RPGHUD_Widget.h"
 #include "Utility/Utility.h"
 #include "Utility/LogDefinitions.h"
@@ -58,7 +59,7 @@ ARPGPlayerCharacter::ARPGPlayerCharacter()
 	XPComp = CreateDefaultSubobject<URPGXP_Component>(TEXT("XPComp"));
 
 	HPComp = CreateDefaultSubobject<URPGHealth_Component>(TEXT("HPComp"));
-	GetHealthComponent()->SetMaxHealth(100.f);
+	GetHealthComponent()->SetMaxHealth(100.f + GetStatsComponent()->Stamina); // TODO: Review this usage
 	GetHealthComponent()->SetCurrentHealth(HPComp->GetMaxHealth());
 
 	ReputationComp = CreateDefaultSubobject<URPGReputation_Component>(TEXT("ReputationComp"));
@@ -68,6 +69,9 @@ ARPGPlayerCharacter::ARPGPlayerCharacter()
 	AkComp = CreateDefaultSubobject<UAkComponent>(TEXT("AkComp"));
 	AkComp->SetupAttachment(GetRootComponent()); // Any Ak component must be attached, otherwise it doesn't work
 
+	// Stats component
+	GetStatsComponent()->Speed = 100.f;
+	
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
@@ -80,9 +84,9 @@ ARPGPlayerCharacter::ARPGPlayerCharacter()
 	FallDamageMinimalThreshold = 1300.f;
 	FallDamageMultiplier = 3.f;
 	CharacterSoundCollection = nullptr;
-	DefaultMaxWalkSpeed = 600.f;
-	SprintMaxWalkSpeed = 1000.f;
-	StealthedMaxWalkSpeed = 250.f;
+	DefaultMaxWalkSpeed = 600.f + GetStatsComponent()->Speed;
+	SprintMaxWalkSpeed = 1000.f + GetStatsComponent()->Speed;
+	StealthedMaxWalkSpeed = 250.f + GetStatsComponent()->Speed;
 	bStealthed = false;
 	bMounted = false;
 	CharacterGender = ECharacterGender::Undefined;
@@ -96,6 +100,9 @@ void ARPGPlayerCharacter::BeginPlay()
 
 	// TODO: Collapse to a function when more related variables are added
 	GetCharacterMovement()->MaxWalkSpeed = DefaultMaxWalkSpeed;
+
+	GetHealthComponent()->AddMaxHealth(GetStatsComponent()->Stamina); // TODO: Review this usage
+	GetHealthComponent()->SetCurrentHealth(HPComp->GetMaxHealth());
 }
 
 void ARPGPlayerCharacter::Tick(float DeltaTime)

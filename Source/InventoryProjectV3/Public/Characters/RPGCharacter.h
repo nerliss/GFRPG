@@ -8,6 +8,7 @@
 #include "RPGCharacter.generated.h"
 
 class URPGQuestLogComponent;
+class URPGStatsComponent;
 
 UENUM(BlueprintType)
 enum class ECharacterGender : uint8
@@ -27,7 +28,8 @@ public:
 	ARPGCharacter();
 
 	URPGQuestLogComponent* GetQuestLogComponent() const { return QuestLogComponent; }
-
+	URPGStatsComponent* GetStatsComponent() const { return StatsComponent; }
+	
 	FText GetCharacterName() const { return CharacterName; }
 	
 protected:
@@ -46,4 +48,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "RPG Character")
 	URPGQuestLogComponent* QuestLogComponent;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "RPG Character")
+	URPGStatsComponent* StatsComponent;
 };

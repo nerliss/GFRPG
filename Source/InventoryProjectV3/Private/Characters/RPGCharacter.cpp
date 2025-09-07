@@ -3,12 +3,15 @@
 
 #include "Characters/RPGCharacter.h"
 #include "Components/RPGQuestLogComponent.h"
+#include "Components/RPGStatsComponent.h"
 
 ARPGCharacter::ARPGCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
 	QuestLogComponent = CreateDefaultSubobject<URPGQuestLogComponent>(TEXT("QuestLogComponent"));
+
+	StatsComponent = CreateDefaultSubobject<URPGStatsComponent>(TEXT("StatsComponent"));
 
 	CharacterName = FText::FromString("Default Character");
 }

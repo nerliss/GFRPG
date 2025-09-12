@@ -176,10 +176,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Components")
 	URPGInventory_Component* GetInventoryComponent() const { return InventoryComp; }
 
-	/* Ak audio component */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	UAkComponent* AkComp;
-
 	/* Is currently in stealth mode? */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 	bool bStealthed;

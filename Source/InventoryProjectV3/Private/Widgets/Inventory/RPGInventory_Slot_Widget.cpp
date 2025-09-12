@@ -10,7 +10,7 @@
 #include "Components/RPGInventory_Component.h"	
 #include "Characters/RPGPlayerCharacter.h"
 #include "PlayerController/RPGPlayer_Controller.h"
-#include "UMG/Public/Blueprint/WidgetBlueprintLibrary.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Utility/LogDefinitions.h"
 #include "Widgets/Inventory/RPGInventory_Tooltip_Widget.h"
 #include "Widgets/RPGHUD_Widget.h"

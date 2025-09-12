@@ -51,13 +51,6 @@ protected:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UButton* ButtonClose;
 
-	// MyTODO: Move these sounds to a struct or something
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Sounds")
-	UAkAudioEvent* OpenInventorySound;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Sounds")
-	UAkAudioEvent* CloseInventorySound;
-
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	int32 GetGoldAmount() const;
 

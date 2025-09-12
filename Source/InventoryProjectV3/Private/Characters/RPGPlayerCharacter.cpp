@@ -12,7 +12,6 @@
 #include "Components/RPGHealth_Component.h"
 #include "Components/RPGReputation_Component.h"
 #include "Components/RPGInventory_Component.h"
-#include "AkComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
 #include "Components/RPGQuestLogComponent.h"
@@ -65,9 +64,6 @@ ARPGPlayerCharacter::ARPGPlayerCharacter()
 	ReputationComp = CreateDefaultSubobject<URPGReputation_Component>(TEXT("ReputationComp"));
 
 	InventoryComp = CreateDefaultSubobject<URPGInventory_Component>(TEXT("InventoryComp"));
-
-	AkComp = CreateDefaultSubobject<UAkComponent>(TEXT("AkComp"));
-	AkComp->SetupAttachment(GetRootComponent()); // Any Ak component must be attached, otherwise it doesn't work
 
 	// Stats component
 	GetStatsComponent()->Speed = 100.f;
@@ -293,12 +289,6 @@ void ARPGPlayerCharacter::Death()
 	if (DeathMontage)
 	{
 		PlayAnimMontage(DeathMontage);
-	}
-
-	// SFX
-	if (AkComp)
-	{
-		AkComp->PostAkEvent(CharacterSoundCollection->DeathSound, 0, nullptr, nullptr);
 	}
 }
 

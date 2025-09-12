@@ -3,7 +3,7 @@
 
 #include "Utility/Statics/RPGGenericStatics.h"
 
-#include "DesktopPlatform/Public/DesktopPlatformModule.h"
+#include "DesktopPlatformModule.h"
 #include "IImageWrapper.h"
 #include "IImageWrapperModule.h"
 

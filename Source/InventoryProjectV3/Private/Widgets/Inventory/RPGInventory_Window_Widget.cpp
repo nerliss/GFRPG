@@ -1,4 +1,4 @@
-// Oleksandr Tkachov 2022-2024
+// Oleksandr Tkachov 2022-2025
 
 
 #include "Widgets/Inventory/RPGInventory_Window_Widget.h"
@@ -7,9 +7,8 @@
 #include "Components/TextBlock.h"
 #include "Components/GridPanel.h"
 #include "Components/Button.h"
-#include "AkGameplayStatics.h"
 #include "GameFramework/InputSettings.h"
-#include "UMG/Public/Blueprint/WidgetBlueprintLibrary.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Utility/LogDefinitions.h"
 
 URPGInventory_Window_Widget::URPGInventory_Window_Widget(const FObjectInitializer& ObjectInitializer) 
@@ -18,9 +17,6 @@ URPGInventory_Window_Widget::URPGInventory_Window_Widget(const FObjectInitialize
 	InventorySlotWidgetClass = nullptr;
 
 	AssociatedInventory = nullptr;
-
-	OpenInventorySound = nullptr;
-	CloseInventorySound = nullptr;
 }
 
 void URPGInventory_Window_Widget::NativeConstruct()
@@ -38,8 +34,6 @@ void URPGInventory_Window_Widget::NativeConstruct()
 void URPGInventory_Window_Widget::NativeDestruct()
 {
 	Super::NativeDestruct();
-
-	UAkGameplayStatics::PostEvent(CloseInventorySound, nullptr, 0, FOnAkPostEventCallback());
 }
 
 FReply URPGInventory_Window_Widget::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
@@ -109,8 +103,6 @@ void URPGInventory_Window_Widget::InitializeWindowWidget()
 	}
 
 	SetFocus();
-
-	UAkGameplayStatics::PostEvent(OpenInventorySound, nullptr, 0, FOnAkPostEventCallback());
 }
 
 void URPGInventory_Window_Widget::CloseWindow()

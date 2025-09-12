@@ -25,7 +25,7 @@ APreviewCharacter::APreviewCharacter()
 	SceneCaptureComponent->AttachToComponent(SceneComponent, FAttachmentTransformRules::KeepRelativeTransform);
 	SceneCaptureComponent->SetRelativeLocation(DefaultCameraDistance);
 
-	AssociatedCharacterCustomizationData = false;
+	AssociatedCharacterCustomizationData = nullptr;
 }
 
 void APreviewCharacter::PostInitializeComponents()

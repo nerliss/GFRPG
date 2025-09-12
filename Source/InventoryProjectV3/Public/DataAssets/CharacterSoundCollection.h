@@ -6,9 +6,8 @@
 #include "Engine/DataAsset.h"
 #include "CharacterSoundCollection.generated.h"
 
-class UAkAudioEvent;
 
-/* Data asset that stores diffent character sounds */
+/* Data asset that stores different character sounds */
 UCLASS()
 class INVENTORYPROJECTV3_API UCharacterSoundCollection : public UDataAsset
 {
@@ -17,7 +16,5 @@ class INVENTORYPROJECTV3_API UCharacterSoundCollection : public UDataAsset
 public:
 	
 	/* Sound that will be played when character dies */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pain Sounds")
-	UAkAudioEvent* DeathSound;
 
 };

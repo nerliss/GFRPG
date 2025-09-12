@@ -3,25 +3,24 @@
 
 #include "Map/RPGMapBoundsVolume.h"
 
-// Sets default values
+#include "Components/BoxComponent.h"
+
 ARPGMapBoundsVolume::ARPGMapBoundsVolume()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
+	Bounds = CreateDefaultSubobject<UBoxComponent>(FName("Bounds"));
+	RootComponent = Bounds;
+	Bounds->SetBoxExtent(FVector(50000.f, 50000.f, 10000.f)); // Should change in editor
+	Bounds->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
-// Called when the game starts or when spawned
-void ARPGMapBoundsVolume::BeginPlay()
+void ARPGMapBoundsVolume::GetXYMinMax(FVector2D& OutMin, FVector2D& OutMax) const
 {
-	Super::BeginPlay();
-	
-}
+	const FVector Location = Bounds->GetComponentLocation();
+	const FVector Extent = Bounds->GetScaledBoxExtent();
 
-// Called every frame
-void ARPGMapBoundsVolume::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
+	OutMin = FVector2D(Location.X - Extent.X, Location.Y - Extent.Y);
+	OutMax = FVector2D(Location.X + Extent.X, Location.Y + Extent.Y);
 }
 

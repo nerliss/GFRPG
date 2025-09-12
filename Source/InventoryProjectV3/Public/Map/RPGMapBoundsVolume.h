@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "RPGMapBoundsVolume.generated.h"
 
+class UBoxComponent;
+
 UCLASS()
 class INVENTORYPROJECTV3_API ARPGMapBoundsVolume : public AActor
 {
@@ -15,9 +17,10 @@ public:
 	
 	ARPGMapBoundsVolume();
 
-protected:
-	
-	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaTime) override;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UBoxComponent* Bounds;
 
+	UFUNCTION(BlueprintCallable, Category="Map")
+	void GetXYMinMax(FVector2D& OutMin, FVector2D& OutMax) const;
+	
 };

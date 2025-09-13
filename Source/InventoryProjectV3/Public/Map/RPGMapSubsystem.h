@@ -7,7 +7,7 @@
 #include "RPGMapSubsystem.generated.h"
 
 class ARPGMapBoundsVolume;
-class URPGMapComponent;
+class URPGMapIconComponent;
 
 UCLASS()
 class INVENTORYPROJECTV3_API URPGMapSubsystem : public UGameInstanceSubsystem
@@ -16,11 +16,27 @@ class INVENTORYPROJECTV3_API URPGMapSubsystem : public UGameInstanceSubsystem
 
 public:
 
+	UFUNCTION(BlueprintCallable, Category="Map")
+	void SetBoundsVolume(ARPGMapBoundsVolume* Volume);
+
+	UFUNCTION(BlueprintCallable, Category="Map")
+	bool WorldToMapUV(const FVector& World, FVector2D& OutUV) const;
+
+	UFUNCTION(BlueprintCallable, Category="Map")
+	FVector MapUVToWorld(const FVector2D& UV, float Z = 0.f) const;
+
+	void RegisterIcon(URPGMapIconComponent* Icon);
+	void UnregisterIcon(URPGMapIconComponent* Icon);
+
+	/** Paint a soft reveal circle into FogRT at World location (optional). */
+	UFUNCTION(BlueprintCallable, Category="Map|Fog")
+	void RevealAtWorld(const FVector& World, float RadiusWorldUnits = 600.f, float Opacity = 1.f);
+	
 	/** Static world map image (or set at runtime) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Map")
 	TSoftObjectPtr<UTexture2D> MapTexture;
 
-	/** If your map image is flipped vertically vs world Y */
+	/** If map image is flipped vertically vs world Y */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Map")
 	bool bFlipY = false;
 
@@ -33,26 +49,10 @@ public:
 	TWeakObjectPtr<ARPGMapBoundsVolume> BoundsVolume;
 
 	/** World icons registered by components */
-	const TArray<TWeakObjectPtr<URPGMapComponent>>& GetIcons() const { return Icons; }
-	
-	UFUNCTION(BlueprintCallable, Category="Map")
-	void SetBoundsVolume(ARPGMapBoundsVolume* Volume);
-
-	UFUNCTION(BlueprintCallable, Category="Map")
-	bool WorldToMapUV(const FVector& World, FVector2D& OutUV) const;
-
-	UFUNCTION(BlueprintCallable, Category="Map")
-	FVector MapUVToWorld(const FVector2D& UV, float Z = 0.f) const;
-
-	void RegisterIcon(URPGMapComponent* Icon);
-	void UnregisterIcon(URPGMapComponent* Icon);
-
-	/** Paint a soft reveal circle into FogRT at World location (optional). */
-	UFUNCTION(BlueprintCallable, Category="Map|Fog")
-	void RevealAtWorld(const FVector& World, float RadiusWorldUnits = 600.f, float Opacity = 1.f);
+	const TArray<TWeakObjectPtr<URPGMapIconComponent>>& GetIcons() const { return Icons; }
 
 private:
 	
-	// UPROPERTY(Transient)
-	TArray<TWeakObjectPtr<URPGMapComponent>> Icons;
+	UPROPERTY(Transient)
+	TArray<TWeakObjectPtr<URPGMapIconComponent>> Icons;
 };

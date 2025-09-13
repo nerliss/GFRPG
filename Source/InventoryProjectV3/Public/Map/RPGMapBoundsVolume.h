@@ -17,10 +17,10 @@ public:
 	
 	ARPGMapBoundsVolume();
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UBoxComponent* Bounds;
-
 	UFUNCTION(BlueprintCallable, Category="Map")
 	void GetXYMinMax(FVector2D& OutMin, FVector2D& OutMax) const;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UBoxComponent* Bounds;
 	
 };

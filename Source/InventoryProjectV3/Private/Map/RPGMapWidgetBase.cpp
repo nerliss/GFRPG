@@ -3,7 +3,11 @@
 
 #include "Map/RPGMapWidgetBase.h"
 
+#include "Blueprint/WidgetTree.h"
+#include "Components/CanvasPanel.h"
+#include "Components/CanvasPanelSlot.h"
 #include "Components/Image.h"
+#include "Map/RPGMapIconComponent.h"
 #include "Map/RPGMapSubsystem.h"
 
 void URPGMapWidgetBase::NativeConstruct()
@@ -74,7 +78,59 @@ void URPGMapWidgetBase::RefreshMapBrush()
 
 void URPGMapWidgetBase::RefreshIcons()
 {
+	if (!MapSubsystem.IsValid() || !IconCanvas || !MapImage)
+	{
+		return;
+	}
+
+	// Rebuild icon list each tick - may be should be optimized later
+	IconCanvas->ClearChildren();
+
+	const FVector2D MapSize = MapImage->GetBrush().ImageSize * Zoom;
 	
+	for (const TWeakObjectPtr<URPGMapIconComponent>& WeakIcon : MapSubsystem->GetIcons())
+	{
+		URPGMapIconComponent* Icon = WeakIcon.Get();
+		if (!Icon || !Icon->GetOwner())
+		{
+			continue;
+		}
+
+		FVector2D UV;
+		if (!Icon->GetMapUV(UV))
+		{
+			continue;
+		}
+
+		UImage* Image = WidgetTree->ConstructWidget<UImage>(UImage::StaticClass());
+		IconCanvas->AddChild(Image);
+
+		if (Icon->Icon)
+		{
+			FSlateBrush Brush;
+			Brush.SetResourceObject(Icon->Icon);
+			Brush.ImageSize = Icon->IconSize;
+			Brush.TintColor = Icon->Tint;
+			Image->SetBrush(Brush);
+		}
+
+		// Convert UV to pixel and center the icon
+		const FVector2D Pixel = (UV * MapSize) - (Icon->IconSize / 2.f);
+
+		if (UCanvasPanelSlot* ImageSlot = Cast<UCanvasPanelSlot>(Image->Slot))
+		{
+			ImageSlot->SetAutoSize(false);
+			ImageSlot->SetPosition(Pixel);
+			ImageSlot->SetSize(Icon->IconSize);
+			ImageSlot->SetAlignment(FVector2D(0.f, 0.f));
+		}
+
+		if (Icon->bRotateWithActor)
+		{
+			Image->SetRenderTransformPivot(FVector2D(0.5f, 0.5f));
+			Image->SetRenderTransformAngle(Icon->GetOwner()->GetActorRotation().Yaw);
+		}
+	}
 }
 
 bool URPGMapWidgetBase::ComputeMapTranslation(FVector2D& OutTranslation, float& OutRotationDeg) const

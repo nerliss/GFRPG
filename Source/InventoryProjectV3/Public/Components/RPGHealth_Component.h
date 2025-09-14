@@ -1,4 +1,4 @@
-// Oleksandr Tkachov 2022-2024
+// Oleksandr Tkachov 2022-2025
 
 #pragma once
 
@@ -14,8 +14,8 @@ class INVENTORYPROJECTV3_API URPGHealth_Component : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
-	// Sets default values for this component's properties
+public:
+	
 	URPGHealth_Component();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health")

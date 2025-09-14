@@ -1,9 +1,10 @@
-// Oleksandr Tkachov 2022-2024
+// Oleksandr Tkachov 2022-2025
 
 
 #include "GameInstance/RPGGameInstanceBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Save/RPGSaveGameObject.h"
+#include "Utility/LogDefinitions.h"
 
 URPGGameInstanceBase::URPGGameInstanceBase()
 {
@@ -24,6 +25,8 @@ void URPGGameInstanceBase::InitializeSaveGameObject()
 	SaveGameObject = UGameplayStatics::DoesSaveGameExist(SaveSlotName, 0) ? 
 	Cast<URPGSaveGameObject>(UGameplayStatics::LoadGameFromSlot(SaveSlotName, 0)) : 
 	Cast<URPGSaveGameObject>(UGameplayStatics::CreateSaveGameObject(URPGSaveGameObject::StaticClass()));
+	
+	UE_LOG(LogRPGSaving, Verbose, TEXT("[URPGGameInstanceBase::InitializeSaveGameObject] SaveGameObject initialized"));
 }
 
 FString URPGGameInstanceBase::GetSaveSlotName() const
@@ -52,6 +55,7 @@ void URPGGameInstanceBase::SavePlayer()
 	SaveGameObject->PlayerTransform = PlayerCharacter->GetActorTransform();
 
 	UGameplayStatics::SaveGameToSlot(SaveGameObject, SaveSlotName, 0);
+	UE_LOG(LogRPGSaving, Log, TEXT("[URPGGameInstanceBase::SavePlayer] Saving player to slot %s"), *SaveSlotName);
 }
 
 void URPGGameInstanceBase::LoadPlayer()
@@ -67,5 +71,8 @@ void URPGGameInstanceBase::LoadPlayer()
 		return;
 	}
 
+	// TODO: Figure this out
 	PlayerCharacter->SetActorTransform(SaveGameObject->PlayerTransform);
+	UGameplayStatics::LoadGameFromSlot(SaveSlotName, 0); 
+	UE_LOG(LogRPGSaving, Log, TEXT("[URPGGameInstanceBase::LoadPlayer] Loading player to slot %s"), *SaveSlotName);
 }

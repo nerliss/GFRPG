@@ -1,4 +1,4 @@
-// Oleksandr Tkachov 2022-2024
+// Oleksandr Tkachov 2022-2025
 
 #pragma once
 
@@ -17,8 +17,8 @@ class INVENTORYPROJECTV3_API URPGXP_Component : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
-	// Sets default values for this component's properties
+public:
+	
 	URPGXP_Component();
 
 	/** Used for XP Progress Bar in UI because PBs take values only between 0 and 1 */
@@ -55,8 +55,9 @@ public:
 	FOnLevelGained OnLevelGained;
 
 protected:
-	// Called when the game starts
+	
 	virtual void BeginPlay() override;
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "XP|Sounds")
 	USoundBase* LevelUpSound;
@@ -87,10 +88,5 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "XP|Experience")
 	float CurrentPercentage_Buffer;
-
-public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-		
+	
 };

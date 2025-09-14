@@ -62,21 +62,21 @@ void URPGQuestLogComponent::SetActiveQuest(ARPGQuest* Quest, bool bPlaySound /* 
 		// TODO: Post Ak audio event here
 	}
 	
-	UE_LOG(LogQuests, Log, TEXT("[URPGQuestLogComponent::SetActiveQuest] Quest (%s) is now active"), *Quest->GetQuestName().ToString());
+	UE_LOG(LogRPGQuests, Log, TEXT("[URPGQuestLogComponent::SetActiveQuest] Quest (%s) is now active"), *Quest->GetQuestName().ToString());
 }
 
 void URPGQuestLogComponent::AddQuest(ARPGQuest* Quest)
 {
 	if (!Quest)
 	{
-		UE_LOG(LogQuests, Error, TEXT("[URPGQuestLogComponent::AddQuest] Quest is nullptr"));
+		UE_LOG(LogRPGQuests, Error, TEXT("[URPGQuestLogComponent::AddQuest] Quest is nullptr"));
 		return;
 	}
 
 	if (!GetActiveQuests().Contains(Quest))
 	{
 		GetActiveQuests().AddUnique(Quest);
-		UE_LOG(LogQuests, Log, TEXT("[URPGQuestLogComponent::AddQuest] Quest (%s) added to quest log"), *Quest->GetQuestName().ToString());
+		UE_LOG(LogRPGQuests, Log, TEXT("[URPGQuestLogComponent::AddQuest] Quest (%s) added to quest log"), *Quest->GetQuestName().ToString());
 	}
 }
 
@@ -154,7 +154,7 @@ void URPGQuestLogComponent::ToggleQuestLog()
 		QuestLogWidget->RemoveFromParent();
 		QuestLogWidget = nullptr;
 
-		UE_LOG(LogQuests, Log, TEXT("[URPGQuestLogComponent::ToggleQuestLog] QuestLogWidget removed"));
+		UE_LOG(LogRPGQuests, Log, TEXT("[URPGQuestLogComponent::ToggleQuestLog] QuestLogWidget removed"));
 		
 		RPGPlayerController->SetDefaultInputMode();
 		return;
@@ -163,7 +163,7 @@ void URPGQuestLogComponent::ToggleQuestLog()
 	QuestLogWidget = Cast<URPGQuestLogWidget>(CreateWidget(GetWorld(), QuestLogWidgetClass));
 	if (!QuestLogWidget)
 	{
-		UE_LOG(LogQuests, Error, TEXT("[URPGQuestLogComponent::ToggleQuestLog] QuestLogWidget was not created, probably because QuestLogWidgetClass is nullptr"));
+		UE_LOG(LogRPGQuests, Error, TEXT("[URPGQuestLogComponent::ToggleQuestLog] QuestLogWidget was not created, probably because QuestLogWidgetClass is nullptr"));
 	}
 
 	QuestLogWidget->AddToViewport();
@@ -177,7 +177,7 @@ bool URPGQuestLogComponent::MarkQuestComplete(TSubclassOf<ARPGQuest> QuestClass)
 	const ARPGQuest* Quest = GetSpawnedQuest(QuestClass);
 	if (!Quest)
 	{
-		UE_LOG(LogQuests, Error, TEXT("[URPGQuestLogComponent::MarkQuestComplete] Provided quest doesn't exist"));
+		UE_LOG(LogRPGQuests, Error, TEXT("[URPGQuestLogComponent::MarkQuestComplete] Provided quest doesn't exist"));
 		return false;
 	}
 	
@@ -186,12 +186,12 @@ bool URPGQuestLogComponent::MarkQuestComplete(TSubclassOf<ARPGQuest> QuestClass)
 		if (!Objective.bCompleted)
 		{
 			// If at least one objective is incomplete we can't mark the quest complete
-			UE_LOG(LogQuests, Warning, TEXT("[URPGQuestLogComponent::MarkQuestComplete] Quest (%s) is not complete since Objective (%s) is not complete"), *Quest->GetName(), *GetNameSafe(Objective.Target.Get()));
+			UE_LOG(LogRPGQuests, Warning, TEXT("[URPGQuestLogComponent::MarkQuestComplete] Quest (%s) is not complete since Objective (%s) is not complete"), *Quest->GetName(), *GetNameSafe(Objective.Target.Get()));
 			return false;
 		}
 	}
 
-	UE_LOG(LogQuests, Log, TEXT("[URPGQuestLogComponent::MarkQuestComplete] Quest (%s) is now marked complete"), *Quest->GetName());
+	UE_LOG(LogRPGQuests, Log, TEXT("[URPGQuestLogComponent::MarkQuestComplete] Quest (%s) is now marked complete"), *Quest->GetName());
 	// TODO: Perhaps this is the best place to update CompleteQuests array? (for now it happens in DeleteQuest())
 	return true;
 }
@@ -200,13 +200,13 @@ void URPGQuestLogComponent::DeleteQuest(ARPGQuest* Quest, bool bAbandonQuest /* 
 {
 	if (!Quest)
 	{
-		UE_LOG(LogQuests, Error, TEXT("[URPGQuestLogComponent::DeleteQuest] Provided quest doesn't exist"));
+		UE_LOG(LogRPGQuests, Error, TEXT("[URPGQuestLogComponent::DeleteQuest] Provided quest doesn't exist"));
 		return;
 	}
 
 	if (!QuestLogWidget)
 	{
-		UE_LOG(LogQuests, Error, TEXT("[URPGQuestLogComponent::DeleteQuest] QuestLogWidget is null"));
+		UE_LOG(LogRPGQuests, Error, TEXT("[URPGQuestLogComponent::DeleteQuest] QuestLogWidget is null"));
 		return;
 	}
 	
@@ -230,7 +230,7 @@ void URPGQuestLogComponent::DeleteQuest(ARPGQuest* Quest, bool bAbandonQuest /* 
 
 		Quest->QuestLogEntryRef = nullptr;
 
-		UE_LOG(LogQuests, Warning, TEXT("[URPGQuestLogComponent::DeleteQuest] Quest %s was abandoned, resetting its objectives"), *Quest->GetQuestName().ToString());
+		UE_LOG(LogRPGQuests, Warning, TEXT("[URPGQuestLogComponent::DeleteQuest] Quest %s was abandoned, resetting its objectives"), *Quest->GetQuestName().ToString());
 		
 		// TODO: Post quest fail sound
 	}
@@ -244,7 +244,7 @@ void URPGQuestLogComponent::DeleteQuest(ARPGQuest* Quest, bool bAbandonQuest /* 
 		QuestLogWidget->QuestInfoBox->ClearChildren();
 		QuestLogWidget->ActiveQuest = nullptr;
 		// TODO: Check abandon button visibility here
-		UE_LOG(LogQuests, Log, TEXT("[URPGQuestLogComponent::DeleteQuest] No quests in quest log"));
+		UE_LOG(LogRPGQuests, Log, TEXT("[URPGQuestLogComponent::DeleteQuest] No quests in quest log"));
 	}
 	else
 	{
@@ -255,7 +255,7 @@ void URPGQuestLogComponent::DeleteQuest(ARPGQuest* Quest, bool bAbandonQuest /* 
 			if (GetActiveQuests().IsValidIndex(i))
 			{
 				SetActiveQuest(GetActiveQuests()[i]);
-				UE_LOG(LogQuests, Log, TEXT("[URPGQuestLogComponent::DeleteQuest] Set new active quest: %s"), *GetActiveQuests()[i]->GetQuestName().ToString());
+				UE_LOG(LogRPGQuests, Log, TEXT("[URPGQuestLogComponent::DeleteQuest] Set new active quest: %s"), *GetActiveQuests()[i]->GetQuestName().ToString());
 				break;
 			}
 		}

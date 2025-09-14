@@ -31,6 +31,9 @@ public:
 	/** Paint a soft reveal circle into FogRT at World location (optional). */
 	UFUNCTION(BlueprintCallable, Category="Map|Fog")
 	void RevealAtWorld(const FVector& World, float RadiusWorldUnits = 600.f, float Opacity = 1.f);
+
+	UFUNCTION(BlueprintCallable, Category="Map")
+	bool FindAndSetBoundsByActorTag(FName Tag);
 	
 	/** Static world map image (or set at runtime) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Map")

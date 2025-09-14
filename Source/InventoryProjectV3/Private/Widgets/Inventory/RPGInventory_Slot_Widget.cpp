@@ -2,7 +2,6 @@
 
 
 #include "Widgets/Inventory/RPGInventory_Slot_Widget.h"
-#include "Components/TextBlock.h"
 #include "Components/Image.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Components/CanvasPanel.h"

@@ -1,4 +1,4 @@
-// Oleksandr Tkachov 2022-2024
+// Oleksandr Tkachov 2022-2025
 
 
 #include "Creatures/RPGMountBase.h"
@@ -22,14 +22,12 @@ ARPGMountBase::ARPGMountBase()
 	GetCharacterMovement()->AirControl = 0.2f;
 	GetCharacterMovement()->MaxWalkSpeed = 1200.f;
 
-	// SpringArm (Camera boom) component configuration
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
 	SpringArmComp->SetupAttachment(GetCapsuleComponent());
 	SpringArmComp->TargetArmLength = 500.f;
 	SpringArmComp->bUsePawnControlRotation = true;
 	SpringArmComp->SetRelativeLocation(FVector(0.f, 0.f, 65.f));
 
-	// Camera component configuration
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
 	CameraComp->SetupAttachment(SpringArmComp);
 	CameraComp->bUsePawnControlRotation = false;

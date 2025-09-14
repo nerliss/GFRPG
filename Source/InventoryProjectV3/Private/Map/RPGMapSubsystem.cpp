@@ -3,6 +3,7 @@
 
 #include "Map/RPGMapSubsystem.h"
 
+#include "EngineUtils.h"
 #include "Kismet/KismetRenderingLibrary.h"
 #include "Map/RPGMapBoundsVolume.h"
 #include "Utility/LogDefinitions.h"
@@ -127,4 +128,19 @@ void URPGMapSubsystem::RevealAtWorld(const FVector& World, float RadiusWorldUnit
 	// 	PaintMatBase = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/UI/Map/M_MapFogPaint.M_MapFogPaint"));
 	// 	UE_LOG (LogRPGMap, Error, TEXT("[URPGMapSubsystem::RevealAtWorld] PaintMatBase didn't load twice. Check if the material path is correct"))
 	// }
+}
+
+bool URPGMapSubsystem::FindAndSetBoundsByActorTag(FName Tag)
+{
+	for (TActorIterator<ARPGMapBoundsVolume> It(GetWorld()); It; ++It)
+	{
+		if (It->ActorHasTag(Tag))
+		{
+			UE_LOG(LogRPGMap, Verbose, TEXT("[URPGMapSubsystem::FindAndSetBoundsByActorTag] Found Bounds Volume with tag %s: %s"), *Tag.ToString(), *It->GetName())
+			SetBoundsVolume(*It);
+			return true;
+		}
+	}
+	
+	return false;
 }

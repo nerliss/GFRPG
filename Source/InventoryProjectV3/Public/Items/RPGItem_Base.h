@@ -1,4 +1,4 @@
-// Oleksandr Tkachov 2022-2024
+// Oleksandr Tkachov 2022-2025
 
 #pragma once
 
@@ -33,7 +33,7 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Inventory")
 	int32 GetQuantity() const;
 
-	// MyTODO: Think how this could be overriden in child C++ classes
+	// TODO: Think how this could be overriden in child C++ classes
 	/* Blueprint overridable function that determines what happens when we use the item */
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Inventory")
 	bool UseItem() const;

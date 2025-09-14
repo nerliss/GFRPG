@@ -52,7 +52,7 @@ void ARPGQuestMarkerLocation::OnSphereBeginOverlap(UPrimitiveComponent* Overlapp
 					if (Objective.Type == OT_Location && !Objective.bCompleted && Objective.bCanBeCompleted)
 					{
 						Quest->OnLocationReached.Broadcast(this);
-						UE_LOG(LogQuests, Warning, TEXT("Reached Location Objective %s (object name: %s)"), *Name.ToString(), *GetName());
+						UE_LOG(LogRPGQuests, Warning, TEXT("Reached Location Objective %s (object name: %s)"), *Name.ToString(), *GetName());
 						break;
 					}
 				}

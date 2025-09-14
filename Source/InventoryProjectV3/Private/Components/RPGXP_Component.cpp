@@ -1,28 +1,22 @@
-// Oleksandr Tkachov 2022-2024
+// Oleksandr Tkachov 2022-2025
 
 
 #include "Components/RPGXP_Component.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
 
-// Sets default values for this component's properties
 URPGXP_Component::URPGXP_Component()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
-	// Default level cap
 	Level_Cap = 30;
-
-	// Default SP
 	SkillPoints = 0;
 }
 
-// Called when the game starts
 void URPGXP_Component::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// Set up default variables for the component
 	Level_Current = 1;
 
 	XP_Current = 0.f;
@@ -33,7 +27,6 @@ void URPGXP_Component::BeginPlay()
 	//OnLevelGained.AddDynamic(this, &URPGXP_Component::CalculateXPReward);
 }
 
-// Called every frame
 void URPGXP_Component::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);

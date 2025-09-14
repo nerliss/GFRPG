@@ -5,7 +5,6 @@
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Widgets/RPGInteractionPrompt_Widget.h"
-#include "Utility/Utility.h"
 #include "Utility/LogDefinitions.h"
 
 bool URPGHUD_Widget::Initialize()

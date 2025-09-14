@@ -1,4 +1,4 @@
-// Oleksandr Tkachov 2022-2024
+// Oleksandr Tkachov 2022-2025
 
 
 #include "Characters/PhotoModePawn.h"
@@ -9,23 +9,19 @@
 #include "Kismet/KismetRenderingLibrary.h"
 #include "GameFramework/FloatingPawnMovement.h"
 
-// Sets default values
 APhotoModePawn::APhotoModePawn()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	// Camera 
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
 	SetRootComponent(CameraComponent);
 
 	bUseControllerRotationPitch = true;
 	bUseControllerRotationYaw = true;
 
-	// Floating movement component
 	FloatingMovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("FloatingMovementComp"));
 	FloatingMovementComponent->UpdatedComponent = CameraComponent;
 
-	// Scene capture component
 	SceneCaptureComponent = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("SceneCaptureComponent"));
 	SceneCaptureComponent->bCaptureEveryFrame = false;
 	SceneCaptureComponent->bCaptureOnMovement = false;

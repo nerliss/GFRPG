@@ -1,11 +1,10 @@
-// Oleksandr Tkachov 2022-2024
+// Oleksandr Tkachov 2022-2025
 
 
 #include "Components/RPGHealth_Component.h"
 #include "Utility//Utility.h"
 #include "Characters/RPGPlayerCharacter.h"
 
-// Sets default values for this component's properties
 URPGHealth_Component::URPGHealth_Component()
 {
 	PrimaryComponentTick.bCanEverTick = false;

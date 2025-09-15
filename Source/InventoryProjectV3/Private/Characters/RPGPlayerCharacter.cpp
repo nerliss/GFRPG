@@ -27,12 +27,11 @@
 
 #if !UE_BUILD_SHIPPING
 static TAutoConsoleVariable CVarSuperSprint(TEXT("DebugSuperSprint"), 0, TEXT("Enable to use super sprint speed instead of default one."));
-static TAutoConsoleVariable CVarSuperJump(TEXT("DebugSuperJump"), 0, TEXT("Enable to use super jump. Gives full free controll of the pawn in air, double jump and force enables DebugIgnoreFallDamage."));
+static TAutoConsoleVariable CVarSuperJump(TEXT("DebugSuperJump"), 0, TEXT("Enable to use super jump. Gives full free control of the pawn in air, double jump and force enables DebugIgnoreFallDamage."));
 static TAutoConsoleVariable CVarIgnoreFallDamage(TEXT("DebugIgnoreFallDamage"), 0, TEXT("Enable to ignore fall damage."));
 static TAutoConsoleVariable CVarDebugInteractLine(TEXT("DebugInteractLine"), 0, TEXT("Enable to debug interact line."));
 #endif
 
-// Sets default values
 ARPGPlayerCharacter::ARPGPlayerCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -64,8 +63,7 @@ ARPGPlayerCharacter::ARPGPlayerCharacter()
 	ReputationComp = CreateDefaultSubobject<URPGReputation_Component>(TEXT("ReputationComp"));
 
 	InventoryComp = CreateDefaultSubobject<URPGInventory_Component>(TEXT("InventoryComp"));
-
-	// Stats component
+	
 	GetStatsComponent()->Speed = 100.f;
 	
 	bUseControllerRotationPitch = false;
@@ -86,6 +84,7 @@ ARPGPlayerCharacter::ARPGPlayerCharacter()
 	bStealthed = false;
 	bMounted = false;
 	CharacterGender = ECharacterGender::Undefined;
+	MapIcon = nullptr;
 }
 
 void ARPGPlayerCharacter::BeginPlay()
@@ -377,11 +376,13 @@ void ARPGPlayerCharacter::SetPOV(const EPlayerPOV DesiredPOV)
 
 AActor* ARPGPlayerCharacter::TraceForInteractableObjects(const float InTraceLength)
 {
-	ensure(GetMainHUDWidget());
+	if (!ensure(GetMainHUDWidget()))
+	{
+		return nullptr;
+	}
 
 	if (bInDialog)
 	{
-		// Don't trace if we are in dialog
 		return nullptr;
 	}
 

@@ -41,8 +41,8 @@ public:
 	UPROPERTY()
 	URPGInteractionPrompt_Widget* InteractionPrompt_Widget;
 
-	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
-	URPGMiniMapWidget* MiniMapWidget;
+	// UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))
+	// URPGMiniMapWidget* MiniMapWidget;
 
 	/* Quest HUD Objectives Class to spawn from */
 	UPROPERTY(EditDefaultsOnly, Category = "WidgetClass")

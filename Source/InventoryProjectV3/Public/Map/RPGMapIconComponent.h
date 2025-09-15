@@ -33,26 +33,27 @@ public:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
-	/** Returns UV (0..1) for this icon’s world position. */
+	/** Returns UV (0..1) for this icon’s world position */
 	bool GetMapUV(FVector2D& OutUV) const;
 	
-	/** Icon to draw on the map/minimap. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="MapIcon")
-	UTexture2D* Icon = nullptr;
+	/** Icon to draw on the map/minimap */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowedClasses="/Script/Engine.Texture,/Script/Engine.MaterialInterface,/Script/Engine.SlateTextureAtlasInterface"), Category="MapIcon")
+	//UTexture2D* Icon;
+	TObjectPtr<UObject> Icon;
 
-	/** Size in pixels in the map widget. */
+	/** Size in pixels in the map widget */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="MapIcon")
-	FVector2D IconSize = FVector2D(24.f, 24.f);
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="MapIcon")
-	FLinearColor Tint = FLinearColor::White;
-
-	/** If true, rotate icon by owner’s yaw (useful for player arrow). */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="MapIcon")
-	bool bRotateWithActor = false;
+	FVector2D IconSize;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="MapIcon")
-	EMapIconCategory Category = EMapIconCategory::Custom;
+	FLinearColor Tint;
+
+	/** If true, rotate icon by owner’s yaw (useful for player arrow) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="MapIcon")
+	bool bRotateWithActor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="MapIcon")
+	EMapIconCategory Category;
 
 private:
 	

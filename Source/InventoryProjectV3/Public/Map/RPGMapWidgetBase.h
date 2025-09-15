@@ -27,27 +27,27 @@ public:
 	UPROPERTY(meta=(BindWidget))
 	UCanvasPanel* IconCanvas = nullptr;
 
-	/** Optional: assign in BP if you want to display FogRT overlay via material. */
+	/** Fog of War image */
 	UPROPERTY(meta=(BindWidgetOptional))
 	UImage* FogImage = nullptr;
 
-	/** If true, rotate the whole map by player yaw (minimap style). */
+	/** If true, rotate the whole map by player yaw (minimap style) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Map")
 	bool bRotateWithPlayer = false;
 
-	/** Scale of the map image. 1.0 fits to its brush size; >1 zooms in. */
+	/** Scale of the map image. 1.0 fits to its brush size; >1 zooms in */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Map")
 	float Zoom = 1.0f;
 
 protected:
 
-	/** Loads/sets the map image brush. */
+	/** Loads/sets the map image brush */
 	void RefreshMapBrush();
 
-	/** Simple icon rebuild each tick (you can pool later). */
+	/** Simple icon rebuild each tick (you can pool later) */
 	void RefreshIcons();
 
-	/** For minimap center-on-player translation (override in a child if needed). */
+	/** For minimap center-on-player translation (override in a child if needed) */
 	virtual bool ComputeMapTranslation(FVector2D& OutTranslation, float& OutRotationDeg) const;
 
 	TWeakObjectPtr<URPGMapSubsystem> MapSubsystem;

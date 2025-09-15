@@ -38,10 +38,10 @@ bool URPGMapSubsystem::WorldToMapUV(const FVector& World, FVector2D& OutUV) cons
 	if (bFlipY)
 	{
 		OutUV.Y = 1.f - OutUV.Y;
-		UE_LOG(LogRPGMap, Log, TEXT("[URPGMapSubsystem::WorldToMapUV] Flipped Y coords (%f). New OutUV vector is %s"), OutUV.Y, *OutUV.ToString());
+		UE_LOG(LogRPGMap, VeryVerbose, TEXT("[URPGMapSubsystem::WorldToMapUV] Flipped Y coords (%f). New OutUV vector is %s"), OutUV.Y, *OutUV.ToString());
 	}
 
-	UE_LOG(LogRPGMap, Log, TEXT("[URPGMapSubsystem::WorldToMapUV] OutUV is %s"), *OutUV.ToString());
+	UE_LOG(LogRPGMap, VeryVerbose, TEXT("[URPGMapSubsystem::WorldToMapUV] OutUV is %s"), *OutUV.ToString());
 	return true;
 }
 

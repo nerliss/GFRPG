@@ -22,7 +22,8 @@ void URPGPointOfInterestComponent::TickComponent(float DeltaTime, ELevelTick Tic
 
 	if (!bSpawned)
 	{
-		SpawnPOIOnMap();
+		// Using new map system, don't spawn
+		//SpawnPOIOnMap();
 	}
 }
 
@@ -43,14 +44,14 @@ void URPGPointOfInterestComponent::SpawnPOIOnMap()
 		return;
 	}
 
-	URPGMiniMapWidget* Minimap = HUD->MiniMapWidget;
-	if (!Minimap)
-	{
-		UE_LOG(LogRPGMap, Error, TEXT("[URPGPointOfInterestComponent::SpawnPOIOnMap] Minimap is null!"));
-		return;
-	}
-
-	Minimap->AddPOI(GetOwner());
+	// URPGMiniMapWidget* Minimap = HUD->MiniMapWidget;
+	// if (!Minimap)
+	// {
+	// 	UE_LOG(LogRPGMap, Error, TEXT("[URPGPointOfInterestComponent::SpawnPOIOnMap] Minimap is null!"));
+	// 	return;
+	// }
+	//
+	// Minimap->AddPOI(GetOwner());
 
 	bSpawned = true;
 	UE_LOG(LogRPGMap, Log, TEXT("[URPGPointOfInterestComponent::SpawnPOIOnMap] PointOfInterest icon for %s spawned"), *GetOwner()->GetName());

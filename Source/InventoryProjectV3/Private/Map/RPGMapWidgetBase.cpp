@@ -9,6 +9,7 @@
 #include "Components/Image.h"
 #include "Map/RPGMapIconComponent.h"
 #include "Map/RPGMapSubsystem.h"
+#include "Utility/LogDefinitions.h"
 
 void URPGMapWidgetBase::NativeConstruct()
 {
@@ -26,8 +27,16 @@ void URPGMapWidgetBase::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
+	// TODO: Remove when the map starts working
+	if (MapSubsystem.IsValid() && MapImage && !MapImage->GetBrush().GetResourceObject())
+	{
+		UE_LOG(LogTemp, Display, TEXT("Map Brush refresh"));
+		RefreshMapBrush();
+	}
+	
 	if (!MapImage)
 	{
+		UE_LOG(LogRPGMap, Error, TEXT("[URPGMapWidgetBase::NativeTick] No map image!"));
 		return;
 	}
 
@@ -57,6 +66,7 @@ void URPGMapWidgetBase::RefreshMapBrush()
 {
 	if (!MapSubsystem.IsValid() || !MapImage)
 	{
+		UE_LOG(LogRPGMap, Error, TEXT("[URPGMapWidgetBase::RefreshMapBrush] MapSystem or MapImage is not valid"))
 		return;
 	}
 
@@ -67,11 +77,13 @@ void URPGMapWidgetBase::RefreshMapBrush()
 		Brush.SetResourceObject(MapTexture);
 		Brush.ImageSize = FVector2D(MapTexture->GetSurfaceWidth(), MapTexture->GetSurfaceHeight());
 		MapImage->SetBrush(Brush);
+		UE_LOG(LogRPGMap, Log, TEXT("[URPGMapWidgetBase::RefreshMapBrush] Setting texture (%s) as a MAP brush"), *MapTexture->GetName());
 
 		if (FogImage)
 		{
 			FSlateBrush FogBrush = Brush;
 			FogImage->SetBrush(FogBrush);
+			UE_LOG(LogRPGMap, Log, TEXT("[URPGMapWidgetBase::RefreshMapBrush] Setting texture (%s) as a FOG brush"), *FogImage->GetName());
 		}
 	}
 }

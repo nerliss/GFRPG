@@ -12,9 +12,7 @@ class URPGReputation_Component;
 class URPGInventory_Component;
 class UCameraComponent;
 class USpringArmComponent;
-class UAkComponent;
 class AActor;
-class UAkAudioEvent;
 class UAnimMontage;
 class URPGHUD_Widget;
 class UCharacterSoundCollection;
@@ -175,7 +173,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Components")
 	URPGInventory_Component* GetInventoryComponent() const { return InventoryComp; }
-
+	
 	/* Is currently in stealth mode? */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 	bool bStealthed;

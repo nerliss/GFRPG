@@ -58,9 +58,8 @@ void ARPGPlayer_Controller::SetupInputComponent()
 
 void ARPGPlayer_Controller::InitializeHUDWidget()
 {
-	if (!MainHUDWidgetClass)
+	if (ensureMsgf(!MainHUDWidgetClass, TEXT("[ARPGPlayer_Controller::InitializeHUDWidget] Couldn't create HUD widget: MainHUDWidgetClass is null")))
 	{
-		UE_LOG(LogRPGUIHUD, Error, TEXT("[ARPGPlayer_Controller::InitializeHUDWidget] Couldn't create a HUD widget: the class to spawn from is unset!"));
 		return;
 	}
 

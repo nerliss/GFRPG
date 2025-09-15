@@ -7,8 +7,10 @@
 #include "Interfaces/RPGInteract_Interface.h"
 #include "RPGCharacter.generated.h"
 
+class URPGMapIconComponent;
 class URPGQuestLogComponent;
 class URPGStatsComponent;
+class UTexture2D;
 
 UENUM(BlueprintType)
 enum class ECharacterGender : uint8
@@ -50,4 +52,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "RPG Character")
 	URPGStatsComponent* StatsComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
+	URPGMapIconComponent* MapIconComponent;
 };

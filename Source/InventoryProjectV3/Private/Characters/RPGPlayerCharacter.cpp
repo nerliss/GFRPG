@@ -84,7 +84,6 @@ ARPGPlayerCharacter::ARPGPlayerCharacter()
 	bStealthed = false;
 	bMounted = false;
 	CharacterGender = ECharacterGender::Undefined;
-	MapIcon = nullptr;
 }
 
 void ARPGPlayerCharacter::BeginPlay()

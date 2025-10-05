@@ -28,11 +28,11 @@ void URPGMapWidgetBase::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
 	// TODO: Remove when the map starts working
-	if (MapSubsystem.IsValid() && MapImage && !MapImage->GetBrush().GetResourceObject())
-	{
-		UE_LOG(LogTemp, Display, TEXT("Map Brush refresh"));
-		RefreshMapBrush();
-	}
+	// if (MapSubsystem.IsValid() && MapImage && !MapImage->GetBrush().GetResourceObject())
+	// {
+	// 	UE_LOG(LogTemp, Display, TEXT("Map Brush refresh"));
+	// 	RefreshMapBrush();
+	// }
 	
 	if (!MapImage)
 	{
@@ -40,24 +40,24 @@ void URPGMapWidgetBase::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 		return;
 	}
 
-	FVector2D Translation;
+	FVector2D Translation = FVector2D::ZeroVector;
 	float RotationDeg = 0.f;
 
-	if (ComputeMapTranslation(Translation, RotationDeg))
-	{
-		MapImage->SetRenderTransformPivot(FVector2D(0.5f, 0.5f));;
-		MapImage->SetRenderScale(FVector2D(Zoom, Zoom));
-		MapImage->SetRenderTransformAngle(bRotateWithPlayer ? RotationDeg : 0.f);
-		MapImage->SetRenderTranslation(Translation);
-
-		if (FogImage)
-		{
-			FogImage->SetRenderTransformPivot(FVector2D(0.5f, 0.5f));;
-			FogImage->SetRenderScale(FVector2D(Zoom, Zoom));
-			FogImage->SetRenderTransformAngle(bRotateWithPlayer ? RotationDeg : 0.f);
-			FogImage->SetRenderTranslation(Translation);
-		}
-	}
+	// if (ComputeMapTranslation(Translation, RotationDeg))
+	// {
+	// 	MapImage->SetRenderTransformPivot(FVector2D(0.5f, 0.5f));;
+	// 	MapImage->SetRenderScale(FVector2D(Zoom, Zoom));
+	// 	MapImage->SetRenderTransformAngle(bRotateWithPlayer ? RotationDeg : 0.f);
+	// 	MapImage->SetRenderTranslation(Translation);
+	//
+	// 	if (FogImage)
+	// 	{
+	// 		FogImage->SetRenderTransformPivot(FVector2D(0.5f, 0.5f));;
+	// 		FogImage->SetRenderScale(FVector2D(Zoom, Zoom));
+	// 		FogImage->SetRenderTransformAngle(bRotateWithPlayer ? RotationDeg : 0.f);
+	// 		FogImage->SetRenderTranslation(Translation);
+	// 	}
+	// }
 
 	RefreshIcons();
 }

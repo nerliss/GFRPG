@@ -52,7 +52,11 @@ void ARPGMapImageGenerator::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 
-	
+	FVector TopLeftLocation = FVector((MapSize / 2.f * -1.f), MapSize / 2.f, 0.f);
+	FVector BottomLeftLocation = FVector(MapSize / 2.f, MapSize / 2.f, 0.f);
+	FVector TopRightLocation = FVector((MapSize / 2.f * -1.f), (MapSize / 2.f * -1.f), 0.f);
+	FVector BottomRightLocation = FVector(MapSize / 2.f, (MapSize / 2.f * -1.f), 0.f);
+	TopLeftMarker->SetRelativeLocation(TopLeftLocation, false, nullptr, ETeleportType::ResetPhysics);
 }
 
 void ARPGMapImageGenerator::TakeScreenshot()

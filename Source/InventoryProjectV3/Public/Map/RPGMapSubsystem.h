@@ -9,6 +9,28 @@
 class ARPGMapBoundsVolume;
 class URPGMapIconComponent;
 
+USTRUCT()
+struct FMapValuesTableRow : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Map")
+	float MapSizeX;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Map")
+	float MapSizeY;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Map")
+	float MapOffsetX;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Map")
+	float MapOffsetY;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Map")
+	UTexture2D* MapTexture;
+	
+};
+
 UCLASS()
 class INVENTORYPROJECTV3_API URPGMapSubsystem : public UGameInstanceSubsystem
 {

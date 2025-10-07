@@ -36,24 +36,24 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Map")
 	FVector BorderScale;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Map")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Map")
 	USceneComponent* Root;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Map")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Map")
 	UStaticMeshComponent* TopLeftMarker;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Map")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Map")
 	UStaticMeshComponent* TopRightMarker;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Map")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Map")
 	UStaticMeshComponent* BottomLeftMarker;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Map")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Map")
 	UStaticMeshComponent* BottomRightMarker;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Map")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Map")
 	USplineComponent* Spline;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Map")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Map")
 	UInstancedStaticMeshComponent* InstancedSM;
 };

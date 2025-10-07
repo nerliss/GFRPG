@@ -9,7 +9,8 @@
 class UImage;
 class UCanvasPanel;
 class URPGMapSubsystem;
-class URPGMapIconComponent;
+class UDataTable;
+class USlateBrushAsset;
 
 UCLASS()
 class INVENTORYPROJECTV3_API URPGMapWidgetBase : public UUserWidget
@@ -20,17 +21,35 @@ public:
 
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+	virtual FReply NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual int32 NativePaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled ) const override;
+
+	void InitMap();
 	
-	UPROPERTY(meta=(BindWidget))
+	void UpdateQuestMarkers(FVector WaypointLocation);
+
+	void VectorToPoint(FVector WaypointLocation, float& XValue, float& YValue);
+
+	void UpdatePlayerPosition();
+
+	void AddWaypoint(FVector WaypointLocation);
+	
+	UPROPERTY(meta=(BindWidgetOptional))
 	UImage* MapImage = nullptr;
-	
-	UPROPERTY(meta=(BindWidget))
-	UCanvasPanel* IconCanvas = nullptr;
 
 	/** Fog of War image */
 	UPROPERTY(meta=(BindWidgetOptional))
 	UImage* FogImage = nullptr;
 
+	UPROPERTY(meta=(BindWidgetOptional))
+	UImage* PlayerIcon = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Map")
+	UDataTable* MapDataTable = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Map")
+	USlateBrushAsset* SlateBrushWaypoint = nullptr;
+	
 	/** If true, rotate the whole map by player yaw (minimap style) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Map")
 	bool bRotateWithPlayer = false;
@@ -39,16 +58,42 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Map")
 	float Zoom = 1.0f;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Map")
+	float MapXDiv = 0.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Map")
+	float MapYDiv = 0.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Map")
+	float MapXOffset = 0.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Map")
+	float MapYOffset = 0.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Map")
+	float WidgetMapSize = 1000.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Map")
+	float WidgetHalfSize = 500.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Map")
+	float WorldIconHalfSize = 16.f;
+
+	// TODO: NYI
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Map")
+	TArray<FVector2D> QuestMarkers;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="Map")
+	bool bInitComplete = false;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="Map")
+	bool bLeftButtonDown = false;
+
+	/* Set in a minimap widget that hosts this one */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Map")
+	bool bIsMiniMap = false;
+	
 protected:
-
-	/** Loads/sets the map image brush */
-	void RefreshMapBrush();
-
-	/** Simple icon rebuild each tick (you can pool later) */
-	void RefreshIcons();
-
-	/** For minimap center-on-player translation (override in a child if needed) */
-	virtual bool ComputeMapTranslation(FVector2D& OutTranslation, float& OutRotationDeg) const;
-
+	
 	TWeakObjectPtr<URPGMapSubsystem> MapSubsystem;
 };

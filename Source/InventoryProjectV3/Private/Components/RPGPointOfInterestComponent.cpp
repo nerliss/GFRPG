@@ -5,7 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "PlayerController/RPGPlayer_Controller.h"
 #include "Widgets/RPGHUD_Widget.h"
-#include "Widgets/Map/RPGMiniMapWidget.h"
+#include "Map/RPGMiniMapWidget.h"
 #include "Utility/LogDefinitions.h"
 
 URPGPointOfInterestComponent::URPGPointOfInterestComponent()

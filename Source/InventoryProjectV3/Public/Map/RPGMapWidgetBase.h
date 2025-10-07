@@ -12,6 +12,9 @@ class URPGMapSubsystem;
 class UDataTable;
 class USlateBrushAsset;
 
+/**
+ * Map widget base class which hosts all map related logic which then shared with MapScreen widget and MiniMap widget
+ */
 UCLASS()
 class INVENTORYPROJECTV3_API URPGMapWidgetBase : public UUserWidget
 {
@@ -44,6 +47,9 @@ public:
 	UPROPERTY(meta=(BindWidgetOptional))
 	UImage* PlayerIcon = nullptr;
 
+	UPROPERTY(meta=(BindWidgetOptional))
+	UImage* WorldMarker = nullptr;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Map")
 	UDataTable* MapDataTable = nullptr;
 

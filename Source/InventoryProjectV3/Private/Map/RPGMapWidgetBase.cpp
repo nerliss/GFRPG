@@ -32,7 +32,6 @@ FReply URPGMapWidgetBase::NativeOnMouseButtonUp(const FGeometry& InGeometry, con
 {
 	return Super::NativeOnMouseButtonUp(InGeometry, InMouseEvent);
 
-	// TODO: Custom waypoint placement logic	
 }
 
 int32 URPGMapWidgetBase::NativePaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry,
@@ -58,8 +57,14 @@ void URPGMapWidgetBase::InitMap()
 		return;
 	}
 
+	if (!MapDataTable)
+	{
+		UE_LOG(LogRPGMap, Error, TEXT("[URPGMapWidgetBase::InitMap] MapDataTable is empty"));
+		return;
+	}
+	
 	const FString LevelName = UGameplayStatics::GetCurrentLevelName(GetWorld());
-	FMapValuesTableRow* FoundRow = MapDataTable->FindRow<FMapValuesTableRow>(*LevelName, TEXT("Map Table Context"));
+	const FMapValuesTableRow* FoundRow = MapDataTable->FindRow<FMapValuesTableRow>(*LevelName, TEXT("Map Table Context"));
 	if (FoundRow)
 	{
 		MapXDiv = FoundRow->MapSizeX / WidgetMapSize;
@@ -67,7 +72,10 @@ void URPGMapWidgetBase::InitMap()
 		MapXOffset = FoundRow->MapOffsetX / MapXDiv;
 		MapYOffset = FoundRow->MapOffsetY / MapYDiv;
 
-		MapImage->SetBrushFromTexture(FoundRow->MapTexture);
+		if (MapImage)
+		{
+			MapImage->SetBrushFromTexture(FoundRow->MapTexture);
+		}
 	}
 
 	bInitComplete = true;
@@ -91,7 +99,7 @@ void URPGMapWidgetBase::VectorToPoint(FVector WaypointLocation, float& XValue, f
 void URPGMapWidgetBase::UpdatePlayerPosition()
 {
 	ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
-	if (PlayerCharacter)
+	if (PlayerCharacter && PlayerCharacter->GetMesh() && PlayerIcon)
 	{
 		const FVector PlayerLoc = PlayerCharacter->GetActorLocation();
 		const float PlayerIconX = PlayerLoc.X / MapXDiv + MapXOffset;

@@ -12,7 +12,8 @@
 void URPGMiniMapWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	
+
+	OnWorldMarkerToggled.AddUObject(this, &ThisClass::AddWorldMarker);
 }
 
 void URPGMiniMapWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -39,6 +40,8 @@ void URPGMiniMapWidget::UpdateMiniMapTranslation()
 
 void URPGMiniMapWidget::AddWorldMarker(bool bSpawn, FVector2D MarkerLocation)
 {
+	UE_LOG(LogRPGMap, Log, TEXT("[URPGMiniMapWidget::AddWorldMarker] Function called with params bSpawn = %s, MarkerLocation = %s"), *LexToString(bSpawn), *MarkerLocation.ToString());
+	
 	if (!MinimapWidget || !MinimapWidget->WorldMarker)
 	{
 		return;

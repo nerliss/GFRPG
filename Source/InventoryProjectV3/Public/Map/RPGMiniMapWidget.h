@@ -21,6 +21,7 @@ public:
 
 	void UpdateMiniMapTranslation();
 
+	UFUNCTION()
 	void AddWorldMarker(bool bSpawn, FVector2D MarkerLocation);
 	
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))

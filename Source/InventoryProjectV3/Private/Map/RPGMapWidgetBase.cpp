@@ -30,8 +30,9 @@ void URPGMapWidgetBase::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 
 FReply URPGMapWidgetBase::NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
+	ToggleWorldMarker(InGeometry, InMouseEvent);
+	
 	return Super::NativeOnMouseButtonUp(InGeometry, InMouseEvent);
-
 }
 
 int32 URPGMapWidgetBase::NativePaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry,
@@ -117,5 +118,55 @@ void URPGMapWidgetBase::AddWaypoint(FVector WaypointLocation)
 	if (bInitComplete)
 	{
 		UpdateQuestMarkers(WaypointLocation);
+	}
+}
+
+void URPGMapWidgetBase::ToggleWorldMarker(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	if (!bLeftButtonDown)
+	{
+		return;
+	}
+
+	if (!WorldMarker)
+	{
+		return;
+	}
+	
+	if (bMiniMap)
+	{
+		return;
+	}
+
+	const FVector2D CursorLocalCoords = InGeometry.AbsoluteToLocal(InMouseEvent.GetScreenSpacePosition());
+	const float WorldMarkerX = WorldMarker->GetRenderTransform().Translation.X;
+	const float WorldMarkerY = WorldMarker->GetRenderTransform().Translation.Y;
+	const float CursorPositionOnWidgetX = CursorLocalCoords.X - WidgetHalfSize;
+	const float CursorPositionOnWidgetY = CursorLocalCoords.Y - WidgetHalfSize;
+	const float CursorInMarkerRangeForXMin = CursorPositionOnWidgetX - 10.f;
+	const float CursorInMarkerRangeForXMax = CursorPositionOnWidgetX + 10.f;
+	const float CursorInMarkerRangeForYMin = CursorPositionOnWidgetY - 10.f;
+	const float CursorInMarkerRangeForYMax = CursorPositionOnWidgetY + 10.f;
+	const bool bCursorInMarkerRangeForX = ((CursorInMarkerRangeForXMin <= WorldMarkerX) && (WorldMarkerX >= CursorInMarkerRangeForXMax));
+	const bool bCursorInMarkerRangeForY = ((CursorInMarkerRangeForYMin <= WorldMarkerY) && (WorldMarkerY >= CursorInMarkerRangeForYMax));
+	const bool bRemoveWorldMaker = bCursorInMarkerRangeForX && bCursorInMarkerRangeForY;
+
+	if (bRemoveWorldMaker)
+	{
+		WorldMarker->SetVisibility(ESlateVisibility::Hidden);
+		WorldMarker->SetRenderTranslation(FVector2D(FLT_MAX));
+
+		OnWorldMarkerToggled.Broadcast(false, FVector2D(0.f)); // TODO: Update Mini map interface call with 0.f coords
+		// TODO: Spawn world marker interface call with 0.f coords
+	}
+	else
+	{
+		WorldMarker->SetVisibility(ESlateVisibility::Visible);
+		WorldMarker->SetRenderTranslation(FVector2D(CursorPositionOnWidgetX, CursorPositionOnWidgetY));
+
+		FVector NewWorldMarkerLocation = FVector((CursorPositionOnWidgetX - MapXOffset) * MapXDiv, (CursorPositionOnWidgetY - MapYOffset) * MapYDiv, 0.f);
+
+		OnWorldMarkerToggled.Broadcast(true, FVector2D(CursorPositionOnWidgetX, CursorPositionOnWidgetY)); // TODO: Update Mini map interface call with FVector2D(CursorPositionOnWidgetX, CursorPositionOnWidgetY)
+		// TODO: Spawn world marker interface call with NewWorldMarkerLocation
 	}
 }

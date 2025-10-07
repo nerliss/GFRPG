@@ -12,6 +12,8 @@ class URPGMapSubsystem;
 class UDataTable;
 class USlateBrushAsset;
 
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnWorldMarkerToggled, bool /*bSpawn*/, FVector2D /*MarkerMapLocation*/);
+
 /**
  * Map widget base class which hosts all map related logic which then shared with MapScreen widget and MiniMap widget
  */
@@ -36,6 +38,8 @@ public:
 	void UpdatePlayerPosition();
 
 	void AddWaypoint(FVector WaypointLocation);
+
+	void ToggleWorldMarker(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent);
 	
 	UPROPERTY(meta=(BindWidgetOptional))
 	UImage* MapImage = nullptr;
@@ -95,9 +99,14 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="Map")
 	bool bLeftButtonDown = false;
 
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="Map")
+	bool bRightButtonDown = false;
+	
 	/* Set in a minimap widget that hosts this one */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Map")
-	bool bIsMiniMap = false;
+	bool bMiniMap = false;
+
+	FOnWorldMarkerToggled OnWorldMarkerToggled;
 	
 protected:
 	

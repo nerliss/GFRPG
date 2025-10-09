@@ -23,6 +23,8 @@
 #include "DamageTypes/DamageTypeEnviromental.h"
 #include "DataAssets/CharacterSoundCollection.h"
 #include "GameInstance/RPGGameInstanceBase.h"
+#include "Map/RPGMapScreenWidget.h"
+#include "PlayerController/RPGPlayer_Controller.h"
 #include "Save/RPGSaveGameObject.h"
 
 #if !UE_BUILD_SHIPPING
@@ -84,6 +86,8 @@ ARPGPlayerCharacter::ARPGPlayerCharacter()
 	bStealthed = false;
 	bMounted = false;
 	CharacterGender = ECharacterGender::Undefined;
+	MapScreenWidgetClass = nullptr;
+	MapScreenWidget = nullptr;
 }
 
 void ARPGPlayerCharacter::BeginPlay()
@@ -120,6 +124,7 @@ void ARPGPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	PlayerInputComponent->BindAction("Inventory", IE_Pressed, this, &ARPGPlayerCharacter::OnInventoryToggled);
 	PlayerInputComponent->BindAction("ToggleQuestLog", IE_Pressed, this, &ARPGPlayerCharacter::OnQuestLogToggled);
 	PlayerInputComponent->BindAction("StealthToggle", IE_Pressed, this, &ARPGPlayerCharacter::OnStealthPressed);
+	PlayerInputComponent->BindAction("ToggleMapScreen", IE_Pressed, this, &ARPGPlayerCharacter::OnMapScreenToggled);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &ARPGPlayerCharacter::OnForwardMoved);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ARPGPlayerCharacter::OnRightMoved);
@@ -410,7 +415,7 @@ AActor* ARPGPlayerCharacter::TraceForInteractableObjects(const float InTraceLeng
 #endif
 
 	AActor* HitActor = HitResult.GetActor();
-	auto* InteractActorCasted = Cast<IRPGInteract_Interface>(HitActor);
+	IRPGInteract_Interface* InteractActorCasted = Cast<IRPGInteract_Interface>(HitActor);
 	if (!InteractActorCasted)
 	{
 		GetMainHUDWidget()->DisplayInteractionMessage(false, FText::FromString(""));
@@ -444,7 +449,7 @@ void ARPGPlayerCharacter::OnInteractPressed()
 		return;
 	}
 
-	auto* InteractActorCasted = Cast<IRPGInteract_Interface>(InteractActor);
+	IRPGInteract_Interface* InteractActorCasted = Cast<IRPGInteract_Interface>(InteractActor);
 	if (!InteractActorCasted)
 	{
 		return;
@@ -464,12 +469,35 @@ void ARPGPlayerCharacter::OnQuestLogToggled()
 	GetQuestLogComponent()->ToggleQuestLog();
 }
 
+void ARPGPlayerCharacter::OnMapScreenToggled()
+{
+	ARPGPlayer_Controller* RPGPlayerController = Cast<ARPGPlayer_Controller>(GetController());
+	ensure(RPGPlayerController);
+	check(MapScreenWidgetClass);
+	
+	if (MapScreenWidget)
+	{
+		MapScreenWidget->RemoveFromParent();
+		MapScreenWidget = nullptr;
+
+		RPGPlayerController->SetDefaultInputMode();
+	}
+	else
+	{
+		MapScreenWidget = Cast<URPGMapScreenWidget>(CreateWidget(GetWorld(), MapScreenWidgetClass));
+		MapScreenWidget->AddToViewport();
+		MapScreenWidget->SetFocus();
+
+		RPGPlayerController->SetUIInputMode();
+	}
+}
+
 void ARPGPlayerCharacter::LoadLastCharacterModel()
 {
-	const auto* RPGGameInstance = GetRPGGameInstance();
+	const URPGGameInstanceBase* RPGGameInstance = GetRPGGameInstance();
 	check(RPGGameInstance);
 
-	const auto SaveCharacterData = RPGGameInstance->GetSaveGameObject()->CharacterPlayerData;
+	const FCharacterSelectionData SaveCharacterData = RPGGameInstance->GetSaveGameObject()->CharacterPlayerData;
 	if (!(SaveCharacterData.SkeletalMesh && SaveCharacterData.AssociatedAnimBP))
 	{	
 		UE_LOG(LogRPGPlayerCharacter, Error, TEXT("[ARPGPlayerCharacter::LoadLastCharacterModel] SaveCharacterData doesn't have SkeletalMesh and/or AssociatedAnimBP!"));

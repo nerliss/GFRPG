@@ -6,6 +6,7 @@
 #include "RPGCharacter.h"
 #include "RPGPlayerCharacter.generated.h"
 
+class URPGMapScreenWidget;
 class URPGXP_Component;
 class URPGHealth_Component;
 class URPGReputation_Component;
@@ -219,6 +220,7 @@ protected:
 
 	void OnInventoryToggled();
 	void OnQuestLogToggled();
+	void OnMapScreenToggled();
 	
 	void LoadLastCharacterModel();
 
@@ -251,7 +253,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
 	float FallDamageMinimalThreshold;
 
-	// MyTODO: Move this to RPGAnimInstance
+	// TODO: Move this to RPGAnimInstance
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
 	UAnimMontage* DeathMontage;
 
@@ -278,6 +280,12 @@ protected:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Character")
 	ECharacterGender CharacterGender;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Map")
+	TSubclassOf<URPGMapScreenWidget> MapScreenWidgetClass;
+
+	UPROPERTY()
+	URPGMapScreenWidget* MapScreenWidget;
+	
 private:
 
 	/* Attempt to interact with the current InteractActor */

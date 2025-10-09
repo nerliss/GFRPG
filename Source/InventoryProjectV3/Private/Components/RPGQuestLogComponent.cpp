@@ -164,6 +164,7 @@ void URPGQuestLogComponent::ToggleQuestLog()
 	if (!QuestLogWidget)
 	{
 		UE_LOG(LogRPGQuests, Error, TEXT("[URPGQuestLogComponent::ToggleQuestLog] QuestLogWidget was not created, probably because QuestLogWidgetClass is nullptr"));
+		return;
 	}
 
 	QuestLogWidget->AddToViewport();

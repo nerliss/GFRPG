@@ -19,8 +19,8 @@ APhotoModePawn::APhotoModePawn()
 	bUseControllerRotationPitch = true;
 	bUseControllerRotationYaw = true;
 
-	FloatingMovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("FloatingMovementComp"));
-	FloatingMovementComponent->UpdatedComponent = CameraComponent;
+	// FloatingMovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("FloatingMovementComp"));
+	// FloatingMovementComponent->UpdatedComponent = CameraComponent;
 
 	SceneCaptureComponent = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("SceneCaptureComponent"));
 	SceneCaptureComponent->bCaptureEveryFrame = false;

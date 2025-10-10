@@ -40,9 +40,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Camera")
 	UCameraComponent* CameraComponent;
 
-	/* Pawn's movement */
-	UPROPERTY(EditDefaultsOnly, Category = "Movement")
-	UFloatingPawnMovement* FloatingMovementComponent;
+	// /* Pawn's movement */
+	// UPROPERTY(EditDefaultsOnly, Category = "Movement")
+	// UFloatingPawnMovement* FloatingMovementComponent;
 
 	/* Scene capture component. Used for taking screenshots */
 	UPROPERTY(EditDefaultsOnly, Category = "PhotoMode")

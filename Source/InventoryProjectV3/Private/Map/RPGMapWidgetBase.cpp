@@ -13,6 +13,7 @@
 #include "Map/RPGMapIconComponent.h"
 #include "Map/RPGMapSubsystem.h"
 #include "Utility/LogDefinitions.h"
+#include "Utility/Utility.h"
 
 void URPGMapWidgetBase::NativeConstruct()
 {
@@ -125,19 +126,22 @@ void URPGMapWidgetBase::ToggleWorldMarker(const FGeometry& InGeometry, const FPo
 {
 	if (!bLeftButtonDown)
 	{
+		LOG_WITH_FUNCTION_NAME(LogRPGMap, Error, TEXT("Left mouse button is not pressed"));
 		return;
 	}
-
+	
 	if (!WorldMarker)
 	{
+		LOG_WITH_FUNCTION_NAME(LogRPGMap, Error, TEXT("WorldMarker is nullptr"));
 		return;
 	}
 	
 	if (bMiniMap)
 	{
+		LOG_WITH_FUNCTION_NAME(LogRPGMap, Error, TEXT("Called on minimap, do nothing"));
 		return;
 	}
-
+	
 	const FVector2D CursorLocalCoords = InGeometry.AbsoluteToLocal(InMouseEvent.GetScreenSpacePosition());
 	const float WorldMarkerX = WorldMarker->GetRenderTransform().Translation.X;
 	const float WorldMarkerY = WorldMarker->GetRenderTransform().Translation.Y;
@@ -151,6 +155,8 @@ void URPGMapWidgetBase::ToggleWorldMarker(const FGeometry& InGeometry, const FPo
 	const bool bCursorInMarkerRangeForY = ((CursorInMarkerRangeForYMin <= WorldMarkerY) && (WorldMarkerY >= CursorInMarkerRangeForYMax));
 	const bool bRemoveWorldMaker = bCursorInMarkerRangeForX && bCursorInMarkerRangeForY;
 
+	LOG_WITH_FUNCTION_NAME(LogRPGMap, Log, TEXT("Toggling world marker at X=%f, Y=%f. Removing marker = %s"), CursorPositionOnWidgetX, CursorPositionOnWidgetY, *LexToString(bRemoveWorldMaker));
+	
 	if (bRemoveWorldMaker)
 	{
 		WorldMarker->SetVisibility(ESlateVisibility::Hidden);

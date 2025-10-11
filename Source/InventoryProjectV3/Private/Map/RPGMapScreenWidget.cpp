@@ -4,21 +4,39 @@
 #include "Map/RPGMapScreenWidget.h"
 
 #include "Components/ScaleBox.h"
+#include "Utility/LogDefinitions.h"
+#include "Utility/Utility.h"
+
+void URPGMapScreenWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	// Assign map's world marker ptr to this class' world marker ptr since the latter is null hence world marker logic doesn't work
+	WorldMarker = MapWidget->WorldMarker;
+}
 
 FReply URPGMapScreenWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
+	Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
+	
 	bRightButtonDown = InMouseEvent.IsMouseButtonDown(EKeys::RightMouseButton);
 	bLeftButtonDown = InMouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton);
+
+	LOG_WITH_FUNCTION_NAME(LogRPGMap, Log, TEXT("Called"));
 	
-	return Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
+	return FReply::Handled();
 }
 
 FReply URPGMapScreenWidget::NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
+	Super::NativeOnMouseButtonUp(InGeometry, InMouseEvent);
+	
 	bRightButtonDown = InMouseEvent.IsMouseButtonDown(EKeys::RightMouseButton);
 	bLeftButtonDown = InMouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton);
+
+	LOG_WITH_FUNCTION_NAME(LogRPGMap, Log, TEXT("Called"));
 	
-	return Super::NativeOnMouseButtonUp(InGeometry, InMouseEvent);
+	return FReply::Handled(); 
 }
 
 FReply URPGMapScreenWidget::NativeOnMouseWheel(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -30,7 +48,19 @@ FReply URPGMapScreenWidget::NativeOnMouseWheel(const FGeometry& InGeometry, cons
 
 FReply URPGMapScreenWidget::NativeOnMouseMove(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
+	UpdatePanning(InMouseEvent);
+	
 	return Super::NativeOnMouseMove(InGeometry, InMouseEvent);
+}
+
+void URPGMapScreenWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseLeave(InMouseEvent);
+
+	bRightButtonDown = false;
+	bLeftButtonDown = false;
+
+	LOG_WITH_FUNCTION_NAME(LogRPGMap, Log, TEXT("Called"));
 }
 
 void URPGMapScreenWidget::UpdateZoom(const FPointerEvent& InMouseEvent)

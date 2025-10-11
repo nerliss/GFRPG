@@ -17,11 +17,13 @@ class INVENTORYPROJECTV3_API URPGMapScreenWidget : public URPGMapWidgetBase
 	GENERATED_BODY()
 
 public:
-	
+
+	virtual void NativeConstruct() override;
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual FReply NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual FReply NativeOnMouseWheel(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual FReply NativeOnMouseMove(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
 
 	void UpdateZoom(const FPointerEvent& InMouseEvent);
 	void UpdatePanning(const FPointerEvent& InMouseEvent);

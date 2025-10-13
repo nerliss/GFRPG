@@ -5,12 +5,9 @@
 
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Blueprint/WidgetTree.h"
-#include "Components/CanvasPanel.h"
-#include "Components/CanvasPanelSlot.h"
 #include "Components/Image.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
-#include "Map/RPGMapIconComponent.h"
 #include "Map/RPGMapSubsystem.h"
 #include "Utility/LogDefinitions.h"
 #include "Utility/Utility.h"
@@ -31,15 +28,34 @@ void URPGMapWidgetBase::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 
 FReply URPGMapWidgetBase::NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
-	ToggleWorldMarker(InGeometry, InMouseEvent);
+	Super::NativeOnMouseButtonUp(InGeometry, InMouseEvent);
+
 	
-	return Super::NativeOnMouseButtonUp(InGeometry, InMouseEvent);
+	
+	ToggleWorldMarker(InGeometry, InMouseEvent);
+
+	bRightButtonDown = InMouseEvent.IsMouseButtonDown(EKeys::RightMouseButton);
+	bLeftButtonDown = InMouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton);
+	
+	return FReply::Handled(); 
+}
+
+FReply URPGMapWidgetBase::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
+	
+	bRightButtonDown = InMouseEvent.IsMouseButtonDown(EKeys::RightMouseButton);
+	bLeftButtonDown = InMouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton);
+	
+	return FReply::Handled();
 }
 
 int32 URPGMapWidgetBase::NativePaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry,
-	const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId,
-	const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const
+                                     const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId,
+                                     const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const
 {
+	Super::NativePaint(Args, AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle, bParentEnabled);
+	
 	FPaintContext Context(AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle, bParentEnabled);
 	for (const FVector2D QuestMarker : QuestMarkers)
 	{
@@ -48,7 +64,7 @@ int32 URPGMapWidgetBase::NativePaint(const FPaintArgs& Args, const FGeometry& Al
 
 	// Add here new waypoints if needed
 
-	return Super::NativePaint(Args, AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle, bParentEnabled);
+	return LayerId;
 }
 
 void URPGMapWidgetBase::InitMap()
@@ -153,9 +169,10 @@ void URPGMapWidgetBase::ToggleWorldMarker(const FGeometry& InGeometry, const FPo
 	const float CursorInMarkerRangeForYMax = CursorPositionOnWidgetY + 10.f;
 	const bool bCursorInMarkerRangeForX = ((CursorInMarkerRangeForXMin <= WorldMarkerX) && (WorldMarkerX >= CursorInMarkerRangeForXMax));
 	const bool bCursorInMarkerRangeForY = ((CursorInMarkerRangeForYMin <= WorldMarkerY) && (WorldMarkerY >= CursorInMarkerRangeForYMax));
-	const bool bRemoveWorldMaker = bCursorInMarkerRangeForX && bCursorInMarkerRangeForY;
+	//const bool bRemoveWorldMaker = bCursorInMarkerRangeForX && bCursorInMarkerRangeForY;
+	const bool bRemoveWorldMaker = false;
 
-	LOG_WITH_FUNCTION_NAME(LogRPGMap, Log, TEXT("Toggling world marker at X=%f, Y=%f. Removing marker = %s"), CursorPositionOnWidgetX, CursorPositionOnWidgetY, *LexToString(bRemoveWorldMaker));
+	LOG_WITH_FUNCTION_NAME(LogRPGMap, Log, TEXT("Toggling world marker at X=%f, Y=%f (Cursor's position: x = %f, y = %f. Removing marker = %s. WidgetHalfSize = %f"), CursorPositionOnWidgetX, CursorPositionOnWidgetY, CursorLocalCoords.X, CursorLocalCoords.Y, *LexToString(bRemoveWorldMaker), WidgetHalfSize);
 	
 	if (bRemoveWorldMaker)
 	{

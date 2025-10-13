@@ -58,10 +58,7 @@ void ARPGPlayer_Controller::SetupInputComponent()
 
 void ARPGPlayer_Controller::InitializeHUDWidget()
 {
-	if (ensureMsgf(!MainHUDWidgetClass, TEXT("[ARPGPlayer_Controller::InitializeHUDWidget] Couldn't create HUD widget: MainHUDWidgetClass is null")))
-	{
-		return;
-	}
+	ensureMsgf(MainHUDWidgetClass, TEXT("[ARPGPlayer_Controller::InitializeHUDWidget] Couldn't create HUD widget: MainHUDWidgetClass is null"));
 
 	MainHUDWidget = Cast<URPGHUD_Widget>(CreateWidget(GetWorld(), MainHUDWidgetClass));
 	if (!MainHUDWidget)

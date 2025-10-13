@@ -33,7 +33,7 @@ FReply URPGMapScreenWidget::NativeOnMouseButtonUp(const FGeometry& InGeometry, c
 	
 	bRightButtonDown = InMouseEvent.IsMouseButtonDown(EKeys::RightMouseButton);
 	bLeftButtonDown = InMouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton);
-
+	
 	LOG_WITH_FUNCTION_NAME(LogRPGMap, Log, TEXT("Called"));
 	
 	return FReply::Handled(); 
@@ -41,16 +41,20 @@ FReply URPGMapScreenWidget::NativeOnMouseButtonUp(const FGeometry& InGeometry, c
 
 FReply URPGMapScreenWidget::NativeOnMouseWheel(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
+	Super::NativeOnMouseWheel(InGeometry, InMouseEvent);
+	
 	UpdateZoom(InMouseEvent);
 	
-	return Super::NativeOnMouseWheel(InGeometry, InMouseEvent);
+	return FReply::Handled(); 
 }
 
 FReply URPGMapScreenWidget::NativeOnMouseMove(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
+	Super::NativeOnMouseMove(InGeometry, InMouseEvent);
+	
 	UpdatePanning(InMouseEvent);
 	
-	return Super::NativeOnMouseMove(InGeometry, InMouseEvent);
+	return FReply::Handled(); 
 }
 
 void URPGMapScreenWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)

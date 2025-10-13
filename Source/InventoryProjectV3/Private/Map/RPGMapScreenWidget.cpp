@@ -15,30 +15,6 @@ void URPGMapScreenWidget::NativeConstruct()
 	WorldMarker = MapWidget->WorldMarker;
 }
 
-FReply URPGMapScreenWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
-{
-	Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
-	
-	bRightButtonDown = InMouseEvent.IsMouseButtonDown(EKeys::RightMouseButton);
-	bLeftButtonDown = InMouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton);
-
-	LOG_WITH_FUNCTION_NAME(LogRPGMap, Log, TEXT("Called"));
-	
-	return FReply::Handled();
-}
-
-FReply URPGMapScreenWidget::NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
-{
-	Super::NativeOnMouseButtonUp(InGeometry, InMouseEvent);
-	
-	bRightButtonDown = InMouseEvent.IsMouseButtonDown(EKeys::RightMouseButton);
-	bLeftButtonDown = InMouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton);
-	
-	LOG_WITH_FUNCTION_NAME(LogRPGMap, Log, TEXT("Called"));
-	
-	return FReply::Handled(); 
-}
-
 FReply URPGMapScreenWidget::NativeOnMouseWheel(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseWheel(InGeometry, InMouseEvent);
@@ -86,6 +62,7 @@ void URPGMapScreenWidget::UpdatePanning(const FPointerEvent& InMouseEvent)
 		return;
 	}
 
+	bRightButtonDown = InMouseEvent.IsMouseButtonDown(EKeys::RightMouseButton);
 	if (!bRightButtonDown)
 	{
 		return;

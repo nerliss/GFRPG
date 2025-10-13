@@ -30,12 +30,12 @@ FReply URPGMapWidgetBase::NativeOnMouseButtonUp(const FGeometry& InGeometry, con
 {
 	Super::NativeOnMouseButtonUp(InGeometry, InMouseEvent);
 
-	
-	
+	LOG_WITH_FUNCTION_NAME(LogRPGMap, Log, TEXT("Parent Called"));
 	ToggleWorldMarker(InGeometry, InMouseEvent);
 
-	bRightButtonDown = InMouseEvent.IsMouseButtonDown(EKeys::RightMouseButton);
+	// TODO: Hard reset mb?
 	bLeftButtonDown = InMouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton);
+	bRightButtonDown = InMouseEvent.IsMouseButtonDown(EKeys::RightMouseButton);
 	
 	return FReply::Handled(); 
 }
@@ -43,9 +43,11 @@ FReply URPGMapWidgetBase::NativeOnMouseButtonUp(const FGeometry& InGeometry, con
 FReply URPGMapWidgetBase::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
-	
-	bRightButtonDown = InMouseEvent.IsMouseButtonDown(EKeys::RightMouseButton);
+
 	bLeftButtonDown = InMouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton);
+	bRightButtonDown = InMouseEvent.IsMouseButtonDown(EKeys::RightMouseButton);
+	
+	LOG_WITH_FUNCTION_NAME(LogRPGMap, Log, TEXT("Parent Called"));
 	
 	return FReply::Handled();
 }
@@ -145,7 +147,7 @@ void URPGMapWidgetBase::ToggleWorldMarker(const FGeometry& InGeometry, const FPo
 		LOG_WITH_FUNCTION_NAME(LogRPGMap, Error, TEXT("Left mouse button is not pressed"));
 		return;
 	}
-	
+
 	if (!WorldMarker)
 	{
 		LOG_WITH_FUNCTION_NAME(LogRPGMap, Error, TEXT("WorldMarker is nullptr"));
@@ -169,10 +171,10 @@ void URPGMapWidgetBase::ToggleWorldMarker(const FGeometry& InGeometry, const FPo
 	const float CursorInMarkerRangeForYMax = CursorPositionOnWidgetY + 10.f;
 	const bool bCursorInMarkerRangeForX = ((CursorInMarkerRangeForXMin <= WorldMarkerX) && (WorldMarkerX >= CursorInMarkerRangeForXMax));
 	const bool bCursorInMarkerRangeForY = ((CursorInMarkerRangeForYMin <= WorldMarkerY) && (WorldMarkerY >= CursorInMarkerRangeForYMax));
-	//const bool bRemoveWorldMaker = bCursorInMarkerRangeForX && bCursorInMarkerRangeForY;
-	const bool bRemoveWorldMaker = false;
+	const bool bRemoveWorldMaker = bCursorInMarkerRangeForX && bCursorInMarkerRangeForY;
+	//const bool bRemoveWorldMaker = false;
 
-	LOG_WITH_FUNCTION_NAME(LogRPGMap, Log, TEXT("Toggling world marker at X=%f, Y=%f (Cursor's position: x = %f, y = %f. Removing marker = %s. WidgetHalfSize = %f"), CursorPositionOnWidgetX, CursorPositionOnWidgetY, CursorLocalCoords.X, CursorLocalCoords.Y, *LexToString(bRemoveWorldMaker), WidgetHalfSize);
+	LOG_WITH_FUNCTION_NAME(LogRPGMap, Log, TEXT("Toggling world marker at X=%f, Y=%f (Cursor's position: x = %f, y = %f. Removing marker = %s."), CursorPositionOnWidgetX, CursorPositionOnWidgetY, CursorLocalCoords.X, CursorLocalCoords.Y, *LexToString(bRemoveWorldMaker));
 	
 	if (bRemoveWorldMaker)
 	{

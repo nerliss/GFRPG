@@ -25,9 +25,18 @@ struct FMapValuesTableRow : public FTableRowBase
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Map")
 	float MapOffsetY;
-	
+
+	/* Map texture. If bUseSeparateTextureForMinimap is true, this texture is only used for Map Screen Widget. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Map")
 	UTexture2D* MapTexture;
+
+	/* Should Minimap Widget use a different map texture? */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Map")
+	bool bUseSeparateTextureForMinimap;
+
+	/* Minimap texture. Usually is just a render of the level. Used only if bUseSeparateTextureForMinimap is true */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Map", meta=(EditCondition = "bUseSeparateTextureForMinimap"))
+	UTexture2D* MinimapTexture;
 	
 };
 

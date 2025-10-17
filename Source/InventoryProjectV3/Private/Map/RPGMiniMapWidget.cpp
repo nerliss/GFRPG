@@ -44,6 +44,31 @@ void URPGMiniMapWidget::UpdateMiniMapTranslation()
 	}
 }
 
+void URPGMiniMapWidget::InitMap()
+{
+	Super::InitMap();
+	
+	if (!MapDataTable)
+	{
+		LOG_WITH_FUNCTION_NAME(LogRPGMap, Error, TEXT("MapDataTable is empty"));
+		return;
+	}
+	
+	const FString LevelName = UGameplayStatics::GetCurrentLevelName(GetWorld());
+	const FMapValuesTableRow* FoundRow = MapDataTable->FindRow<FMapValuesTableRow>(*LevelName, TEXT("Map Table Context"));
+	if (FoundRow)
+	{
+		if (FoundRow->bUseSeparateTextureForMinimap)
+		{
+			if (MinimapWidget && MinimapWidget->MapImage)
+			{
+				LOG_WITH_FUNCTION_NAME(LogRPGMap, VeryVerbose, TEXT("Settings separate texture for minimap"));
+				MinimapWidget->MapImage->SetBrushFromTexture(FoundRow->MinimapTexture);
+			}
+		}
+	}
+}
+
 void URPGMiniMapWidget::AddWorldMarker(bool bSpawn, FVector2D MarkerLocation)
 {
 	LOG_WITH_FUNCTION_NAME(LogRPGMap, Verbose, TEXT("Function called with params bSpawn = %s, MarkerLocation = %s"), *LexToString(bSpawn), *MarkerLocation.ToString());

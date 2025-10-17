@@ -21,6 +21,8 @@ public:
 
 	void UpdateMiniMapTranslation();
 
+	virtual void InitMap() override;
+	
 	UFUNCTION()
 	void AddWorldMarker(bool bSpawn, FVector2D MarkerLocation);
 	

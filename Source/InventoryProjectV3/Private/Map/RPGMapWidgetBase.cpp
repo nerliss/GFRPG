@@ -169,10 +169,9 @@ void URPGMapWidgetBase::ToggleWorldMarker(const FGeometry& InGeometry, const FPo
 	const float CursorInMarkerRangeForXMax = CursorPositionOnWidgetX + 10.f;
 	const float CursorInMarkerRangeForYMin = CursorPositionOnWidgetY - 10.f;
 	const float CursorInMarkerRangeForYMax = CursorPositionOnWidgetY + 10.f;
-	const bool bCursorInMarkerRangeForX = ((CursorInMarkerRangeForXMin <= WorldMarkerX) && (WorldMarkerX >= CursorInMarkerRangeForXMax));
-	const bool bCursorInMarkerRangeForY = ((CursorInMarkerRangeForYMin <= WorldMarkerY) && (WorldMarkerY >= CursorInMarkerRangeForYMax));
+	const bool bCursorInMarkerRangeForX = ((CursorInMarkerRangeForXMin <= WorldMarkerX) && (CursorInMarkerRangeForXMax >= WorldMarkerX));
+	const bool bCursorInMarkerRangeForY = ((CursorInMarkerRangeForYMin <= WorldMarkerY) && (CursorInMarkerRangeForYMax >= WorldMarkerY));
 	const bool bRemoveWorldMaker = bCursorInMarkerRangeForX && bCursorInMarkerRangeForY;
-	//const bool bRemoveWorldMaker = false;
 
 	LOG_WITH_FUNCTION_NAME(LogRPGMap, Log, TEXT("Toggling world marker at X=%f, Y=%f (Cursor's position: x = %f, y = %f. Removing marker = %s."), CursorPositionOnWidgetX, CursorPositionOnWidgetY, CursorLocalCoords.X, CursorLocalCoords.Y, *LexToString(bRemoveWorldMaker));
 	

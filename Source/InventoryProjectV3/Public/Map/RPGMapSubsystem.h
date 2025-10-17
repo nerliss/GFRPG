@@ -31,6 +31,8 @@ struct FMapValuesTableRow : public FTableRowBase
 	
 };
 
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnWorldMarkerToggled, bool /*bSpawn*/, FVector2D /*MarkerMapLocation*/);
+
 UCLASS()
 class INVENTORYPROJECTV3_API URPGMapSubsystem : public UGameInstanceSubsystem
 {
@@ -76,6 +78,8 @@ public:
 	/** World icons registered by components */
 	const TArray<TWeakObjectPtr<URPGMapIconComponent>>& GetIcons() const { return Icons; }
 
+	FOnWorldMarkerToggled OnWorldMarkerToggled;
+	
 private:
 	
 	UPROPERTY(Transient)

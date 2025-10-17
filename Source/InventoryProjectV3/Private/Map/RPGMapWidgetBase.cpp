@@ -30,7 +30,7 @@ FReply URPGMapWidgetBase::NativeOnMouseButtonUp(const FGeometry& InGeometry, con
 {
 	Super::NativeOnMouseButtonUp(InGeometry, InMouseEvent);
 
-	LOG_WITH_FUNCTION_NAME(LogRPGMap, Log, TEXT("Parent Called"));
+	LOG_WITH_FUNCTION_NAME(LogRPGMap, VeryVerbose, TEXT("Parent Called"));
 	ToggleWorldMarker(InGeometry, InMouseEvent);
 
 	// TODO: Hard reset mb?
@@ -47,7 +47,7 @@ FReply URPGMapWidgetBase::NativeOnMouseButtonDown(const FGeometry& InGeometry, c
 	bLeftButtonDown = InMouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton);
 	bRightButtonDown = InMouseEvent.IsMouseButtonDown(EKeys::RightMouseButton);
 	
-	LOG_WITH_FUNCTION_NAME(LogRPGMap, Log, TEXT("Parent Called"));
+	LOG_WITH_FUNCTION_NAME(LogRPGMap, VeryVerbose, TEXT("Parent Called"));
 	
 	return FReply::Handled();
 }
@@ -173,14 +173,19 @@ void URPGMapWidgetBase::ToggleWorldMarker(const FGeometry& InGeometry, const FPo
 	const bool bCursorInMarkerRangeForY = ((CursorInMarkerRangeForYMin <= WorldMarkerY) && (CursorInMarkerRangeForYMax >= WorldMarkerY));
 	const bool bRemoveWorldMaker = bCursorInMarkerRangeForX && bCursorInMarkerRangeForY;
 
-	LOG_WITH_FUNCTION_NAME(LogRPGMap, Log, TEXT("Toggling world marker at X=%f, Y=%f (Cursor's position: x = %f, y = %f. Removing marker = %s."), CursorPositionOnWidgetX, CursorPositionOnWidgetY, CursorLocalCoords.X, CursorLocalCoords.Y, *LexToString(bRemoveWorldMaker));
+	LOG_WITH_FUNCTION_NAME(LogRPGMap, Verbose, TEXT("Toggling world marker at X=%f, Y=%f (Cursor's position: x = %f, y = %f. Removing marker = %s."), CursorPositionOnWidgetX, CursorPositionOnWidgetY, CursorLocalCoords.X, CursorLocalCoords.Y, *LexToString(bRemoveWorldMaker));
 	
 	if (bRemoveWorldMaker)
 	{
 		WorldMarker->SetVisibility(ESlateVisibility::Hidden);
 		WorldMarker->SetRenderTranslation(FVector2D(FLT_MAX));
 
-		OnWorldMarkerToggled.Broadcast(false, FVector2D(0.f)); // TODO: Update Mini map interface call with 0.f coords
+		URPGMapSubsystem* MapSubsystem = GetGameInstance()->GetSubsystem<URPGMapSubsystem>();
+		if (MapSubsystem)
+		{
+			MapSubsystem->OnWorldMarkerToggled.Broadcast(false, FVector2D(0.f));
+		}
+		
 		// TODO: Spawn world marker interface call with 0.f coords
 	}
 	else
@@ -188,9 +193,13 @@ void URPGMapWidgetBase::ToggleWorldMarker(const FGeometry& InGeometry, const FPo
 		WorldMarker->SetVisibility(ESlateVisibility::Visible);
 		WorldMarker->SetRenderTranslation(FVector2D(CursorPositionOnWidgetX, CursorPositionOnWidgetY));
 
+		URPGMapSubsystem* MapSubsystem = GetGameInstance()->GetSubsystem<URPGMapSubsystem>();
+		if (MapSubsystem)
+		{
+			MapSubsystem->OnWorldMarkerToggled.Broadcast(true, FVector2D(CursorPositionOnWidgetX, CursorPositionOnWidgetY));
+		}
+		
 		FVector NewWorldMarkerLocation = FVector((CursorPositionOnWidgetX - MapXOffset) * MapXDiv, (CursorPositionOnWidgetY - MapYOffset) * MapYDiv, 0.f);
-
-		OnWorldMarkerToggled.Broadcast(true, FVector2D(CursorPositionOnWidgetX, CursorPositionOnWidgetY)); // TODO: Update Mini map interface call with FVector2D(CursorPositionOnWidgetX, CursorPositionOnWidgetY)
 		// TODO: Spawn world marker interface call with NewWorldMarkerLocation
 	}
 }

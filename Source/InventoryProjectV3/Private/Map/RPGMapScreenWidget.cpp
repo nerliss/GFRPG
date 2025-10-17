@@ -3,7 +3,9 @@
 
 #include "Map/RPGMapScreenWidget.h"
 
+#include "Characters/RPGPlayerCharacter.h"
 #include "Components/ScaleBox.h"
+#include "GameFramework/InputSettings.h"
 #include "Utility/LogDefinitions.h"
 #include "Utility/Utility.h"
 
@@ -40,7 +42,31 @@ void URPGMapScreenWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 	bRightButtonDown = false;
 	bLeftButtonDown = false;
 
-	LOG_WITH_FUNCTION_NAME(LogRPGMap, Log, TEXT("Called"));
+	LOG_WITH_FUNCTION_NAME(LogRPGMap, VeryVerbose, TEXT("Called"));
+}
+
+FReply URPGMapScreenWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+{
+	Super::NativeOnKeyDown(InGeometry, InKeyEvent);
+
+	TArray<FInputActionKeyMapping> KeyMappings;
+	UInputSettings::GetInputSettings()->GetActionMappingByName("ToggleMapScreen", KeyMappings);
+
+	for (FInputActionKeyMapping& Key : KeyMappings)
+	{
+		if (Key.Key == InKeyEvent.GetKey())
+		{
+			// TODO: Move map toggle functionality to a better place (a map subsystem may be?)
+			ARPGPlayerCharacter* PlayerCharacter = Cast<ARPGPlayerCharacter>(GetOwningPlayerPawn());
+			if (PlayerCharacter)
+			{
+				PlayerCharacter->OnMapScreenToggled();
+				break;
+			}
+		}
+	}
+	
+	return FReply::Handled();
 }
 
 void URPGMapScreenWidget::UpdateZoom(const FPointerEvent& InMouseEvent)

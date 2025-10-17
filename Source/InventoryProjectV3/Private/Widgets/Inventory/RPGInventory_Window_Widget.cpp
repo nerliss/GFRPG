@@ -43,7 +43,7 @@ FReply URPGInventory_Window_Widget::NativeOnKeyDown(const FGeometry& InGeometry,
 	TArray<FInputActionKeyMapping> KeyMappings;
 	UInputSettings::GetInputSettings()->GetActionMappingByName("Inventory", KeyMappings);
 
-	for (auto& Key : KeyMappings)
+	for (FInputActionKeyMapping& Key : KeyMappings)
 	{
 		if (Key.Key == InKeyEvent.GetKey())
 		{

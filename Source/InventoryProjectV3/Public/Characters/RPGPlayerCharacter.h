@@ -182,6 +182,8 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mount")
 	bool bMounted;
 
+	void OnMapScreenToggled();
+	
 protected:
 
 	void OnForwardMoved(float Value);
@@ -220,7 +222,6 @@ protected:
 
 	void OnInventoryToggled();
 	void OnQuestLogToggled();
-	void OnMapScreenToggled();
 	
 	void LoadLastCharacterModel();
 

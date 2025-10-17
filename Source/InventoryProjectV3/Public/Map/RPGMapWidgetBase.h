@@ -12,8 +12,6 @@ class URPGMapSubsystem;
 class UDataTable;
 class USlateBrushAsset;
 
-DECLARE_MULTICAST_DELEGATE_TwoParams(FOnWorldMarkerToggled, bool /*bSpawn*/, FVector2D /*MarkerMapLocation*/);
-
 /**
  * Map widget base class which hosts all map related logic which then shared with MapScreen widget and MiniMap widget
  */
@@ -106,10 +104,5 @@ public:
 	/* Set in a minimap widget that hosts this one */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Map")
 	bool bMiniMap = false;
-
-	FOnWorldMarkerToggled OnWorldMarkerToggled;
 	
-protected:
-	
-	TWeakObjectPtr<URPGMapSubsystem> MapSubsystem;
 };

@@ -5,15 +5,21 @@
 #include "Components/Image.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
+#include "Map/RPGMapSubsystem.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Widgets/Map/RPGMapPlayerIconWidget.h"
 #include "Utility/LogDefinitions.h"
+#include "Utility/Utility.h"
 
 void URPGMiniMapWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	OnWorldMarkerToggled.AddUObject(this, &ThisClass::AddWorldMarker);
+	URPGMapSubsystem* MapSubsystem = GetGameInstance()->GetSubsystem<URPGMapSubsystem>();
+	if (MapSubsystem)
+	{
+		MapSubsystem->OnWorldMarkerToggled.AddUObject(this, &URPGMiniMapWidget::AddWorldMarker);
+	}
 }
 
 void URPGMiniMapWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -40,7 +46,7 @@ void URPGMiniMapWidget::UpdateMiniMapTranslation()
 
 void URPGMiniMapWidget::AddWorldMarker(bool bSpawn, FVector2D MarkerLocation)
 {
-	UE_LOG(LogRPGMap, Log, TEXT("[URPGMiniMapWidget::AddWorldMarker] Function called with params bSpawn = %s, MarkerLocation = %s"), *LexToString(bSpawn), *MarkerLocation.ToString());
+	LOG_WITH_FUNCTION_NAME(LogRPGMap, Verbose, TEXT("Function called with params bSpawn = %s, MarkerLocation = %s"), *LexToString(bSpawn), *MarkerLocation.ToString());
 	
 	if (!MinimapWidget || !MinimapWidget->WorldMarker)
 	{

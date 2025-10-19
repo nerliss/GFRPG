@@ -6,6 +6,8 @@
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Map/RPG3DWorldMarkerWidget.h"
+#include "Utility/LogDefinitions.h"
+#include "Utility/Utility.h"
 
 ARPG3DWorldMarker::ARPG3DWorldMarker()
 {
@@ -42,13 +44,17 @@ void ARPG3DWorldMarker::BeginPlay()
 {
 	Super::BeginPlay();
 
+	LOG_WITH_FUNCTION_NAME(LogRPGMap, VeryVerbose, TEXT("Initial initialization"))
 	Initialize();
 }
 
 void ARPG3DWorldMarker::UpdateDistance()
 {
+	GetWorld()->GetTimerManager().ClearTimer(UpdateDistanceHandle);
+	
 	if (!GetOwner())
 	{
+		LOG_WITH_FUNCTION_NAME(LogRPGMap, Warning, TEXT("Owner was null, updating the owner and reinitializing..."))
 		UpdateOwner();
 		Initialize();
 	}
@@ -59,21 +65,25 @@ void ARPG3DWorldMarker::UpdateDistance()
 	{
 		const FText DistanceText = FText::Format(FText::FromString("{0}m"), FText::AsNumber(FMath::RoundToInt(PlayerDistance)));
 		UIWorldMarker->UpdateDistance(DistanceText, !bQuestWaypoint, PlayerDistance, MaxShowDistance);
+		LOG_WITH_FUNCTION_NAME(LogRPGMap, Verbose, TEXT("UIWorldMarker was updated with next info: DistanceText=%s, !bQuestWaypoint=%s, PlayerDistance=%f, MaxShowDistance=%f"), *DistanceText.ToString(), *LexToString(!bQuestWaypoint), PlayerDistance, MaxShowDistance);
 	}
 
 	// Restart the timer
+	LOG_WITH_FUNCTION_NAME(LogRPGMap, VeryVerbose, TEXT("Reinitializing..."))
 	Initialize();
 }
 
 void ARPG3DWorldMarker::UpdateOwner()
 {
-	// TODO: Do we actually need this function? 
+	// TODO: Do we actually need this function?
+	LOG_WITH_FUNCTION_NAME(LogRPGMap, Warning, TEXT("Called but is empty"))
 }
 
 void ARPG3DWorldMarker::Initialize()
 {
-	GetWorld()->GetTimerManager().SetTimer(UpdateDistanceHandle, this, &ARPG3DWorldMarker::UpdateDistance, 1.f);
-
+	LOG_WITH_FUNCTION_NAME(LogRPGMap, VeryVerbose, TEXT("Start"))
+	GetWorld()->GetTimerManager().SetTimer(UpdateDistanceHandle, this, &ARPG3DWorldMarker::UpdateDistance, 0.2f);
+	
 	UIWorldMarker = Cast<URPG3DWorldMarkerWidget>(WidgetComp->GetWidget());
 	if (UIWorldMarker)
 	{
@@ -82,6 +92,11 @@ void ARPG3DWorldMarker::Initialize()
 
 	if (MeshComponent)
 	{
-		MeshComponent->SetVisibility(!bQuestWaypoint, true);
+		MeshComponent->SetVisibility(!bQuestWaypoint);
+	}
+
+	if (HighlightMeshComponent)
+	{
+		HighlightMeshComponent->SetVisibility(!bQuestWaypoint);
 	}
 }

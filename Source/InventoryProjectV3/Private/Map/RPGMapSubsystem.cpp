@@ -173,13 +173,16 @@ void URPGMapSubsystem::Spawn3DWorldMarker(bool bSpawn, FVector Location)
 		FCollisionObjectQueryParams Params;
 		Params.AddObjectTypesToQuery(ECC_WorldStatic);
 		Params.AddObjectTypesToQuery(ECC_WorldDynamic);
-		if (GetWorld()->LineTraceSingleByObjectType(Hit, Location + 250000.f, Location - 500000.f, Params))
+		const FVector StartLocation = FVector(Location.X, Location.Y, Location.Z + 250000.f);
+		const FVector EndLocation = FVector(Location.X, Location.Y, Location.Z - 500000.f);
+		if (GetWorld()->LineTraceSingleByObjectType(Hit, StartLocation, EndLocation, Params))
 		{
-			// TODO: Marker spawn doesn't take elevation into account (if placed on a mountain, the root will be at the base of that mountain)
-			WorldMarker = GetWorld()->SpawnActor<ARPG3DWorldMarker>(MapSettings->RPG3DWorldMarker, Location, FRotator(0.f));
+			DrawDebugLine(GetWorld(), StartLocation, EndLocation, FColor::Black, true, -1.f, 0, 20);
+			
+			WorldMarker = GetWorld()->SpawnActor<ARPG3DWorldMarker>(MapSettings->RPG3DWorldMarker, Hit.ImpactPoint, FRotator(0.f));
 			if (WorldMarker)
 			{
-				WorldMarker->SetOwner(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+				WorldMarker->SetOwner(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 				WorldMarker->bQuestWaypoint = false;
 				WorldMarker->WaypointName = FText::FromString(TEXT("Waypoint"));
 				WorldMarker->MaxShowDistance = 999999.f;

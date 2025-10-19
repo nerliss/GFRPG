@@ -184,9 +184,8 @@ void URPGMapWidgetBase::ToggleWorldMarker(const FGeometry& InGeometry, const FPo
 		if (MapSubsystem)
 		{
 			MapSubsystem->OnWorldMarkerToggled.Broadcast(false, FVector2D(0.f));
+			MapSubsystem->On3DWorldMarkerSpawned.Broadcast(false, FVector(0.f));
 		}
-		
-		// TODO: Spawn world marker interface call with 0.f coords
 	}
 	else
 	{
@@ -196,10 +195,10 @@ void URPGMapWidgetBase::ToggleWorldMarker(const FGeometry& InGeometry, const FPo
 		URPGMapSubsystem* MapSubsystem = GetGameInstance()->GetSubsystem<URPGMapSubsystem>();
 		if (MapSubsystem)
 		{
+			const FVector NewWorldMarkerLocation = FVector((CursorPositionOnWidgetX - MapXOffset) * MapXDiv, (CursorPositionOnWidgetY - MapYOffset) * MapYDiv, 0.f);
+			
 			MapSubsystem->OnWorldMarkerToggled.Broadcast(true, FVector2D(CursorPositionOnWidgetX, CursorPositionOnWidgetY));
+			MapSubsystem->On3DWorldMarkerSpawned.Broadcast(true, NewWorldMarkerLocation);
 		}
-		
-		FVector NewWorldMarkerLocation = FVector((CursorPositionOnWidgetX - MapXOffset) * MapXDiv, (CursorPositionOnWidgetY - MapYOffset) * MapYDiv, 0.f);
-		// TODO: Spawn world marker interface call with NewWorldMarkerLocation
 	}
 }

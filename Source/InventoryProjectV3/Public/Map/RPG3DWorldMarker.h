@@ -20,18 +20,29 @@ public:
 	
 	ARPG3DWorldMarker();
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "3D World Marker")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "3D World Marker")
 	USphereComponent* SphereComp;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "3D World Marker")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "3D World Marker")
 	UWidgetComponent* WidgetComp;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "3D World Marker")
+	/* Arrow-like mesh component */
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "3D World Marker")
 	UStaticMeshComponent* MeshComponent;
+
+	/* A pillar of light-like that is visible from far away mesh component */
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "3D World Marker")
+	UStaticMeshComponent* HighlightMeshComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "3D World Marker")
 	TSubclassOf<URPG3DWorldMarkerWidget> WorldMarkerWidgetClass;
+	
+	FText WaypointName;
 
+	bool bQuestWaypoint;
+
+	float MaxShowDistance;
+	
 protected:
 	
 	virtual void BeginPlay() override;
@@ -39,5 +50,12 @@ protected:
 	void UpdateDistance();
 	void UpdateOwner();
 	void Initialize();
+
+	float PlayerDistance;
+
+	FTimerHandle UpdateDistanceHandle;
+
+	UPROPERTY()
+	URPG3DWorldMarkerWidget* UIWorldMarker;
 	
 };

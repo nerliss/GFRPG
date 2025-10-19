@@ -4,10 +4,20 @@
 #include "Map/RPGMapSubsystem.h"
 
 #include "EngineUtils.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetRenderingLibrary.h"
+#include "Map/RPG3DWorldMarker.h"
 #include "Map/RPGMapBoundsVolume.h"
 #include "Utility/LogDefinitions.h"
 #include "Map/RPGMapIconComponent.h"
+#include "Utility/Utility.h"
+
+void URPGMapSubsystem::Initialize(FSubsystemCollectionBase& Collection)
+{
+	Super::Initialize(Collection);
+
+	On3DWorldMarkerSpawned.AddUObject(this, &URPGMapSubsystem::Spawn3DWorldMarker);
+}
 
 void URPGMapSubsystem::SetBoundsVolume(ARPGMapBoundsVolume* Volume)
 {
@@ -143,4 +153,46 @@ bool URPGMapSubsystem::FindAndSetBoundsByActorTag(FName Tag)
 	}
 	
 	return false;
+}
+
+void URPGMapSubsystem::Spawn3DWorldMarker(bool bSpawn, FVector Location)
+{
+	LOG_WITH_FUNCTION_NAME(LogRPGMap, Verbose, TEXT("Spawning 3d World Marker"));
+
+	const UMapSubsystemSettings* MapSettings = UMapSubsystemSettings::Get();
+	check(MapSettings);
+	
+	if (bSpawn)
+	{
+		if (WorldMarker)
+		{
+			WorldMarker->Destroy();
+		}
+
+		FHitResult Hit;
+		FCollisionObjectQueryParams Params;
+		Params.AddObjectTypesToQuery(ECC_WorldStatic);
+		Params.AddObjectTypesToQuery(ECC_WorldDynamic);
+		if (GetWorld()->LineTraceSingleByObjectType(Hit, Location + 250000.f, Location - 500000.f, Params))
+		{
+			// TODO: Marker spawn doesn't take elevation into account (if placed on a mountain, the root will be at the base of that mountain)
+			WorldMarker = GetWorld()->SpawnActor<ARPG3DWorldMarker>(MapSettings->RPG3DWorldMarker, Location, FRotator(0.f));
+			if (WorldMarker)
+			{
+				WorldMarker->SetOwner(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+				WorldMarker->bQuestWaypoint = false;
+				WorldMarker->WaypointName = FText::FromString(TEXT("Waypoint"));
+				WorldMarker->MaxShowDistance = 999999.f;
+			}
+			// Update compass marker (if we are going to have a compass system)
+		}
+	}
+	else
+	{
+		if (WorldMarker)
+		{
+			WorldMarker->Destroy();
+			// Update compass marker (if we are going to have a compass system)
+		}
+	}
 }

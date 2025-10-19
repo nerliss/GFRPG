@@ -28,3 +28,11 @@ void URPG3DWorldMarkerWidget::UpdateDistance(FText DistanceAsText, bool bMapMark
 		}
 	}
 }
+
+void URPG3DWorldMarkerWidget::UpdateName(FText Name)
+{
+	if (MarkerText)
+	{
+		MarkerText->SetText(Name);
+	}
+}

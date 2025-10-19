@@ -16,6 +16,8 @@ class INVENTORYPROJECTV3_API URPG3DWorldMarkerWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
+protected:
+	
 	UPROPERTY(meta=(BindWidgetOptional))
 	UTextBlock* MarkerText = nullptr;
 
@@ -24,6 +26,9 @@ class INVENTORYPROJECTV3_API URPG3DWorldMarkerWidget : public UUserWidget
 
 	UPROPERTY(meta=(BindWidgetOptional))
 	UBorder* MarkerBorder = nullptr;
+
+public:
 	
 	void UpdateDistance(FText DistanceAsText, bool bMapMarker, float PlayerDistance, float MaxDistance);
+	void UpdateName(FText Name);
 };

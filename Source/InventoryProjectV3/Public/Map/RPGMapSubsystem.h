@@ -8,6 +8,7 @@
 
 class ARPGMapBoundsVolume;
 class URPGMapIconComponent;
+class ARPG3DWorldMarker;
 
 USTRUCT()
 struct FMapValuesTableRow : public FTableRowBase
@@ -40,7 +41,35 @@ struct FMapValuesTableRow : public FTableRowBase
 	
 };
 
+UCLASS(Config=Game, DefaultConfig, meta=(DisplayName="Map Subsystem"))
+class INVENTORYPROJECTV3_API UMapSubsystemSettings : public UDeveloperSettings
+{
+	GENERATED_BODY()
+
+public:
+	
+	virtual FName GetContainerName() const override { return "Project"; }  
+	virtual FName GetCategoryName()  const override { return "RPGSettings"; }  
+	virtual FName GetSectionName()   const override { return "Map Subsystem"; }
+
+	virtual FText GetSectionText() const override
+	{
+		return NSLOCTEXT("MapSubsystem", "SectionText", "Map Subsystem");
+	}
+	virtual FText GetSectionDescription() const override
+	{
+		return NSLOCTEXT("MapSubsystem", "SectionDesc", "Parameters that control RPG Map Subsystem behavior.");
+	}
+
+	static const UMapSubsystemSettings* Get() { return GetDefault<UMapSubsystemSettings>(); }
+	static UMapSubsystemSettings* GetMutable() { return GetMutableDefault<UMapSubsystemSettings>(); }
+	
+	UPROPERTY(EditAnywhere, Config, Category = "Settings")
+	TSubclassOf<ARPG3DWorldMarker> RPG3DWorldMarker; 
+};
+
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnWorldMarkerToggled, bool /*bSpawn*/, FVector2D /*MarkerMapLocation*/);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOn3DWorldMarkerSpawned, bool /*bSpawn*/, FVector /*MarkerWorldLocation*/);
 
 UCLASS()
 class INVENTORYPROJECTV3_API URPGMapSubsystem : public UGameInstanceSubsystem
@@ -49,6 +78,8 @@ class INVENTORYPROJECTV3_API URPGMapSubsystem : public UGameInstanceSubsystem
 
 public:
 
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+	
 	UFUNCTION(BlueprintCallable, Category="Map")
 	void SetBoundsVolume(ARPGMapBoundsVolume* Volume);
 
@@ -67,6 +98,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="Map")
 	bool FindAndSetBoundsByActorTag(FName Tag);
+
+	UFUNCTION()
+	void Spawn3DWorldMarker(bool bSpawn, FVector Location);
 	
 	/** Static world map image (or set at runtime) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Map")
@@ -88,6 +122,10 @@ public:
 	const TArray<TWeakObjectPtr<URPGMapIconComponent>>& GetIcons() const { return Icons; }
 
 	FOnWorldMarkerToggled OnWorldMarkerToggled;
+	FOn3DWorldMarkerSpawned On3DWorldMarkerSpawned;
+
+	UPROPERTY()
+	ARPG3DWorldMarker* WorldMarker;
 	
 private:
 	

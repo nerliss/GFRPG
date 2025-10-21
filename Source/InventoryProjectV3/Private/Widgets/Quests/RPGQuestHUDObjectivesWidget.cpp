@@ -49,8 +49,8 @@ void URPGQuestHUDObjectivesWidget::UpdateObjectiveList()
 
 			// TODO: Rewrite this when QuestTurnInTarget = QuestGiver if bCanBeTurnedInToSomeoneElse == false is implemented
 			FText NpcName;
-			const auto QuestGiverNPC = Cast<ARPGCharacter>(ActiveQuest->QuestGiver.Get());
-			const auto OtherTurnInNPC = Cast<ARPGCharacter>(ActiveQuest->QuestTurnInTarget.Get());
+			const ARPGCharacter* QuestGiverNPC = Cast<ARPGCharacter>(ActiveQuest->QuestGiver.Get());
+			const ARPGCharacter* OtherTurnInNPC = Cast<ARPGCharacter>(ActiveQuest->QuestTurnInTarget.Get());
 			if (OtherTurnInNPC || QuestGiverNPC)
 			{
 				NpcName = ActiveQuest->bCanBeTurnedInToSomeoneElse ? OtherTurnInNPC->GetCharacterName() : QuestGiverNPC->GetCharacterName();

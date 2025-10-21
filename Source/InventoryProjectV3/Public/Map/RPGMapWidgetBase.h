@@ -27,18 +27,9 @@ public:
 	virtual FReply NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual int32 NativePaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled ) const override;
-
-	virtual void InitMap();
 	
-	void UpdateQuestMarkers(FVector WaypointLocation);
-
-	void VectorToPoint(FVector WaypointLocation, float& XValue, float& YValue);
-
-	void UpdatePlayerPosition();
-
+	UFUNCTION(BlueprintCallable)
 	void AddWaypoint(FVector WaypointLocation);
-
-	void ToggleWorldMarker(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent);
 	
 	UPROPERTY(meta=(BindWidgetOptional))
 	UImage* MapImage = nullptr;
@@ -58,14 +49,6 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Map")
 	USlateBrushAsset* SlateBrushWaypoint = nullptr;
-	
-	/** If true, rotate the whole map by player yaw (minimap style) */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Map")
-	bool bRotateWithPlayer = false;
-
-	/** Scale of the map image. 1.0 fits to its brush size; >1 zooms in */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Map")
-	float Zoom = 1.0f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Map")
 	float MapXDiv = 0.f;
@@ -104,5 +87,16 @@ public:
 	/* Set in a minimap widget that hosts this one */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Map")
 	bool bMiniMap = false;
+
+protected:
+
+	virtual void InitMap();
+	
+private:
+
+	void VectorToPoint(FVector WaypointLocation, float& XValue, float& YValue);
+	void UpdateQuestMarkers(FVector WaypointLocation);
+	void UpdatePlayerPosition();
+	void ToggleWorldMarker(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent);
 	
 };

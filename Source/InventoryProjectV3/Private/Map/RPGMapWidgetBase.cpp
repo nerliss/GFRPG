@@ -58,12 +58,12 @@ int32 URPGMapWidgetBase::NativePaint(const FPaintArgs& Args, const FGeometry& Al
 {
 	Super::NativePaint(Args, AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle, bParentEnabled);
 	
-	FPaintContext Context(AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle, bParentEnabled);
-	for (const FVector2D QuestMarker : QuestMarkers)
-	{
-		LOG_WITH_FUNCTION_NAME(LogRPGMap, Verbose, TEXT("Drawing quest marker at %s"), *QuestMarker.ToString());	
-		UWidgetBlueprintLibrary::DrawBox(Context, QuestMarker, FVector2D(32.f, 32.f), SlateBrushWaypoint, FLinearColor(1.f, 1.f, 1.f, 0.2f));
-	}
+	// FPaintContext Context(AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle, bParentEnabled);
+	// for (const FVector2D QuestMarker : QuestMarkers)
+	// {
+	// 	LOG_WITH_FUNCTION_NAME(LogRPGMap, Verbose, TEXT("Drawing quest marker at %s"), *QuestMarker.ToString());	
+	// 	UWidgetBlueprintLibrary::DrawBox(Context, QuestMarker, FVector2D(32.f, 32.f), SlateBrushWaypoint, FLinearColor(1.f, 1.f, 1.f, 1.f));
+	// }
 
 	// Add here new waypoints if needed
 

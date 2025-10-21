@@ -9,6 +9,7 @@
 #include "Components/SphereComponent.h"
 #include "Quests/RPGQuest.h"
 #include "Utility/LogDefinitions.h"
+#include "Utility/Utility.h"
 
 ARPGQuestMarkerLocation::ARPGQuestMarkerLocation()
 {
@@ -52,7 +53,7 @@ void ARPGQuestMarkerLocation::OnSphereBeginOverlap(UPrimitiveComponent* Overlapp
 					if (Objective.Type == OT_Location && !Objective.bCompleted && Objective.bCanBeCompleted)
 					{
 						Quest->OnLocationReached.Broadcast(this);
-						UE_LOG(LogRPGQuests, Warning, TEXT("Reached Location Objective %s (object name: %s)"), *Name.ToString(), *GetName());
+						LOG_WITH_FUNCTION_NAME(LogRPGQuests, Warning, TEXT("Reached Location Objective %s (object name: %s)"), *Name.ToString(), *GetName());
 						break;
 					}
 				}

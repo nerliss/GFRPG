@@ -45,7 +45,6 @@ public:
 protected:
 
 	virtual void BeginPlay() override;
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
 	TArray<ARPGQuest*> ActiveQuests;
@@ -61,9 +60,6 @@ protected:
 	
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Quest")
 	URPGQuestLogWidget* QuestLogWidget;
-	
-	UPROPERTY(BlueprintReadOnly, Category = "Quest")
-	ARPGCharacter* PlayerRef;
 
 private:
 

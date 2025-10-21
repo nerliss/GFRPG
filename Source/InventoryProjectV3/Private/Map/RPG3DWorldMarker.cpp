@@ -65,7 +65,7 @@ void ARPG3DWorldMarker::UpdateDistance()
 	{
 		const FText DistanceText = FText::Format(FText::FromString("{0}m"), FText::AsNumber(FMath::RoundToInt(PlayerDistance)));
 		UIWorldMarker->UpdateDistance(DistanceText, !bQuestWaypoint, PlayerDistance, MaxShowDistance);
-		LOG_WITH_FUNCTION_NAME(LogRPGMap, Verbose, TEXT("UIWorldMarker was updated with next info: DistanceText=%s, !bQuestWaypoint=%s, PlayerDistance=%f, MaxShowDistance=%f"), *DistanceText.ToString(), *LexToString(!bQuestWaypoint), PlayerDistance, MaxShowDistance);
+		LOG_WITH_FUNCTION_NAME(LogRPGMap, VeryVerbose, TEXT("UIWorldMarker was updated with next info: DistanceText=%s, !bQuestWaypoint=%s, PlayerDistance=%f, MaxShowDistance=%f"), *DistanceText.ToString(), *LexToString(!bQuestWaypoint), PlayerDistance, MaxShowDistance);
 	}
 
 	// Restart the timer

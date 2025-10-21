@@ -22,6 +22,7 @@ void URPG3DWorldMarkerWidget::UpdateDistance(FText DistanceAsText, bool bMapMark
 	{
 		if (MarkerBorder)
 		{
+			// TODO: Debug this
 			FLinearColor Color = FLinearColor::White;
 			Color.A = 1.f - ((PlayerDistance - (MaxDistance * 0.5f)) / MaxDistance * 0.5f); // TODO: Break down in to meaningful parts
 			MarkerBorder->SetContentColorAndOpacity(Color);

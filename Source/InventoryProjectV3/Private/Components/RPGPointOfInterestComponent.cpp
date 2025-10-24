@@ -7,6 +7,7 @@
 #include "Widgets/RPGHUD_Widget.h"
 #include "Map/RPGMiniMapWidget.h"
 #include "Utility/LogDefinitions.h"
+#include "Utility/Utility.h"
 
 URPGPointOfInterestComponent::URPGPointOfInterestComponent()
 {
@@ -22,38 +23,36 @@ void URPGPointOfInterestComponent::TickComponent(float DeltaTime, ELevelTick Tic
 
 	if (!bSpawned)
 	{
-		// Using new map system, don't spawn
-		//SpawnPOIOnMap();
+		SpawnPOIOnMap();
 	}
 }
 
 void URPGPointOfInterestComponent::SpawnPOIOnMap()
 {
-	const auto* PlayerController = Cast<ARPGPlayer_Controller>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	const ARPGPlayer_Controller* PlayerController = Cast<ARPGPlayer_Controller>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	if (!PlayerController)
 	{
-		// TODO: Remove this after everything is done
-		UE_LOG(LogRPGMap, Error, TEXT("[URPGPointOfInterestComponent::SpawnPOIOnMap] Player controller is null!"));
+		LOG_WITH_FUNCTION_NAME(LogRPGMap, Error, TEXT("Player controller is null!"));
 		return;
 	}
 
 	const URPGHUD_Widget* HUD = PlayerController->GetHUDWidget();
 	if (!HUD)
 	{
-		UE_LOG(LogRPGMap, Error, TEXT("[URPGPointOfInterestComponent::SpawnPOIOnMap] HUD widget is null!"));
+		LOG_WITH_FUNCTION_NAME(LogRPGMap, Error, TEXT("HUD widget is null!"));
 		return;
 	}
 
-	// URPGMiniMapWidget* Minimap = HUD->MiniMapWidget;
-	// if (!Minimap)
-	// {
-	// 	UE_LOG(LogRPGMap, Error, TEXT("[URPGPointOfInterestComponent::SpawnPOIOnMap] Minimap is null!"));
-	// 	return;
-	// }
-	//
-	// Minimap->AddPOI(GetOwner());
+	URPGMiniMapWidget* Minimap = HUD->MiniMapWidget;
+	if (!Minimap)
+	{
+		LOG_WITH_FUNCTION_NAME(LogRPGMap, Error, TEXT("Minimap is null!"));
+		return;
+	}
+	
+	Minimap->AddPOI(GetOwner());
 
 	bSpawned = true;
-	UE_LOG(LogRPGMap, Log, TEXT("[URPGPointOfInterestComponent::SpawnPOIOnMap] PointOfInterest icon for %s spawned"), *GetOwner()->GetName());
+	LOG_WITH_FUNCTION_NAME(LogRPGMap, Log, TEXT("PointOfInterest icon for %s spawned"), *GetOwner()->GetName());
 }
 

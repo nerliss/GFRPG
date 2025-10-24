@@ -4,11 +4,18 @@
 #include "Widgets/Map/RPGMapPOIWidget.h"
 #include "Components/RPGPointOfInterestComponent.h"
 #include "Components/Image.h"
+#include "Kismet/GameplayStatics.h"
+#include "Map/RPGMiniMapWidget.h"
+#include "PlayerController/RPGPlayer_Controller.h"
+#include "Utility/LogDefinitions.h"
+#include "Utility/Utility.h"
+#include "Widgets/RPGHUD_Widget.h"
 
 void URPGMapPOIWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	LOG_WITH_FUNCTION_NAME(LogRPGMap, Log, TEXT("Called"))
 	SetPOIIcon();
 }
 
@@ -16,6 +23,32 @@ void URPGMapPOIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
+	if (!bIconSet)
+	{
+		SetPOIIcon();
+	}
+
+	// TODO: Remake for better since there is a lot of repetition from player poi pos logic. Move it to MapSubsystem or something. Also Map pointer here is really awkward
+	// TODO: Change POI's visibility depending on distance to player
+	if (Owner && POIImage)
+	{
+		auto PlayerController = Cast<ARPGPlayer_Controller>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+		if (PlayerController)
+		{
+			auto Map = PlayerController->GetHUDWidget()->MiniMapWidget;
+			if (Map)
+			{
+				const FVector OwnerLoc = Owner->GetActorLocation();
+				const float OwnerIconX = OwnerLoc.X / Map->MapXDiv + Map->MapXOffset;
+				const float OwnerIconY = OwnerLoc.Y / Map->MapYDiv + Map->MapYOffset;
+
+				const float OwnerIconAngle = Owner->GetActorRotation().Yaw + 90.f;
+		
+				POIImage->SetRenderTranslation(FVector2D(OwnerIconX, OwnerIconY));
+				POIImage->SetRenderTransformAngle(OwnerIconAngle);
+			}
+		}
+	}
 }
 
 float URPGMapPOIWidget::FindAngleDegrees(FVector2D A, FVector2D B) const
@@ -26,7 +59,7 @@ float URPGMapPOIWidget::FindAngleDegrees(FVector2D A, FVector2D B) const
 
 FVector2D URPGMapPOIWidget::FindCoordinates(float Radius, float Degrees) const
 {
-	// MyTODO: Check this out
+	// TODO: Remove
 	const float X = Radius * FMath::Cos(Degrees * PI / 180);
 	const float Y = Radius * FMath::Sin(Degrees * PI / 180);
 	return FVector2D(X, Y);
@@ -36,14 +69,18 @@ void URPGMapPOIWidget::SetPOIIcon()
 {
 	if (!Owner)
 	{
+		LOG_WITH_FUNCTION_NAME(LogRPGMap, Error, TEXT("Owner is nullptr"));
 		return;
 	}
 
-	auto* OwnerPOIComponent = Owner->FindComponentByClass<URPGPointOfInterestComponent>();
+	const URPGPointOfInterestComponent* OwnerPOIComponent = Owner->FindComponentByClass<URPGPointOfInterestComponent>();
 	if (!OwnerPOIComponent)
 	{
+		LOG_WITH_FUNCTION_NAME(LogRPGMap, Error, TEXT("Owner doesn't have a URPGPointOfInterestComponent component"));
 		return;
 	}
 
 	POIImage->SetBrush(OwnerPOIComponent->GetIcon());
+	bIconSet = true;
+	LOG_WITH_FUNCTION_NAME(LogRPGMap, Log, TEXT("Setting POI Image as (%s) for component (%s) of owning actor (%s)"), *OwnerPOIComponent->GetIcon().GetResourceName().ToString(), *GetName(), *Owner->GetName());
 }

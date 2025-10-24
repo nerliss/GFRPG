@@ -9,6 +9,7 @@
 
 bool URPGHUD_Widget::Initialize()
 {
+	// TODO: Not sure we need this function
 	bool Success = Super::Initialize();
 
 	if (!Success)

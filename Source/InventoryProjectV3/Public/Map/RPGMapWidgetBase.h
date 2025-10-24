@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "RPGMapWidgetBase.generated.h"
 
+class UOverlay;
 class UImage;
 class UCanvasPanel;
 class URPGMapSubsystem;
@@ -38,6 +39,9 @@ public:
 	UPROPERTY(meta=(BindWidgetOptional))
 	UImage* FogImage = nullptr;
 
+	UPROPERTY(meta=(BindWidgetOptional))
+	UOverlay* MapOverlay = nullptr;
+	
 	UPROPERTY(meta=(BindWidgetOptional))
 	UImage* PlayerIcon = nullptr;
 

@@ -177,7 +177,7 @@ void URPGMapSubsystem::Spawn3DWorldMarker(bool bSpawn, FVector Location)
 		const FVector EndLocation = FVector(Location.X, Location.Y, Location.Z - 500000.f);
 		if (GetWorld()->LineTraceSingleByObjectType(Hit, StartLocation, EndLocation, Params))
 		{
-			DrawDebugLine(GetWorld(), StartLocation, EndLocation, FColor::Black, true, -1.f, 0, 20);
+			DrawDebugLine(GetWorld(), StartLocation, EndLocation, FColor::Black, false, 10.f, 0, 20);
 			
 			WorldMarker = GetWorld()->SpawnActor<ARPG3DWorldMarker>(MapSettings->RPG3DWorldMarker, Hit.ImpactPoint, FRotator(0.f));
 			if (WorldMarker)

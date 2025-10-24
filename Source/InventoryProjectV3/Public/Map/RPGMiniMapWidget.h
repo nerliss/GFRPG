@@ -6,6 +6,7 @@
 #include "RPGMapWidgetBase.h"
 #include "RPGMiniMapWidget.generated.h"
 
+class URPGMapPOIWidget;
 /**
  * Minimap widget class
  */
@@ -26,7 +27,12 @@ public:
 	UFUNCTION()
 	void AddWorldMarker(bool bSpawn, FVector2D MarkerLocation);
 	
-	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))
-	URPGMapWidgetBase* MinimapWidget;
+	void AddPOI(AActor* Actor);
 	
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))
+	URPGMapWidgetBase* MinimapWidget = nullptr;
+
+	// TODO: Probably will need to move this class and related logic to parent class since we obviously want POIs to be on both maps
+	UPROPERTY(EditDefaultsOnly, Category = "Map")
+	TSubclassOf<URPGMapPOIWidget> POIClass = nullptr;
 };

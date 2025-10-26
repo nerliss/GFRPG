@@ -19,7 +19,7 @@ void ARPGMainGameMode::BeginPlay()
 	if (URPGMapSubsystem* MapSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<URPGMapSubsystem>())
 	{
 		// TODO: Move all these Map-related settings somewhere else
-		MapSubsystem->FindAndSetBoundsByActorTag("Map.Primary");
+		//MapSubsystem->FindAndSetBoundsByActorTag("Map.Primary");
 		MapSubsystem->MapTexture = TSoftObjectPtr<UTexture2D>(MapTexture);
 		MapSubsystem->FogRT = FogRT;
 	}

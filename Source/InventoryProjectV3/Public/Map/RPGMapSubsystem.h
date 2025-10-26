@@ -80,25 +80,13 @@ public:
 
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	
-	UFUNCTION(BlueprintCallable, Category="Map")
-	void SetBoundsVolume(ARPGMapBoundsVolume* Volume);
-
-	UFUNCTION(BlueprintCallable, Category="Map")
-	bool WorldToMapUV(const FVector& World, FVector2D& OutUV) const;
-
-	UFUNCTION(BlueprintCallable, Category="Map")
-	FVector MapUVToWorld(const FVector2D& UV, float Z = 0.f) const;
-
 	void RegisterIcon(URPGMapIconComponent* Icon);
 	void UnregisterIcon(URPGMapIconComponent* Icon);
 
 	/** Paint a soft reveal circle into FogRT at World location (optional). */
 	UFUNCTION(BlueprintCallable, Category="Map|Fog")
 	void RevealAtWorld(const FVector& World, float RadiusWorldUnits = 600.f, float Opacity = 1.f);
-
-	UFUNCTION(BlueprintCallable, Category="Map")
-	bool FindAndSetBoundsByActorTag(FName Tag);
-
+	
 	UFUNCTION()
 	void Spawn3DWorldMarker(bool bSpawn, FVector Location);
 	
@@ -113,10 +101,6 @@ public:
 	/** Optional fog-of-war render target. If null, fog is disabled */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Map|Fog")
 	UTextureRenderTarget2D* FogRT = nullptr;
-
-	/** Active bounds volume (set from level/game mode). */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Map")
-	TWeakObjectPtr<ARPGMapBoundsVolume> BoundsVolume;
 
 	/** World icons registered by components */
 	const TArray<TWeakObjectPtr<URPGMapIconComponent>>& GetIcons() const { return Icons; }

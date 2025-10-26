@@ -14,6 +14,7 @@ URPGMapIconComponent::URPGMapIconComponent()
 	Tint = FLinearColor::White;
 	bRotateWithActor = false;
 	Category = EMapIconCategory::Custom;
+	// TODO: THIS CLASS IS UNUSED. DELETE LATER
 }
 
 void URPGMapIconComponent::BeginPlay()
@@ -38,15 +39,5 @@ void URPGMapIconComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	}
 	
 	Super::EndPlay(EndPlayReason);
-}
-
-bool URPGMapIconComponent::GetMapUV(FVector2D& OutUV) const
-{
-	if (!MapSubsystem.IsValid() || !GetOwner())
-	{
-		return false;
-	}
-
-	return MapSubsystem->WorldToMapUV(GetOwner()->GetActorLocation(), OutUV);
 }
 

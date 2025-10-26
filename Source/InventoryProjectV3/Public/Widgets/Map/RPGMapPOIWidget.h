@@ -26,13 +26,9 @@ public:
 
 	UPROPERTY()
 	AActor* Owner;
-
-	float MapWidgetRadius;
-
+	
 	bool bIconSet;
 	
-	float FindAngleDegrees(FVector2D A, FVector2D B) const;
-	FVector2D FindCoordinates(float Radius, float Degrees) const;
 	void SetPOIIcon();
 
 };

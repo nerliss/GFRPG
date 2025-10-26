@@ -2,6 +2,8 @@
 
 
 #include "Widgets/Map/RPGMapPOIWidget.h"
+
+#include "Characters/RPGPlayerCharacter.h"
 #include "Components/RPGPointOfInterestComponent.h"
 #include "Components/Image.h"
 #include "Kismet/GameplayStatics.h"
@@ -29,12 +31,33 @@ void URPGMapPOIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime
 	}
 
 	// TODO: Remake for better since there is a lot of repetition from player poi pos logic. Move it to MapSubsystem or something. Also Map pointer here is really awkward
-	// TODO: Change POI's visibility depending on distance to player
 	if (Owner && POIImage)
 	{
 		auto PlayerController = Cast<ARPGPlayer_Controller>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 		if (PlayerController)
 		{
+			// Update icon visibility
+			auto PlayerCharacter = Cast<ARPGPlayerCharacter>(PlayerController->GetCharacter());
+			if (PlayerCharacter)
+			{
+				float DistanceToPlayer = FVector::Distance(PlayerCharacter->GetActorLocation(), Owner->GetActorLocation());
+				if (DistanceToPlayer >= 5000.f)
+				{
+					if (POIImage->GetVisibility() != ESlateVisibility::Collapsed)
+					{
+						LOG_WITH_FUNCTION_NAME(LogRPGMap, Warning, TEXT("Setting visibility to collapsed"));
+						POIImage->SetVisibility(ESlateVisibility::Collapsed);
+					}
+				}
+				else
+				{
+					if (POIImage->GetVisibility() != ESlateVisibility::Visible)
+					{
+						LOG_WITH_FUNCTION_NAME(LogRPGMap, Warning, TEXT("Setting visibility to visible"));
+						POIImage->SetVisibility(ESlateVisibility::Visible);
+					}
+				}
+			}
 			auto Map = PlayerController->GetHUDWidget()->MiniMapWidget;
 			if (Map)
 			{
@@ -49,20 +72,6 @@ void URPGMapPOIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime
 			}
 		}
 	}
-}
-
-float URPGMapPOIWidget::FindAngleDegrees(FVector2D A, FVector2D B) const
-{
-	const float Angle = FMath::Atan2(A.Y - B.Y, A.X - B.X) * 180 / PI;
-	return Angle;
-}
-
-FVector2D URPGMapPOIWidget::FindCoordinates(float Radius, float Degrees) const
-{
-	// TODO: Remove
-	const float X = Radius * FMath::Cos(Degrees * PI / 180);
-	const float Y = Radius * FMath::Sin(Degrees * PI / 180);
-	return FVector2D(X, Y);
 }
 
 void URPGMapPOIWidget::SetPOIIcon()

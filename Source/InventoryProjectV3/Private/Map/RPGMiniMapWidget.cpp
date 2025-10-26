@@ -107,7 +107,6 @@ void URPGMiniMapWidget::AddPOI(AActor* Actor)
 		return;
 	}
 	
-	// TODO: Do some logic here
 	auto POIWidget = Cast<URPGMapPOIWidget>(CreateWidget(GetWorld(), POIClass));
 	if (POIWidget)
 	{

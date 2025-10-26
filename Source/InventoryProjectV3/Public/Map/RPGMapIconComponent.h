@@ -33,8 +33,7 @@ public:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
-	/** Returns UV (0..1) for this icon’s world position */
-	bool GetMapUV(FVector2D& OutUV) const;
+	// TODO: THIS CLASS IS UNUSED. DELETE LATER
 	
 	/** Icon to draw on the map/minimap */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowedClasses="/Script/Engine.Texture,/Script/Engine.MaterialInterface,/Script/Engine.SlateTextureAtlasInterface"), Category="MapIcon")

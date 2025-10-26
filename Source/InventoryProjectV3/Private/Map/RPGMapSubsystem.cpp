@@ -8,12 +8,16 @@
 #include "Map/RPG3DWorldMarker.h"
 #include "Utility/LogDefinitions.h"
 #include "Map/RPGMapIconComponent.h"
+#include "Map/RPGMapScreenWidget.h"
+#include "PlayerController/RPGPlayer_Controller.h"
 #include "Utility/Utility.h"
 
 void URPGMapSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 
+	InitializeMapScreen();
+	
 	On3DWorldMarkerSpawned.AddUObject(this, &URPGMapSubsystem::Spawn3DWorldMarker);
 }
 
@@ -111,6 +115,58 @@ void URPGMapSubsystem::Spawn3DWorldMarker(bool bSpawn, FVector Location)
 		{
 			WorldMarker->Destroy();
 			// Update compass marker (if we are going to have a compass system)
+		}
+	}
+}
+
+void URPGMapSubsystem::InitializeMapScreen()
+{
+	const UMapSubsystemSettings* MapSettings = UMapSubsystemSettings::Get();
+	check(MapSettings);
+
+	if (!MapSettings->MapScreenWidgetClass)
+	{
+		LOG_WITH_FUNCTION_NAME(LogRPGMap, Error, TEXT("MapScreenWidgetClass is not set in project settings"));
+		return;
+	}
+
+	MapScreenWidget = Cast<URPGMapScreenWidget>(CreateWidget(GetWorld(), MapSettings->MapScreenWidgetClass));
+	if (MapScreenWidget)
+	{
+		// Need to call this explicitly for map screen POIs to creat properly
+		MapScreenWidget->NativeConstruct();
+		MapScreenWidget->SetVisibility(ESlateVisibility::Collapsed);
+
+		LOG_WITH_FUNCTION_NAME(LogRPGMap, Verbose, TEXT("Map Screen initialized. Pointer: %s"), *MapScreenWidget->GetName());
+	}
+}
+
+void URPGMapSubsystem::ToggleMapScreen()
+{
+	ARPGPlayer_Controller* RPGPlayerController = Cast<ARPGPlayer_Controller>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	ensure(RPGPlayerController);
+
+	if (MapScreenWidget)
+	{
+		if (MapScreenWidget->GetVisibility() == ESlateVisibility::Collapsed)
+		{
+			// We only run this logic once so we just might set initial owning player here too (since we need to do that once as well)
+			if (!MapScreenWidget->IsInViewport())
+			{
+				MapScreenWidget->AddToViewport();
+				MapScreenWidget->SetOwningPlayer(RPGPlayerController); // Explicitly set the owning player since the widget is created before the player controller is initialized hence owning player is null (we need this for focus)
+			}
+			
+			MapScreenWidget->SetVisibility(ESlateVisibility::Visible);
+			MapScreenWidget->SetFocus();
+			
+			RPGPlayerController->SetUIInputMode();
+		}
+		else
+		{
+			MapScreenWidget->SetVisibility(ESlateVisibility::Collapsed);
+			
+			RPGPlayerController->SetDefaultInputMode();
 		}
 	}
 }

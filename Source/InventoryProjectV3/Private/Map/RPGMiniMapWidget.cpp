@@ -24,12 +24,15 @@ void URPGMiniMapWidget::NativeConstruct()
 	{
 		MapSubsystem->OnWorldMarkerToggled.AddUObject(this, &URPGMiniMapWidget::AddWorldMarker);
 	}
+
+	MapOverlay = MinimapWidget->MapOverlay;
 }
 
 void URPGMiniMapWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
+	//LOG_WITH_FUNCTION_NAME(LogRPGMap, Log, TEXT("MINIMAP CALL: MapOverlay: %s"), *GetNameSafe(MapOverlay));
 	UpdateMiniMapTranslation();
 }
 
@@ -96,33 +99,35 @@ void URPGMiniMapWidget::AddWorldMarker(bool bSpawn, FVector2D MarkerLocation)
 
 void URPGMiniMapWidget::AddPOI(AActor* Actor)
 {
-	if (!Actor)
-	{
-		return;
-	}
-
-	if (!POIClass)
-	{
-		LOG_WITH_FUNCTION_NAME(LogRPGMap, Error, TEXT("POIClass is null"));
-		return;
-	}
+	Super::AddPOI(Actor);
 	
-	auto POIWidget = Cast<URPGMapPOIWidget>(CreateWidget(GetWorld(), POIClass));
-	if (POIWidget)
-	{
-		auto POIComp = Actor->GetComponentByClass<URPGPointOfInterestComponent>();
-		if (POIComp)
-		{
-			POIWidget->Owner = Actor;
-			
-			auto OverlaySlot = MinimapWidget->MapOverlay->AddChildToOverlay(POIWidget);
-			if (OverlaySlot)
-			{
-				OverlaySlot->SetHorizontalAlignment(HAlign_Center);
-				OverlaySlot->SetVerticalAlignment(VAlign_Center);
-			}
-			
-			LOG_WITH_FUNCTION_NAME(LogRPGMap, Log, TEXT("Added POI for %s"), *Actor->GetName());
-		}
-	}
+	// if (!Actor)
+	// {
+	// 	return;
+	// }
+	//
+	// if (!POIClass)
+	// {
+	// 	LOG_WITH_FUNCTION_NAME(LogRPGMap, Error, TEXT("POIClass is null"));
+	// 	return;
+	// }
+	//
+	// auto POIWidget = Cast<URPGMapPOIWidget>(CreateWidget(GetWorld(), POIClass));
+	// if (POIWidget)
+	// {
+	// 	auto POIComp = Actor->GetComponentByClass<URPGPointOfInterestComponent>();
+	// 	if (POIComp)
+	// 	{
+	// 		POIWidget->Owner = Actor;
+	// 		
+	// 		auto OverlaySlot = MinimapWidget->MapOverlay->AddChildToOverlay(POIWidget);
+	// 		if (OverlaySlot)
+	// 		{
+	// 			OverlaySlot->SetHorizontalAlignment(HAlign_Center);
+	// 			OverlaySlot->SetVerticalAlignment(VAlign_Center);
+	// 		}
+	// 		
+	// 		LOG_WITH_FUNCTION_NAME(LogRPGMap, Log, TEXT("Added POI for %s"), *Actor->GetName());
+	// 	}
+	// }
 }

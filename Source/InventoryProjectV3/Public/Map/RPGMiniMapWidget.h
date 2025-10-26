@@ -27,12 +27,8 @@ public:
 	UFUNCTION()
 	void AddWorldMarker(bool bSpawn, FVector2D MarkerLocation);
 	
-	void AddPOI(AActor* Actor);
+	virtual void AddPOI(AActor* Actor) override;
 	
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))
 	URPGMapWidgetBase* MinimapWidget = nullptr;
-
-	// TODO: Probably will need to move this class and related logic to parent class since we obviously want POIs to be on both maps
-	UPROPERTY(EditDefaultsOnly, Category = "Map")
-	TSubclassOf<URPGMapPOIWidget> POIClass = nullptr;
 };

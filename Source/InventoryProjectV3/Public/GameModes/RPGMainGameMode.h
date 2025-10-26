@@ -6,7 +6,6 @@
 #include "GameFramework/GameModeBase.h"
 #include "RPGMainGameMode.generated.h"
 
-class ARPGMapBoundsVolume;
 class UTexture2D;
 class UTextureRenderTarget2D;
 

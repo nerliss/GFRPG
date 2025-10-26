@@ -31,7 +31,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void AddWaypoint(FVector WaypointLocation);
-	
+
+	virtual void AddPOI(AActor* Actor);
+		
 	UPROPERTY(meta=(BindWidgetOptional))
 	UImage* MapImage = nullptr;
 

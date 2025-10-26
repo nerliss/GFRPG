@@ -3,6 +3,8 @@
 
 #include "Components/RPGPointOfInterestComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Map/RPGMapScreenWidget.h"
+#include "Map/RPGMapSubsystem.h"
 #include "PlayerController/RPGPlayer_Controller.h"
 #include "Widgets/RPGHUD_Widget.h"
 #include "Map/RPGMiniMapWidget.h"
@@ -51,6 +53,17 @@ void URPGPointOfInterestComponent::SpawnPOIOnMap()
 	}
 	
 	Minimap->AddPOI(GetOwner());
+
+	auto MapSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<URPGMapSubsystem>();
+	if (MapSubsystem && MapSubsystem->MapScreenWidget)
+	{
+		LOG_WITH_FUNCTION_NAME(LogRPGMap, Log, TEXT("Spawning on MapScreen too"))
+		MapSubsystem->MapScreenWidget->AddPOI(GetOwner());
+	}
+	else
+	{
+		LOG_WITH_FUNCTION_NAME(LogRPGMap, Error, TEXT("Map subsystem or its MapScreenWidget is null!"));
+	}
 
 	bSpawned = true;
 	LOG_WITH_FUNCTION_NAME(LogRPGMap, Log, TEXT("PointOfInterest icon for %s spawned"), *GetOwner()->GetName());

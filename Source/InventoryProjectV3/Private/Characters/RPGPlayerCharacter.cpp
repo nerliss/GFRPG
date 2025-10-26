@@ -24,6 +24,7 @@
 #include "DataAssets/CharacterSoundCollection.h"
 #include "GameInstance/RPGGameInstanceBase.h"
 #include "Map/RPGMapScreenWidget.h"
+#include "Map/RPGMapSubsystem.h"
 #include "PlayerController/RPGPlayer_Controller.h"
 #include "Save/RPGSaveGameObject.h"
 
@@ -86,8 +87,6 @@ ARPGPlayerCharacter::ARPGPlayerCharacter()
 	bStealthed = false;
 	bMounted = false;
 	CharacterGender = ECharacterGender::Undefined;
-	MapScreenWidgetClass = nullptr;
-	MapScreenWidget = nullptr;
 }
 
 void ARPGPlayerCharacter::BeginPlay()
@@ -321,7 +320,7 @@ void ARPGPlayerCharacter::CalculateFallDamage()
 
 	UGameplayStatics::ApplyDamage(this, ActualDamage, nullptr, nullptr, UDamageTypeEnviromental::StaticClass());
 
-	DEBUGMESSAGE(3.f, FColor::Red, "Damage taken from falling: %f", ActualDamage);
+	LOG_WITH_FUNCTION_NAME(LogRPGPlayerCharacter, Log, TEXT("Damage taken from falling: %f"), ActualDamage);
 }
 
 void ARPGPlayerCharacter::Landed(const FHitResult& Hit)
@@ -456,7 +455,7 @@ void ARPGPlayerCharacter::OnInteractPressed()
 	}
 
 	InteractActorCasted->InteractNative(this);
-	UE_LOG(LogRPGPlayerCharacter, Verbose, TEXT("Interacting with %s"), *InteractActor->GetName());
+	LOG_WITH_FUNCTION_NAME(LogRPGPlayerCharacter, Verbose, TEXT("Interacting with %s"), *InteractActor->GetName());
 }
 
 void ARPGPlayerCharacter::OnInventoryToggled()
@@ -471,24 +470,10 @@ void ARPGPlayerCharacter::OnQuestLogToggled()
 
 void ARPGPlayerCharacter::OnMapScreenToggled()
 {
-	ARPGPlayer_Controller* RPGPlayerController = Cast<ARPGPlayer_Controller>(GetController());
-	ensure(RPGPlayerController);
-	check(MapScreenWidgetClass);
-	
-	if (MapScreenWidget)
+	URPGMapSubsystem* MapSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<URPGMapSubsystem>();
+	if (MapSubsystem)
 	{
-		MapScreenWidget->RemoveFromParent();
-		MapScreenWidget = nullptr;
-
-		RPGPlayerController->SetDefaultInputMode();
-	}
-	else
-	{
-		MapScreenWidget = Cast<URPGMapScreenWidget>(CreateWidget(GetWorld(), MapScreenWidgetClass));
-		MapScreenWidget->AddToViewport();
-		MapScreenWidget->SetFocus();
-
-		RPGPlayerController->SetUIInputMode();
+		MapSubsystem->ToggleMapScreen();
 	}
 }
 
@@ -500,7 +485,7 @@ void ARPGPlayerCharacter::LoadLastCharacterModel()
 	const FCharacterSelectionData SaveCharacterData = RPGGameInstance->GetSaveGameObject()->CharacterPlayerData;
 	if (!(SaveCharacterData.SkeletalMesh && SaveCharacterData.AssociatedAnimBP))
 	{	
-		UE_LOG(LogRPGPlayerCharacter, Error, TEXT("[ARPGPlayerCharacter::LoadLastCharacterModel] SaveCharacterData doesn't have SkeletalMesh and/or AssociatedAnimBP!"));
+		LOG_WITH_FUNCTION_NAME(LogRPGPlayerCharacter, Error, TEXT("SaveCharacterData doesn't have SkeletalMesh and/or AssociatedAnimBP!"));
 		return;
 	}
 
@@ -509,7 +494,7 @@ void ARPGPlayerCharacter::LoadLastCharacterModel()
 
 	SetCharacterGender(SaveCharacterData.Gender);
 
-	UE_LOG(LogRPGPlayerCharacter, Log, TEXT("[ARPGPlayerCharacter::LoadLastCharacterModel] Last character model was loaded"));
+	LOG_WITH_FUNCTION_NAME(LogRPGPlayerCharacter, Log, TEXT("Last character model was loaded"));
 }
 
 #if WITH_EDITORONLY_DATA

@@ -6,6 +6,8 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "RPGMapSubsystem.generated.h"
 
+class URPGMapPOIWidget;
+class URPGMapScreenWidget;
 class ARPGMapBoundsVolume;
 class URPGMapIconComponent;
 class ARPG3DWorldMarker;
@@ -65,7 +67,13 @@ public:
 	static UMapSubsystemSettings* GetMutable() { return GetMutableDefault<UMapSubsystemSettings>(); }
 	
 	UPROPERTY(EditAnywhere, Config, Category = "Settings")
-	TSubclassOf<ARPG3DWorldMarker> RPG3DWorldMarker; 
+	TSubclassOf<ARPG3DWorldMarker> RPG3DWorldMarker;
+
+	UPROPERTY(EditAnywhere, Config, Category = "Settings")
+	TSubclassOf<URPGMapPOIWidget> POIWidgetClass;
+	
+	UPROPERTY(EditAnywhere, Config, Category = "Settings")
+	TSubclassOf<URPGMapScreenWidget> MapScreenWidgetClass;
 };
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnWorldMarkerToggled, bool /*bSpawn*/, FVector2D /*MarkerMapLocation*/);
@@ -89,6 +97,9 @@ public:
 	
 	UFUNCTION()
 	void Spawn3DWorldMarker(bool bSpawn, FVector Location);
+
+	void InitializeMapScreen();
+	void ToggleMapScreen();
 	
 	/** Static world map image (or set at runtime) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Map")
@@ -110,6 +121,9 @@ public:
 
 	UPROPERTY()
 	ARPG3DWorldMarker* WorldMarker;
+
+	UPROPERTY()
+	URPGMapScreenWidget* MapScreenWidget;
 	
 private:
 	

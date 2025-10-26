@@ -6,11 +6,15 @@
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Blueprint/WidgetTree.h"
 #include "Components/Image.h"
+#include "Components/Overlay.h"
+#include "Components/OverlaySlot.h"
+#include "Components/RPGPointOfInterestComponent.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
 #include "Map/RPGMapSubsystem.h"
 #include "Utility/LogDefinitions.h"
 #include "Utility/Utility.h"
+#include "Widgets/Map/RPGMapPOIWidget.h"
 
 void URPGMapWidgetBase::NativeConstruct()
 {
@@ -24,6 +28,7 @@ void URPGMapWidgetBase::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
 	UpdatePlayerPosition();
+	//LOG_WITH_FUNCTION_NAME(LogRPGMap, Log, TEXT("PARENT CALL: Class: %s, MapOverlay: %s"), *GetName(), *GetNameSafe(MapOverlay));
 }
 
 FReply URPGMapWidgetBase::NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -138,6 +143,45 @@ void URPGMapWidgetBase::AddWaypoint(FVector WaypointLocation)
 	if (bInitComplete)
 	{
 		UpdateQuestMarkers(WaypointLocation);
+	}
+}
+
+void URPGMapWidgetBase::AddPOI(AActor* Actor)
+{
+	if (!Actor)
+	{
+		return;
+	}
+
+	const UMapSubsystemSettings* MapSettings = UMapSubsystemSettings::Get();
+	check(MapSettings);
+	
+	if (!MapSettings->POIWidgetClass)
+	{
+		LOG_WITH_FUNCTION_NAME(LogRPGMap, Error, TEXT("POIClass is null"));
+		return;
+	}
+	
+	URPGMapPOIWidget* POIWidget = Cast<URPGMapPOIWidget>(CreateWidget(GetWorld(), MapSettings->POIWidgetClass));
+	if (POIWidget)
+	{
+		URPGPointOfInterestComponent* POIComp = Actor->GetComponentByClass<URPGPointOfInterestComponent>();
+		if (POIComp)
+		{
+			POIWidget->Owner = Actor;
+
+			if (MapOverlay)
+			{
+				auto OverlaySlot = MapOverlay->AddChildToOverlay(POIWidget);
+				if (OverlaySlot)
+				{
+					OverlaySlot->SetHorizontalAlignment(HAlign_Center);
+					OverlaySlot->SetVerticalAlignment(VAlign_Center);
+				}
+			}
+			
+			LOG_WITH_FUNCTION_NAME(LogRPGMap, Log, TEXT("PARENT CALL: Added POI for %s"), *Actor->GetName());
+		}
 	}
 }
 

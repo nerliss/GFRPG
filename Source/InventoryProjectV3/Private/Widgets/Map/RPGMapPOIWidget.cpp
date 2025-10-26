@@ -68,7 +68,7 @@ void URPGMapPOIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime
 				const float OwnerIconAngle = Owner->GetActorRotation().Yaw + 90.f;
 		
 				POIImage->SetRenderTranslation(FVector2D(OwnerIconX, OwnerIconY));
-				POIImage->SetRenderTransformAngle(OwnerIconAngle);
+				//POIImage->SetRenderTransformAngle(OwnerIconAngle); // Don't rotate POIs
 			}
 		}
 	}

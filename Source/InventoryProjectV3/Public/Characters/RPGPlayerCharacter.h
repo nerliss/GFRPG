@@ -280,12 +280,6 @@ protected:
 	/* Character gender, updated when new character model is set. */
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Character")
 	ECharacterGender CharacterGender;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Map")
-	TSubclassOf<URPGMapScreenWidget> MapScreenWidgetClass;
-
-	UPROPERTY()
-	URPGMapScreenWidget* MapScreenWidget;
 	
 private:
 

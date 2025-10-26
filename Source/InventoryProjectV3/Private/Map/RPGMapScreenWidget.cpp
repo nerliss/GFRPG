@@ -6,6 +6,7 @@
 #include "Characters/RPGPlayerCharacter.h"
 #include "Components/ScaleBox.h"
 #include "GameFramework/InputSettings.h"
+#include "Map/RPGMapSubsystem.h"
 #include "Utility/LogDefinitions.h"
 #include "Utility/Utility.h"
 
@@ -15,6 +16,9 @@ void URPGMapScreenWidget::NativeConstruct()
 
 	// Assign map's world marker ptr to this class' world marker ptr since the latter is null hence world marker logic doesn't work
 	WorldMarker = MapWidget->WorldMarker;
+	MapOverlay = MapWidget->MapOverlay;
+	
+	LOG_WITH_FUNCTION_NAME(LogRPGMap, Warning, TEXT("Map screen open"));
 }
 
 FReply URPGMapScreenWidget::NativeOnMouseWheel(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -56,11 +60,10 @@ FReply URPGMapScreenWidget::NativeOnKeyDown(const FGeometry& InGeometry, const F
 	{
 		if (Key.Key == InKeyEvent.GetKey())
 		{
-			// TODO: Move map toggle functionality to a better place (a map subsystem may be?)
-			ARPGPlayerCharacter* PlayerCharacter = Cast<ARPGPlayerCharacter>(GetOwningPlayerPawn());
-			if (PlayerCharacter)
+			URPGMapSubsystem* MapSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<URPGMapSubsystem>();
+			if (MapSubsystem)
 			{
-				PlayerCharacter->OnMapScreenToggled();
+				MapSubsystem->ToggleMapScreen();
 				break;
 			}
 		}

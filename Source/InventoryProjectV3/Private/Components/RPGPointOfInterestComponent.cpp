@@ -15,6 +15,7 @@ URPGPointOfInterestComponent::URPGPointOfInterestComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
+	Icon.SetImageSize(FVector2D(16.0f, 16.0f));
 	Mobility = EPOIMobility::None;
 	bQuestObjective = false;
 }
@@ -53,13 +54,13 @@ void URPGPointOfInterestComponent::SpawnPOIOnMap()
 	}
 
 	// TODO: Try to unify it more, may be move minimap logic to map subsystem too
-	Minimap->AddPOI(GetOwner());
+	Minimap->AddPOI(GetOwner(), Minimap);
 
 	auto MapSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<URPGMapSubsystem>();
 	if (MapSubsystem && MapSubsystem->MapScreenWidget)
 	{
 		LOG_WITH_FUNCTION_NAME(LogRPGMap, Log, TEXT("Spawning on MapScreen too"))
-		MapSubsystem->MapScreenWidget->AddPOI(GetOwner());
+		MapSubsystem->MapScreenWidget->AddPOI(GetOwner(), MapSubsystem->MapScreenWidget);
 	}
 	else
 	{

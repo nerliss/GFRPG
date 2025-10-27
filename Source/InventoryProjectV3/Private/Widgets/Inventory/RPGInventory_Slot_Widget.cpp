@@ -63,7 +63,7 @@ FReply URPGInventory_Slot_Widget::NativeOnMouseButtonDown(const FGeometry& InGeo
 {
 	Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
 
-	// MyTODO: Collapse to functions and clean it up
+	// TODO: Collapse to functions and clean it up
 	if (InMouseEvent.GetEffectingButton() == EKeys::RightMouseButton)
 	{
 		// Use item
@@ -97,7 +97,7 @@ FReply URPGInventory_Slot_Widget::NativeOnMouseButtonDown(const FGeometry& InGeo
 
 void URPGInventory_Slot_Widget::UpdateThumbnail()
 {
-	if (SlotContent.Quantity <= 0) // MyTODO: Check this
+	if (SlotContent.Quantity <= 0) // TODO: Check this
 	{
 		// Slot is empty
 		return;
@@ -164,8 +164,8 @@ bool URPGInventory_Slot_Widget::UseItem()
 		return false;
 	}
 
-	const bool bUsedSuccessfuly = ItemToUse->UseItem();
-	if (!bUsedSuccessfuly)
+	const bool bUsedSuccessfully = ItemToUse->UseItem();
+	if (!bUsedSuccessfully)
 	{
 		return false;
 	}

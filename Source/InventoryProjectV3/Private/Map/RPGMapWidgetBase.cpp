@@ -103,7 +103,7 @@ void URPGMapWidgetBase::InitMap()
 			MapImage->SetBrushFromTexture(FoundRow->MapTexture);
 		}
 	}
-
+	
 	bInitComplete = true;
 }
 
@@ -146,7 +146,7 @@ void URPGMapWidgetBase::AddWaypoint(FVector WaypointLocation)
 	}
 }
 
-void URPGMapWidgetBase::AddPOI(AActor* Actor)
+void URPGMapWidgetBase::AddPOI(AActor* Actor, URPGMapWidgetBase* MapReference)
 {
 	if (!Actor)
 	{
@@ -169,7 +169,7 @@ void URPGMapWidgetBase::AddPOI(AActor* Actor)
 		if (POIComp)
 		{
 			POIWidget->Owner = Actor;
-			POIWidget->OwningMapWidget = this; // Both MapScreen and Minimap have the same OwningMapWidget, but the parent of that OwningMapWidget is absent for MapScreen. Kinda a hacky way to determine whether created POI belongs to a Minimap or not
+			POIWidget->OwningMapWidget = MapReference; // Also works with 'this', but better to leave it as explicitly as this
 
 			if (MapOverlay)
 			{

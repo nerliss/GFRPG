@@ -31,7 +31,7 @@ public:
 	
 	void AddWaypoint(FVector WaypointLocation);
 
-	virtual void AddPOI(AActor* Actor);
+	virtual void AddPOI(AActor* Actor, URPGMapWidgetBase* MapReference);
 		
 	UPROPERTY(meta=(BindWidgetOptional))
 	UImage* MapImage = nullptr;

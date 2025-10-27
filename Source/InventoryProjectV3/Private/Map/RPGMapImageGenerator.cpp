@@ -6,6 +6,7 @@
 #include "AutomationBlueprintFunctionLibrary.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Camera/CameraActor.h"
+#include "Camera/CameraComponent.h"
 #include "Components/InstancedStaticMeshComponent.h"
 #include "Components/SplineComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -100,8 +101,8 @@ void ARPGMapImageGenerator::TakeScreenshot()
 		if (PC)
 		{
 			PC->SetViewTarget(SpawnedCamera);
-
-			UAutomationBlueprintFunctionLibrary::TakeHighResScreenshot(1920, 1080, "", SpawnedCamera);
+			//SpawnedCamera->GetCameraComponent()->SetProjectionMode(ECameraProjectionMode::Orthographic); // TODO: To try out
+			UAutomationBlueprintFunctionLibrary::TakeHighResScreenshot(3840, 2160, "", SpawnedCamera);
 			
 			SpawnedCamera->Destroy();
 		}

@@ -25,7 +25,7 @@ public:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UImage* POIImage;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	AActor* Owner;
 
 	UPROPERTY()

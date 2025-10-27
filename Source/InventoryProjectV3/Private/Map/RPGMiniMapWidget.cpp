@@ -97,9 +97,9 @@ void URPGMiniMapWidget::AddWorldMarker(bool bSpawn, FVector2D MarkerLocation)
 	}
 }
 
-void URPGMiniMapWidget::AddPOI(AActor* Actor)
+void URPGMiniMapWidget::AddPOI(AActor* Actor, URPGMapWidgetBase* MapReference)
 {
-	Super::AddPOI(Actor);
+	Super::AddPOI(Actor, MapReference);
 	
 	// if (!Actor)
 	// {

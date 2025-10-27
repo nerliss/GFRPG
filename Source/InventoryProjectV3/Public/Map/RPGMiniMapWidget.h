@@ -27,7 +27,7 @@ public:
 	UFUNCTION()
 	void AddWorldMarker(bool bSpawn, FVector2D MarkerLocation);
 	
-	virtual void AddPOI(AActor* Actor) override;
+	virtual void AddPOI(AActor* Actor, URPGMapWidgetBase* MapReference) override;
 	
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))
 	URPGMapWidgetBase* MinimapWidget = nullptr;

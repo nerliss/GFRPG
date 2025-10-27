@@ -51,7 +51,8 @@ void URPGPointOfInterestComponent::SpawnPOIOnMap()
 		LOG_WITH_FUNCTION_NAME(LogRPGMap, Error, TEXT("Minimap is null!"));
 		return;
 	}
-	
+
+	// TODO: Try to unify it more, may be move minimap logic to map subsystem too
 	Minimap->AddPOI(GetOwner());
 
 	auto MapSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<URPGMapSubsystem>();

@@ -3,9 +3,11 @@
 
 #include "Widgets/Map/RPGMapPOIWidget.h"
 
+#include "Blueprint/WidgetBlueprintGeneratedClass.h"
 #include "Characters/RPGPlayerCharacter.h"
 #include "Components/RPGPointOfInterestComponent.h"
 #include "Components/Image.h"
+#include "Components/PanelWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "Map/RPGMiniMapWidget.h"
 #include "PlayerController/RPGPlayer_Controller.h"
@@ -30,6 +32,10 @@ void URPGMapPOIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime
 		SetPOIIcon();
 	}
 
+	
+	
+	//LOG_WITH_FUNCTION_NAME(LogRPGMap, Log, TEXT("%s's OwningMapWidget: %s"), *GetName(), *GetNameSafe(OwningMapWidget->GetParent()));
+	
 	// TODO: Remake for better since there is a lot of repetition from player poi pos logic. Move it to MapSubsystem or something. Also Map pointer here is really awkward
 	if (Owner && POIImage)
 	{
@@ -40,8 +46,9 @@ void URPGMapPOIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime
 			auto PlayerCharacter = Cast<ARPGPlayerCharacter>(PlayerController->GetCharacter());
 			if (PlayerCharacter)
 			{
+				const bool bBelongsToMinimap = OwningMapWidget->GetParent(); // MapScreen returns nullptr here, don't know why - should be fine for now
 				float DistanceToPlayer = FVector::Distance(PlayerCharacter->GetActorLocation(), Owner->GetActorLocation());
-				if (DistanceToPlayer >= 5000.f)
+				if (DistanceToPlayer >= 5000.f && bBelongsToMinimap)
 				{
 					if (POIImage->GetVisibility() != ESlateVisibility::Collapsed)
 					{

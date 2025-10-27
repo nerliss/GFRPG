@@ -161,7 +161,7 @@ void URPGMapWidgetBase::AddPOI(AActor* Actor)
 		LOG_WITH_FUNCTION_NAME(LogRPGMap, Error, TEXT("POIClass is null"));
 		return;
 	}
-	
+
 	URPGMapPOIWidget* POIWidget = Cast<URPGMapPOIWidget>(CreateWidget(GetWorld(), MapSettings->POIWidgetClass));
 	if (POIWidget)
 	{
@@ -169,6 +169,7 @@ void URPGMapWidgetBase::AddPOI(AActor* Actor)
 		if (POIComp)
 		{
 			POIWidget->Owner = Actor;
+			POIWidget->OwningMapWidget = this; // Both MapScreen and Minimap have the same OwningMapWidget, but the parent of that OwningMapWidget is absent for MapScreen. Kinda a hacky way to determine whether created POI belongs to a Minimap or not
 
 			if (MapOverlay)
 			{

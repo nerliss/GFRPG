@@ -1,4 +1,4 @@
-// Oleksandr Tkachov 2022-2024
+// Oleksandr Tkachov 2022-2025
 
 #pragma once
 
@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "RPGMapPOIWidget.generated.h"
 
+class URPGMapWidgetBase;
 class UImage;
 
 /**
@@ -26,6 +27,9 @@ public:
 
 	UPROPERTY()
 	AActor* Owner;
+
+	UPROPERTY()
+	URPGMapWidgetBase* OwningMapWidget;
 	
 	bool bIconSet;
 	

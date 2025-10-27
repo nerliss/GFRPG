@@ -45,8 +45,6 @@ void URPGMapScreenWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 
 	bRightButtonDown = false;
 	bLeftButtonDown = false;
-
-	LOG_WITH_FUNCTION_NAME(LogRPGMap, VeryVerbose, TEXT("Called"));
 }
 
 FReply URPGMapScreenWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)

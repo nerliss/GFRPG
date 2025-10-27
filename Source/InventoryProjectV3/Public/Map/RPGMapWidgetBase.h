@@ -29,7 +29,6 @@ public:
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual int32 NativePaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled ) const override;
 	
-	UFUNCTION(BlueprintCallable)
 	void AddWaypoint(FVector WaypointLocation);
 
 	virtual void AddPOI(AActor* Actor);

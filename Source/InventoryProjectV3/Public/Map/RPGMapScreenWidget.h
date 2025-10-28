@@ -26,22 +26,28 @@ public:
 
 	void UpdateZoom(const FPointerEvent& InMouseEvent);
 	void UpdatePanning(const FPointerEvent& InMouseEvent);
-	
+
+	/* How fast should mouse wheel change zoom? */
 	UPROPERTY(EditDefaultsOnly, Category = "Map")
 	float ZoomSpeed = 0.5f;
 
+	/* How far can we zoom the map out? */
 	UPROPERTY(EditDefaultsOnly, Category = "Map")
 	float ZoomMin = 0.5f;
 
+	/* How close can we zoom the map in? */
 	UPROPERTY(EditDefaultsOnly, Category = "Map")
 	float ZoomMax = 3.0f;
 
+	/* Base pan speed which than scales with zoom */
 	UPROPERTY(EditDefaultsOnly, Category = "Map")
 	float PanSpeed = 1.f;
 
+	/* Pan borders for X axis */
 	UPROPERTY(EditDefaultsOnly, Category = "Map")
 	FVector2D PanXMinMax = FVector2D(-900.f, 900.f);
 
+	/* Pan borders for Y axis */
 	UPROPERTY(EditDefaultsOnly, Category = "Map")
 	FVector2D PanYMinMax = FVector2D(-300.f, 300.f);
 	
@@ -50,5 +56,9 @@ public:
 
 	UPROPERTY(meta=(BindWidgetOptional))
 	URPGMapWidgetBase* MapWidget;
+
+private:
+
+	float ZoomFactor;
 	
 };

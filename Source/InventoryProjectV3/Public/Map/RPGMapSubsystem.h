@@ -78,6 +78,7 @@ public:
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnWorldMarkerToggled, bool /*bSpawn*/, FVector2D /*MarkerMapLocation*/);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOn3DWorldMarkerSpawned, bool /*bSpawn*/, FVector /*MarkerWorldLocation*/);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnMapZoomChanged, float /*Zoom*/);
 
 UCLASS()
 class INVENTORYPROJECTV3_API URPGMapSubsystem : public UGameInstanceSubsystem
@@ -118,6 +119,7 @@ public:
 
 	FOnWorldMarkerToggled OnWorldMarkerToggled;
 	FOn3DWorldMarkerSpawned On3DWorldMarkerSpawned;
+	FOnMapZoomChanged OnMapZoomChanged;
 
 	UPROPERTY()
 	ARPG3DWorldMarker* WorldMarker;

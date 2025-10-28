@@ -32,6 +32,9 @@ public:
 	URPGMapWidgetBase* OwningMapWidget;
 	
 	bool bIconSet;
+
+	UFUNCTION()
+	void UpdateIconSize(float ZoomFactor);
 	
 	void SetPOIIcon();
 

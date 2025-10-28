@@ -79,7 +79,15 @@ void URPGMapScreenWidget::UpdateZoom(const FPointerEvent& InMouseEvent)
 
 	const float FinalZoomSpeed = InMouseEvent.GetWheelDelta() * ZoomSpeed;
 	const float NewZoomBoxScale = MapZoomBox->GetUserSpecifiedScale() + FinalZoomSpeed;
-	MapZoomBox->SetUserSpecifiedScale(FMath::Clamp(NewZoomBoxScale, ZoomMin, ZoomMax));
+	ZoomFactor = FMath::Clamp(NewZoomBoxScale, ZoomMin, ZoomMax);
+	MapZoomBox->SetUserSpecifiedScale(ZoomFactor);
+	//MapZoomBox->SetUserSpecifiedScale(FMath::Lerp(ZoomFactor, ZoomMin, ZoomMax));
+
+	URPGMapSubsystem* MapSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<URPGMapSubsystem>();
+	if (MapSubsystem)
+	{
+		MapSubsystem->OnMapZoomChanged.Broadcast(ZoomFactor);
+	}
 }
 
 void URPGMapScreenWidget::UpdatePanning(const FPointerEvent& InMouseEvent)
@@ -95,7 +103,9 @@ void URPGMapScreenWidget::UpdatePanning(const FPointerEvent& InMouseEvent)
 		return;
 	}
 
-	const FVector2D PanLocation = MapWidget->GetRenderTransform().Translation + (InMouseEvent.GetCursorDelta() * PanSpeed);
+	const float FinalPanSpeed = PanSpeed / ZoomFactor;
+	
+	const FVector2D PanLocation = MapWidget->GetRenderTransform().Translation + (InMouseEvent.GetCursorDelta() * FinalPanSpeed);
 	const FVector2D FinalPanLocation = FVector2D(FMath::Clamp(PanLocation.X, PanXMinMax.X, PanXMinMax.Y), FMath::Clamp(PanLocation.Y, PanYMinMax.X, PanYMinMax.Y));
 	MapWidget->SetRenderTranslation(FinalPanLocation);
 }

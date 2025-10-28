@@ -8,6 +8,7 @@
 #include "Components/Image.h"
 #include "Components/PanelWidget.h"
 #include "Kismet/GameplayStatics.h"
+#include "Map/RPGMapSubsystem.h"
 #include "Map/RPGMiniMapWidget.h"
 #include "PlayerController/RPGPlayer_Controller.h"
 #include "Utility/LogDefinitions.h"
@@ -20,6 +21,12 @@ void URPGMapPOIWidget::NativeConstruct()
 
 	LOG_WITH_FUNCTION_NAME(LogRPGMap, Log, TEXT("Called"))
 	SetPOIIcon();
+
+	URPGMapSubsystem* MapSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<URPGMapSubsystem>();
+	if (MapSubsystem)
+	{
+		MapSubsystem->OnMapZoomChanged.AddUObject(this, &URPGMapPOIWidget::UpdateIconSize);
+	}
 }
 
 void URPGMapPOIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -73,6 +80,16 @@ void URPGMapPOIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime
 				//POIImage->SetRenderTransformAngle(OwnerIconAngle); // Don't rotate POIs
 			}
 		}
+	}
+}
+
+void URPGMapPOIWidget::UpdateIconSize(float ZoomFactor)
+{
+	LOG_WITH_FUNCTION_NAME(LogRPGMap, Log, TEXT("ZoomFactor = %f"), ZoomFactor);
+
+	if (POIImage)
+	{
+		POIImage->SetRenderScale(FVector2D(1.f / ZoomFactor));
 	}
 }
 

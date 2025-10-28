@@ -3,7 +3,6 @@
 
 #include "Map/RPGMapScreenWidget.h"
 
-#include "Characters/RPGPlayerCharacter.h"
 #include "Components/ScaleBox.h"
 #include "GameFramework/InputSettings.h"
 #include "Map/RPGMapSubsystem.h"
@@ -17,8 +16,13 @@ void URPGMapScreenWidget::NativeConstruct()
 	// Assign map's world marker ptr to this class' world marker ptr since the latter is null hence world marker logic doesn't work
 	WorldMarker = MapWidget->WorldMarker;
 	MapOverlay = MapWidget->MapOverlay;
+}
+
+void URPGMapScreenWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+
 	
-	LOG_WITH_FUNCTION_NAME(LogRPGMap, Warning, TEXT("Map screen open"));
 }
 
 FReply URPGMapScreenWidget::NativeOnMouseWheel(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -77,17 +81,24 @@ void URPGMapScreenWidget::UpdateZoom(const FPointerEvent& InMouseEvent)
 		return;
 	}
 
-	const float FinalZoomSpeed = InMouseEvent.GetWheelDelta() * ZoomSpeed;
-	const float NewZoomBoxScale = MapZoomBox->GetUserSpecifiedScale() + FinalZoomSpeed;
+	const float ZoomStep = InMouseEvent.GetWheelDelta() * ZoomSpeed;
+	const float NewZoomBoxScale = MapZoomBox->GetUserSpecifiedScale() + ZoomStep;
 	ZoomFactor = FMath::Clamp(NewZoomBoxScale, ZoomMin, ZoomMax);
+
+	if (ZoomFactor == PreviousZoomFactor)
+	{
+		return;
+	}
+	
 	MapZoomBox->SetUserSpecifiedScale(ZoomFactor);
-	//MapZoomBox->SetUserSpecifiedScale(FMath::Lerp(ZoomFactor, ZoomMin, ZoomMax));
 
 	URPGMapSubsystem* MapSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<URPGMapSubsystem>();
 	if (MapSubsystem)
 	{
 		MapSubsystem->OnMapZoomChanged.Broadcast(ZoomFactor);
 	}
+
+	PreviousZoomFactor = ZoomFactor;
 }
 
 void URPGMapScreenWidget::UpdatePanning(const FPointerEvent& InMouseEvent)
@@ -104,7 +115,6 @@ void URPGMapScreenWidget::UpdatePanning(const FPointerEvent& InMouseEvent)
 	}
 
 	const float FinalPanSpeed = PanSpeed / ZoomFactor;
-	
 	const FVector2D PanLocation = MapWidget->GetRenderTransform().Translation + (InMouseEvent.GetCursorDelta() * FinalPanSpeed);
 	const FVector2D FinalPanLocation = FVector2D(FMath::Clamp(PanLocation.X, PanXMinMax.X, PanXMinMax.Y), FMath::Clamp(PanLocation.Y, PanYMinMax.X, PanYMinMax.Y));
 	MapWidget->SetRenderTranslation(FinalPanLocation);

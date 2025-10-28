@@ -85,7 +85,13 @@ void URPGMapPOIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime
 
 void URPGMapPOIWidget::UpdateIconSize(float ZoomFactor)
 {
-	LOG_WITH_FUNCTION_NAME(LogRPGMap, Log, TEXT("ZoomFactor = %f"), ZoomFactor);
+	if (OwningMapWidget && OwningMapWidget->bMiniMap)
+	{
+		LOG_WITH_FUNCTION_NAME(LogRPGMap, VeryVerbose, TEXT("Ignoring icon change by zoom on Minimap"));
+		return;
+	}
+	
+	LOG_WITH_FUNCTION_NAME(LogRPGMap, VeryVerbose, TEXT("ZoomFactor = %f"), ZoomFactor);
 
 	if (POIImage)
 	{

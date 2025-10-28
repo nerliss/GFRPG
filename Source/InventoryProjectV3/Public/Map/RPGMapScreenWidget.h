@@ -19,6 +19,7 @@ class INVENTORYPROJECTV3_API URPGMapScreenWidget : public URPGMapWidgetBase
 public:
 
 	virtual void NativeConstruct() override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	virtual FReply NativeOnMouseWheel(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual FReply NativeOnMouseMove(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
@@ -60,5 +61,6 @@ public:
 private:
 
 	float ZoomFactor;
+	float PreviousZoomFactor;
 	
 };

@@ -22,14 +22,14 @@ void URPGMapScreenWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaT
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
-	
+	UpdateZoom(InDeltaTime);
 }
 
 FReply URPGMapScreenWidget::NativeOnMouseWheel(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseWheel(InGeometry, InMouseEvent);
 	
-	UpdateZoom(InMouseEvent);
+	OnMouseWheelZoom(InMouseEvent);
 	
 	return FReply::Handled(); 
 }
@@ -40,7 +40,7 @@ FReply URPGMapScreenWidget::NativeOnMouseMove(const FGeometry& InGeometry, const
 	
 	UpdatePanning(InMouseEvent);
 	
-	return FReply::Handled(); 
+	return FReply::Handled();
 }
 
 void URPGMapScreenWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
@@ -74,7 +74,7 @@ FReply URPGMapScreenWidget::NativeOnKeyDown(const FGeometry& InGeometry, const F
 	return FReply::Handled();
 }
 
-void URPGMapScreenWidget::UpdateZoom(const FPointerEvent& InMouseEvent)
+void URPGMapScreenWidget::OnMouseWheelZoom(const FPointerEvent& InMouseEvent)
 {
 	if (!MapZoomBox)
 	{
@@ -83,22 +83,26 @@ void URPGMapScreenWidget::UpdateZoom(const FPointerEvent& InMouseEvent)
 
 	const float ZoomStep = InMouseEvent.GetWheelDelta() * ZoomSpeed;
 	const float NewZoomBoxScale = MapZoomBox->GetUserSpecifiedScale() + ZoomStep;
-	ZoomFactor = FMath::Clamp(NewZoomBoxScale, ZoomMin, ZoomMax);
+	TargetZoomFactor = FMath::Clamp(NewZoomBoxScale, ZoomMin, ZoomMax);
 
-	if (ZoomFactor == PreviousZoomFactor)
+	PointerEventOnZoom = InMouseEvent;
+}
+
+void URPGMapScreenWidget::UpdateZoom(float InDeltaTime)
+{
+	const float NewZoomFactor = FMath::FInterpTo(ZoomFactor, TargetZoomFactor, InDeltaTime, ZoomSpeed * 10.f);
+
+	if (!FMath::IsNearlyEqual(NewZoomFactor, ZoomFactor))
 	{
-		return;
+		ZoomFactor = NewZoomFactor;
+		MapZoomBox->SetUserSpecifiedScale(ZoomFactor);
+		
+		URPGMapSubsystem* MapSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<URPGMapSubsystem>();
+		if (MapSubsystem)
+		{
+			MapSubsystem->OnMapZoomChanged.Broadcast(ZoomFactor);
+		}
 	}
-	
-	MapZoomBox->SetUserSpecifiedScale(ZoomFactor);
-
-	URPGMapSubsystem* MapSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<URPGMapSubsystem>();
-	if (MapSubsystem)
-	{
-		MapSubsystem->OnMapZoomChanged.Broadcast(ZoomFactor);
-	}
-
-	PreviousZoomFactor = ZoomFactor;
 }
 
 void URPGMapScreenWidget::UpdatePanning(const FPointerEvent& InMouseEvent)

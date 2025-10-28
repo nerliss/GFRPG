@@ -25,7 +25,8 @@ public:
 	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
 	virtual FReply NativeOnKeyDown( const FGeometry& InGeometry, const FKeyEvent& InKeyEvent ) override;
 
-	void UpdateZoom(const FPointerEvent& InMouseEvent);
+	void OnMouseWheelZoom(const FPointerEvent& InMouseEvent);
+	void UpdateZoom(float InDeltaTime);
 	void UpdatePanning(const FPointerEvent& InMouseEvent);
 
 	/* How fast should mouse wheel change zoom? */
@@ -61,6 +62,7 @@ public:
 private:
 
 	float ZoomFactor;
-	float PreviousZoomFactor;
+	float TargetZoomFactor = 1.f;
+	FPointerEvent PointerEventOnZoom;
 	
 };

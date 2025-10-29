@@ -23,7 +23,6 @@ public:
 
 	URPGPointOfInterestComponent();
 
-	UFUNCTION(BlueprintCallable)
 	void SpawnPOIOnMap();
 
 	FSlateBrush GetIcon() const { return Icon; }
@@ -37,6 +36,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Point of interest")
 	FSlateBrush Icon;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Point of interest")
+	bool bRotateWithActor;
+	
 protected:
 
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;

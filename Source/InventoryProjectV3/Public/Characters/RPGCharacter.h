@@ -7,7 +7,7 @@
 #include "Interfaces/RPGInteract_Interface.h"
 #include "RPGCharacter.generated.h"
 
-class URPGMapIconComponent;
+class URPGPointOfInterestComponent;
 class URPGQuestLogComponent;
 class URPGStatsComponent;
 class UTexture2D;
@@ -54,5 +54,5 @@ protected:
 	URPGStatsComponent* StatsComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
-	URPGMapIconComponent* MapIconComponent;
+	URPGPointOfInterestComponent* PointOfInterestComponent;
 };

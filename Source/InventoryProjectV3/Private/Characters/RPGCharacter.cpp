@@ -2,9 +2,10 @@
 
 
 #include "Characters/RPGCharacter.h"
+
+#include "Components/RPGPointOfInterestComponent.h"
 #include "Components/RPGQuestLogComponent.h"
 #include "Components/RPGStatsComponent.h"
-#include "Map/RPGMapIconComponent.h"
 
 ARPGCharacter::ARPGCharacter()
 {
@@ -16,11 +17,8 @@ ARPGCharacter::ARPGCharacter()
 
 	CharacterName = FText::FromString("Default Character");
 
-	MapIconComponent = CreateDefaultSubobject<URPGMapIconComponent>(TEXT("PlayerIconComp"));
-	MapIconComponent->Icon = nullptr;
-	MapIconComponent->IconSize = FVector2D(32.f, 32.f);
-	MapIconComponent->Tint = FColor::White;
-	MapIconComponent->bRotateWithActor = true;
+	PointOfInterestComponent = CreateDefaultSubobject<URPGPointOfInterestComponent>(TEXT("PointOfInterestComponent"));
+	PointOfInterestComponent->Icon = FSlateBrush();
 }
 
 void ARPGCharacter::BeginPlay()

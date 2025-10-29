@@ -14,6 +14,7 @@
 #include "Components/RPGInventory_Component.h"
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
+#include "Components/RPGPointOfInterestComponent.h"
 #include "Components/RPGQuestLogComponent.h"
 #include "Components/RPGStatsComponent.h"
 #include "Widgets/RPGHUD_Widget.h"
@@ -23,9 +24,7 @@
 #include "DamageTypes/DamageTypeEnviromental.h"
 #include "DataAssets/CharacterSoundCollection.h"
 #include "GameInstance/RPGGameInstanceBase.h"
-#include "Map/RPGMapScreenWidget.h"
 #include "Map/RPGMapSubsystem.h"
-#include "PlayerController/RPGPlayer_Controller.h"
 #include "Save/RPGSaveGameObject.h"
 
 #if !UE_BUILD_SHIPPING
@@ -66,6 +65,9 @@ ARPGPlayerCharacter::ARPGPlayerCharacter()
 	ReputationComp = CreateDefaultSubobject<URPGReputation_Component>(TEXT("ReputationComp"));
 
 	InventoryComp = CreateDefaultSubobject<URPGInventory_Component>(TEXT("InventoryComp"));
+
+	// Player's icon should rotate
+	PointOfInterestComponent->bRotateWithActor = true;
 	
 	GetStatsComponent()->Speed = 100.f;
 	
@@ -328,6 +330,11 @@ void ARPGPlayerCharacter::Landed(const FHitResult& Hit)
 	Super::Landed(Hit);
 
 	CalculateFallDamage();
+}
+
+FText ARPGPlayerCharacter::GetNameNative() const
+{
+	return FText::FromString(TEXT("Player"));
 }
 
 void ARPGPlayerCharacter::OnPOVSwitched()

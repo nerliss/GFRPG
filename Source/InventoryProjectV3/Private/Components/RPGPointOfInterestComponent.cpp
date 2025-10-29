@@ -18,6 +18,7 @@ URPGPointOfInterestComponent::URPGPointOfInterestComponent()
 	Icon.SetImageSize(FVector2D(16.0f, 16.0f));
 	Mobility = EPOIMobility::None;
 	bQuestObjective = false;
+	bRotateWithActor = false;
 }
 
 void URPGPointOfInterestComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -32,6 +33,13 @@ void URPGPointOfInterestComponent::TickComponent(float DeltaTime, ELevelTick Tic
 
 void URPGPointOfInterestComponent::SpawnPOIOnMap()
 {
+	if (!GetIcon().GetResourceObject())
+	{
+		bSpawned = true;
+		LOG_WITH_FUNCTION_NAME(LogRPGMap, Error, TEXT("Actor %s doesn't have an icon to spawn"), *GetOuter()->GetName());
+		return;
+	}
+	
 	const ARPGPlayer_Controller* PlayerController = Cast<ARPGPlayer_Controller>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	if (!PlayerController)
 	{
@@ -56,15 +64,10 @@ void URPGPointOfInterestComponent::SpawnPOIOnMap()
 	// TODO: Try to unify it more, may be move minimap logic to map subsystem too
 	Minimap->AddPOI(GetOwner(), Minimap);
 
-	auto MapSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<URPGMapSubsystem>();
+	URPGMapSubsystem* MapSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<URPGMapSubsystem>();
 	if (MapSubsystem && MapSubsystem->MapScreenWidget)
 	{
-		LOG_WITH_FUNCTION_NAME(LogRPGMap, Log, TEXT("Spawning on MapScreen too"))
 		MapSubsystem->MapScreenWidget->AddPOI(GetOwner(), MapSubsystem->MapScreenWidget);
-	}
-	else
-	{
-		LOG_WITH_FUNCTION_NAME(LogRPGMap, Error, TEXT("Map subsystem or its MapScreenWidget is null!"));
 	}
 
 	bSpawned = true;

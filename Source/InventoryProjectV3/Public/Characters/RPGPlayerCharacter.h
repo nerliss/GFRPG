@@ -114,6 +114,9 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void Landed(const FHitResult& Hit) override;
 
+	/* RPGInteractable_Interface */
+	virtual FText GetNameNative() const override;
+	
 #if WITH_EDITORONLY_DATA
 	virtual void OnConstruction(const FTransform& Transform) override;
 #endif

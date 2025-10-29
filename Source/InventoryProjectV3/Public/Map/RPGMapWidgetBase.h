@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "RPGMapWidgetBase.generated.h"
 
+class URPGMapPOIWidget;
 class UOverlay;
 class UImage;
 class UCanvasPanel;
@@ -42,10 +43,12 @@ public:
 
 	UPROPERTY(meta=(BindWidgetOptional))
 	UOverlay* MapOverlay = nullptr;
-	
+
+	// TODO: Remove
 	UPROPERTY(meta=(BindWidgetOptional))
 	UImage* PlayerIcon = nullptr;
 
+	// TODO: Remake to use Point of Interest component
 	UPROPERTY(meta=(BindWidgetOptional))
 	UImage* WorldMarker = nullptr;
 	
@@ -76,7 +79,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Map")
 	float WorldIconHalfSize = 16.f;
 
-	// TODO: NYI
+	// TODO: NYI - Probably won't need
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Map")
 	TArray<FVector2D> QuestMarkers;
 
@@ -93,6 +96,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Map")
 	bool bMiniMap = false;
 
+	UPROPERTY()
+	TArray<URPGMapPOIWidget*> MapPOIWidgets;
+
+	UPROPERTY()
+	URPGMapPOIWidget* PlayerPOI = nullptr;
+	
 protected:
 
 	virtual void InitMap();

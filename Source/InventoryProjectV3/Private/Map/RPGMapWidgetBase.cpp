@@ -5,6 +5,7 @@
 
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Blueprint/WidgetTree.h"
+#include "Characters/RPGPlayerCharacter.h"
 #include "Components/Image.h"
 #include "Components/Overlay.h"
 #include "Components/OverlaySlot.h"
@@ -27,7 +28,7 @@ void URPGMapWidgetBase::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
-	UpdatePlayerPosition();
+	//UpdatePlayerPosition();
 	//LOG_WITH_FUNCTION_NAME(LogRPGMap, Log, TEXT("PARENT CALL: Class: %s, MapOverlay: %s"), *GetName(), *GetNameSafe(MapOverlay));
 }
 
@@ -171,13 +172,37 @@ void URPGMapWidgetBase::AddPOI(AActor* Actor, URPGMapWidgetBase* MapReference)
 			POIWidget->Owner = Actor;
 			POIWidget->OwningMapWidget = MapReference; // Also works with 'this', but better to leave it as explicitly as this
 
+			MapPOIWidgets.AddUnique(POIWidget);
+
+			// Save player's icon separately
+			ARPGPlayerCharacter* PlayerCharacter = Cast<ARPGPlayerCharacter>(Actor);
+			if (PlayerCharacter)
+			{
+				LOG_WITH_FUNCTION_NAME(LogRPGMap, VeryVerbose, TEXT("%s is player's icon"), *POIWidget->GetName());
+				PlayerPOI = POIWidget;
+			}
+			
 			if (MapOverlay)
 			{
-				auto OverlaySlot = MapOverlay->AddChildToOverlay(POIWidget);
+				UOverlaySlot* OverlaySlot = MapOverlay->AddChildToOverlay(POIWidget);
 				if (OverlaySlot)
 				{
 					OverlaySlot->SetHorizontalAlignment(HAlign_Center);
 					OverlaySlot->SetVerticalAlignment(VAlign_Center);
+				}
+
+				// TODO: Collapse in to a function
+				// Ensure the player icon is always on top to have the highest render priority (since ZOrder is not available)
+				if (MapOverlay->GetChildIndex(PlayerPOI) != INDEX_NONE)
+				{
+					MapOverlay->RemoveChildAt(MapOverlay->GetChildIndex(PlayerPOI));
+
+					UOverlaySlot* PlayerIconSlot = MapOverlay->AddChildToOverlay(PlayerPOI);
+					if (PlayerIconSlot)
+					{
+						PlayerIconSlot->SetHorizontalAlignment(HAlign_Center);
+						PlayerIconSlot->SetVerticalAlignment(VAlign_Center);
+					}
 				}
 			}
 			

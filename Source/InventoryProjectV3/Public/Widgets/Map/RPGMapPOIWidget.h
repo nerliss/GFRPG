@@ -31,11 +31,14 @@ public:
 	UPROPERTY()
 	URPGMapWidgetBase* OwningMapWidget;
 	
-	bool bIconSet;
-
 	UFUNCTION()
 	void UpdateIconSize(float ZoomFactor);
-	
+
+private:
+
 	void SetPOIIcon();
+	void UpdateTooltipText();
+
+	bool bIconSet;
 
 };

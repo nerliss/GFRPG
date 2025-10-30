@@ -21,6 +21,22 @@ URPGPointOfInterestComponent::URPGPointOfInterestComponent()
 	bRotateWithActor = false;
 }
 
+void URPGPointOfInterestComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	// Don't want to remove if the object was streamed out
+	if (EndPlayReason != EEndPlayReason::Type::RemovedFromWorld)
+	{
+		auto MapSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<URPGMapSubsystem>();
+		if (MapSubsystem)
+		{
+			MapSubsystem->MapScreenWidget->CleanupPOIWidgets();
+			//MapSubsystem->OnPointOfInterestComponentDestroyed.Broadcast(Cast<AActor>(GetOuter()));
+		}
+	}
+
+	Super::EndPlay(EndPlayReason);
+}
+
 void URPGPointOfInterestComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);

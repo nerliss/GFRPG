@@ -23,6 +23,8 @@ public:
 
 	URPGPointOfInterestComponent();
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	
 	void SpawnPOIOnMap();
 
 	FSlateBrush GetIcon() const { return Icon; }

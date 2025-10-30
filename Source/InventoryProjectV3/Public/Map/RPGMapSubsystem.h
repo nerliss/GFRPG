@@ -11,6 +11,7 @@ class URPGMapScreenWidget;
 class ARPGMapBoundsVolume;
 class URPGMapIconComponent;
 class ARPG3DWorldMarker;
+class URPGMapWidgetBase;
 
 USTRUCT()
 struct FMapValuesTableRow : public FTableRowBase
@@ -65,6 +66,9 @@ public:
 
 	static const UMapSubsystemSettings* Get() { return GetDefault<UMapSubsystemSettings>(); }
 	static UMapSubsystemSettings* GetMutable() { return GetMutableDefault<UMapSubsystemSettings>(); }
+
+	UPROPERTY(EditAnywhere, Config, Category = "Settings")
+	TSoftObjectPtr<UDataTable> MapDataTable;
 	
 	UPROPERTY(EditAnywhere, Config, Category = "Settings")
 	TSubclassOf<ARPG3DWorldMarker> RPG3DWorldMarker;
@@ -79,6 +83,8 @@ public:
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnWorldMarkerToggled, bool /*bSpawn*/, FVector2D /*MarkerMapLocation*/);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOn3DWorldMarkerSpawned, bool /*bSpawn*/, FVector /*MarkerWorldLocation*/);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnMapZoomChanged, float /*Zoom*/);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnPointOfInterestComponentDestroyed, AActor* /* Owner */, URPGMapWidgetBase* /* MapReference */);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnPointOfInterestIconSpawned, URPGMapPOIWidget* /* Icon */);
 
 UCLASS()
 class INVENTORYPROJECTV3_API URPGMapSubsystem : public UGameInstanceSubsystem
@@ -88,9 +94,6 @@ class INVENTORYPROJECTV3_API URPGMapSubsystem : public UGameInstanceSubsystem
 public:
 
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
-	
-	void RegisterIcon(URPGMapIconComponent* Icon);
-	void UnregisterIcon(URPGMapIconComponent* Icon);
 
 	/** Paint a soft reveal circle into FogRT at World location (optional). */
 	UFUNCTION(BlueprintCallable, Category="Map|Fog")
@@ -120,6 +123,8 @@ public:
 	FOnWorldMarkerToggled OnWorldMarkerToggled;
 	FOn3DWorldMarkerSpawned On3DWorldMarkerSpawned;
 	FOnMapZoomChanged OnMapZoomChanged;
+	FOnPointOfInterestComponentDestroyed OnPointOfInterestComponentDestroyed;
+	FOnPointOfInterestIconSpawned OnPointOfInterestIconSpawned;
 
 	UPROPERTY()
 	ARPG3DWorldMarker* WorldMarker;

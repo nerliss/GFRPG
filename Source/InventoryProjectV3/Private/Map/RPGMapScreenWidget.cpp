@@ -3,11 +3,14 @@
 
 #include "Map/RPGMapScreenWidget.h"
 
+#include "Components/Image.h"
 #include "Components/ScaleBox.h"
 #include "GameFramework/InputSettings.h"
 #include "Map/RPGMapSubsystem.h"
+#include "Map/RPGMiniMapWidget.h"
 #include "Utility/LogDefinitions.h"
 #include "Utility/Utility.h"
+#include "Widgets/Map/RPGMapPOIWidget.h"
 
 void URPGMapScreenWidget::NativeConstruct()
 {
@@ -16,6 +19,12 @@ void URPGMapScreenWidget::NativeConstruct()
 	// Assign map's world marker ptr to this class' world marker ptr since the latter is null hence world marker logic doesn't work
 	WorldMarker = MapWidget->WorldMarker;
 	MapOverlay = MapWidget->MapOverlay;
+
+	URPGMapSubsystem* MapSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<URPGMapSubsystem>();
+	if (MapSubsystem)
+	{
+		MapSubsystem->OnPointOfInterestIconSpawned.AddUObject(this, &URPGMapScreenWidget::OnPointOfInterestIconSpawned);
+	}
 }
 
 void URPGMapScreenWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -90,7 +99,8 @@ void URPGMapScreenWidget::OnMouseWheelZoom(const FPointerEvent& InMouseEvent)
 
 void URPGMapScreenWidget::UpdateZoom(float InDeltaTime)
 {
-	const float NewZoomFactor = FMath::FInterpTo(ZoomFactor, TargetZoomFactor, InDeltaTime, ZoomSpeed * 10.f);
+	const float InterpolationSpeed = ZoomSpeed * 10.f;
+	const float NewZoomFactor = FMath::FInterpTo(ZoomFactor, TargetZoomFactor, InDeltaTime, InterpolationSpeed);
 
 	if (!FMath::IsNearlyEqual(NewZoomFactor, ZoomFactor))
 	{
@@ -102,6 +112,17 @@ void URPGMapScreenWidget::UpdateZoom(float InDeltaTime)
 		{
 			MapSubsystem->OnMapZoomChanged.Broadcast(ZoomFactor);
 		}
+		
+		// Reset map panning
+		if (MapWidget)
+		{
+			if (FMath::IsNearlyEqual(TargetZoomFactor, ZoomMin))
+			{
+				const float NewRenderTranslationX = FMath::FInterpTo(MapWidget->GetRenderTransform().Translation.X, 0.f, InDeltaTime, InterpolationSpeed);
+				const float NewRenderTranslationY = FMath::FInterpTo(MapWidget->GetRenderTransform().Translation.Y, 0.f, InDeltaTime, InterpolationSpeed);
+				MapWidget->SetRenderTranslation(FVector2D(NewRenderTranslationX, NewRenderTranslationY));
+			}
+		}
 	}
 }
 
@@ -112,6 +133,12 @@ void URPGMapScreenWidget::UpdatePanning(const FPointerEvent& InMouseEvent)
 		return;
 	}
 
+	// Don't allow panning when the map is zoomed out 
+	if (FMath::IsNearlyEqual(TargetZoomFactor, ZoomMin))
+	{
+		return;
+	}
+	
 	bRightButtonDown = InMouseEvent.IsMouseButtonDown(EKeys::RightMouseButton);
 	if (!bRightButtonDown)
 	{
@@ -122,4 +149,19 @@ void URPGMapScreenWidget::UpdatePanning(const FPointerEvent& InMouseEvent)
 	const FVector2D PanLocation = MapWidget->GetRenderTransform().Translation + (InMouseEvent.GetCursorDelta() * FinalPanSpeed);
 	const FVector2D FinalPanLocation = FVector2D(FMath::Clamp(PanLocation.X, PanXMinMax.X, PanXMinMax.Y), FMath::Clamp(PanLocation.Y, PanYMinMax.X, PanYMinMax.Y));
 	MapWidget->SetRenderTranslation(FinalPanLocation);
+}
+
+void URPGMapScreenWidget::OnPointOfInterestIconSpawned(URPGMapPOIWidget* InPOIWidget)
+{
+	if (!InPOIWidget)
+	{
+		return;
+	}
+
+	LOG_WITH_FUNCTION_NAME(LogRPGMap, Warning, TEXT("Updating zoom for %s explicitly"), *InPOIWidget->GetName());
+
+	if (InPOIWidget->POIImage)
+	{
+		InPOIWidget->POIImage->SetRenderScale(FVector2D(1.f / ZoomFactor));
+	}
 }

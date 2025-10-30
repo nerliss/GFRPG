@@ -29,6 +29,12 @@ void URPGMapPOIWidget::NativeConstruct()
 	}
 }
 
+void URPGMapPOIWidget::NativeDestruct()
+{
+	LOG_WITH_FUNCTION_NAME(LogRPGMap, Warning, TEXT("Destroying"));
+	Super::NativeDestruct();
+}
+
 void URPGMapPOIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);

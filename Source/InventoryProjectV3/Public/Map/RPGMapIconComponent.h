@@ -30,9 +30,6 @@ public:
 	
 	URPGMapIconComponent();
 
-	virtual void BeginPlay() override;
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-
 	// TODO: THIS CLASS IS UNUSED. DELETE LATER
 	
 	/** Icon to draw on the map/minimap */

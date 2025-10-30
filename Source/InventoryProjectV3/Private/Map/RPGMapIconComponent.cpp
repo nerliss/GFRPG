@@ -16,28 +16,3 @@ URPGMapIconComponent::URPGMapIconComponent()
 	Category = EMapIconCategory::Custom;
 	// TODO: THIS CLASS IS UNUSED. DELETE LATER
 }
-
-void URPGMapIconComponent::BeginPlay()
-{
-	Super::BeginPlay();
-
-	if (GetWorld() && GetWorld()->GetGameInstance())
-	{
-		MapSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<URPGMapSubsystem>();
-		if (MapSubsystem.IsValid())
-		{
-			MapSubsystem->RegisterIcon(this);
-		}
-	}
-}
-
-void URPGMapIconComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
-{
-	if (MapSubsystem.IsValid())
-	{
-		MapSubsystem->UnregisterIcon(this);
-	}
-	
-	Super::EndPlay(EndPlayReason);
-}
-

@@ -28,11 +28,12 @@ public:
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	virtual FReply NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
-	virtual int32 NativePaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled ) const override;
 	
 	void AddWaypoint(FVector WaypointLocation);
 
 	virtual void AddPOI(AActor* Actor, URPGMapWidgetBase* MapReference);
+	virtual void RemovePOI(AActor* Actor, URPGMapWidgetBase* MapReference);
+	void CleanupPOIWidgets();
 		
 	UPROPERTY(meta=(BindWidgetOptional))
 	UImage* MapImage = nullptr;
@@ -44,16 +45,9 @@ public:
 	UPROPERTY(meta=(BindWidgetOptional))
 	UOverlay* MapOverlay = nullptr;
 
-	// TODO: Remove
-	UPROPERTY(meta=(BindWidgetOptional))
-	UImage* PlayerIcon = nullptr;
-
 	// TODO: Remake to use Point of Interest component
 	UPROPERTY(meta=(BindWidgetOptional))
 	UImage* WorldMarker = nullptr;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Map")
-	UDataTable* MapDataTable = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Map")
 	USlateBrushAsset* SlateBrushWaypoint = nullptr;
@@ -78,10 +72,6 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Map")
 	float WorldIconHalfSize = 16.f;
-
-	// TODO: NYI - Probably won't need
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Map")
-	TArray<FVector2D> QuestMarkers;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="Map")
 	bool bInitComplete = false;
@@ -110,7 +100,7 @@ private:
 
 	void VectorToPoint(FVector WaypointLocation, float& XValue, float& YValue);
 	void UpdateQuestMarkers(FVector WaypointLocation);
-	void UpdatePlayerPosition();
 	void ToggleWorldMarker(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent);
+	void MovePlayerIconToTop();
 	
 };

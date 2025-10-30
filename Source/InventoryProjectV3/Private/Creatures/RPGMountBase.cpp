@@ -67,7 +67,8 @@ void ARPGMountBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 
 void ARPGMountBase::InteractNative(AActor* Interactor)
 {
-	OnMount(Interactor);
+	Destroy();
+	//OnMount(Interactor);
 }
 
 FText ARPGMountBase::GetNameNative() const

@@ -54,15 +54,17 @@ void URPGMiniMapWidget::UpdateMiniMapTranslation()
 void URPGMiniMapWidget::InitMap()
 {
 	Super::InitMap();
-	
-	if (!MapDataTable)
+
+	const UMapSubsystemSettings* MapSettings = UMapSubsystemSettings::Get();
+	check(MapSettings);
+	if (!MapSettings->MapDataTable)
 	{
 		LOG_WITH_FUNCTION_NAME(LogRPGMap, Error, TEXT("MapDataTable is empty"));
 		return;
 	}
 	
 	const FString LevelName = UGameplayStatics::GetCurrentLevelName(GetWorld());
-	const FMapValuesTableRow* FoundRow = MapDataTable->FindRow<FMapValuesTableRow>(*LevelName, TEXT("Map Table Context"));
+	const FMapValuesTableRow* FoundRow = MapSettings->MapDataTable->FindRow<FMapValuesTableRow>(*LevelName, TEXT("Map Table Context"));
 	if (FoundRow)
 	{
 		if (FoundRow->bUseSeparateTextureForMinimap)

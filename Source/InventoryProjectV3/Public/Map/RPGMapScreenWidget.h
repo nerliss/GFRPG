@@ -24,10 +24,12 @@ public:
 	virtual FReply NativeOnMouseMove(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
 	virtual FReply NativeOnKeyDown( const FGeometry& InGeometry, const FKeyEvent& InKeyEvent ) override;
-
+	
 	void OnMouseWheelZoom(const FPointerEvent& InMouseEvent);
 	void UpdateZoom(float InDeltaTime);
 	void UpdatePanning(const FPointerEvent& InMouseEvent);
+
+	void OnPointOfInterestIconSpawned(URPGMapPOIWidget* InPOIWidget);
 
 	/* How fast should mouse wheel change zoom? */
 	UPROPERTY(EditDefaultsOnly, Category = "Map")

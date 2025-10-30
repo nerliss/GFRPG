@@ -10,7 +10,6 @@
 #include "Components/Overlay.h"
 #include "Components/OverlaySlot.h"
 #include "Components/RPGPointOfInterestComponent.h"
-#include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
 #include "Map/RPGMapSubsystem.h"
 #include "Utility/LogDefinitions.h"
@@ -28,8 +27,7 @@ void URPGMapWidgetBase::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
-	//UpdatePlayerPosition();
-	//LOG_WITH_FUNCTION_NAME(LogRPGMap, Log, TEXT("PARENT CALL: Class: %s, MapOverlay: %s"), *GetName(), *GetNameSafe(MapOverlay));
+	CleanupPOIWidgets();
 }
 
 FReply URPGMapWidgetBase::NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -58,24 +56,6 @@ FReply URPGMapWidgetBase::NativeOnMouseButtonDown(const FGeometry& InGeometry, c
 	return FReply::Handled();
 }
 
-int32 URPGMapWidgetBase::NativePaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry,
-                                     const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId,
-                                     const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const
-{
-	Super::NativePaint(Args, AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle, bParentEnabled);
-	
-	// FPaintContext Context(AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle, bParentEnabled);
-	// for (const FVector2D QuestMarker : QuestMarkers)
-	// {
-	// 	LOG_WITH_FUNCTION_NAME(LogRPGMap, Verbose, TEXT("Drawing quest marker at %s"), *QuestMarker.ToString());	
-	// 	UWidgetBlueprintLibrary::DrawBox(Context, QuestMarker, FVector2D(32.f, 32.f), SlateBrushWaypoint, FLinearColor(1.f, 1.f, 1.f, 1.f));
-	// }
-
-	// Add here new waypoints if needed
-
-	return LayerId;
-}
-
 void URPGMapWidgetBase::InitMap()
 {
 	if (bInitComplete)
@@ -84,14 +64,15 @@ void URPGMapWidgetBase::InitMap()
 		return;
 	}
 
-	if (!MapDataTable)
+	const UMapSubsystemSettings* MapSettings = UMapSubsystemSettings::Get();
+	check(MapSettings);
+	if (!MapSettings->MapDataTable)
 	{
-		UE_LOG(LogRPGMap, Error, TEXT("[URPGMapWidgetBase::InitMap] MapDataTable is empty"));
 		return;
 	}
 	
 	const FString LevelName = UGameplayStatics::GetCurrentLevelName(GetWorld());
-	const FMapValuesTableRow* FoundRow = MapDataTable->FindRow<FMapValuesTableRow>(*LevelName, TEXT("Map Table Context"));
+	const FMapValuesTableRow* FoundRow = MapSettings->MapDataTable->FindRow<FMapValuesTableRow>(*LevelName, TEXT("Map Table Context"));
 	if (FoundRow)
 	{
 		MapXDiv = FoundRow->MapSizeX / WidgetMapSize;
@@ -112,8 +93,6 @@ void URPGMapWidgetBase::UpdateQuestMarkers(FVector WaypointLocation)
 {
 	float X, Y;
 	VectorToPoint(WaypointLocation, X, Y);
-	
-	QuestMarkers.Add(FVector2D(X, Y));
 }
 
 void URPGMapWidgetBase::VectorToPoint(FVector WaypointLocation, float& XValue, float& YValue)
@@ -121,22 +100,6 @@ void URPGMapWidgetBase::VectorToPoint(FVector WaypointLocation, float& XValue, f
 	// Converts the provided waypoint location to the correct X and Y based on the map UI size
 	XValue = ((((WaypointLocation.X / MapXDiv) + MapXOffset) - WorldIconHalfSize) + 500.f);
 	YValue = ((((WaypointLocation.Y / MapYDiv) + MapYOffset) - WorldIconHalfSize) + 500.f);
-}
-
-void URPGMapWidgetBase::UpdatePlayerPosition()
-{
-	ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
-	if (PlayerCharacter && PlayerCharacter->GetMesh() && PlayerIcon)
-	{
-		const FVector PlayerLoc = PlayerCharacter->GetActorLocation();
-		const float PlayerIconX = PlayerLoc.X / MapXDiv + MapXOffset;
-		const float PlayerIconY = PlayerLoc.Y / MapYDiv + MapYOffset;
-
-		const float PlayerIconAngle = PlayerCharacter->GetMesh()->GetComponentRotation().Yaw + 90.f;
-		
-		PlayerIcon->SetRenderTranslation(FVector2D(PlayerIconX, PlayerIconY));
-		PlayerIcon->SetRenderTransformAngle(PlayerIconAngle);
-	}
 }
 
 void URPGMapWidgetBase::AddWaypoint(FVector WaypointLocation)
@@ -174,6 +137,18 @@ void URPGMapWidgetBase::AddPOI(AActor* Actor, URPGMapWidgetBase* MapReference)
 
 			MapPOIWidgets.AddUnique(POIWidget);
 
+			URPGMapSubsystem* MapSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<URPGMapSubsystem>();
+			if (MapSubsystem)
+			{
+				// Broadcast only for MapScreen 
+				if (!bMiniMap)
+				{
+					MapSubsystem->OnPointOfInterestIconSpawned.Broadcast(POIWidget);
+				}
+				
+				MapSubsystem->OnPointOfInterestComponentDestroyed.AddUObject(this, &URPGMapWidgetBase::RemovePOI);
+			}
+			
 			// Save player's icon separately
 			ARPGPlayerCharacter* PlayerCharacter = Cast<ARPGPlayerCharacter>(Actor);
 			if (PlayerCharacter)
@@ -191,22 +166,33 @@ void URPGMapWidgetBase::AddPOI(AActor* Actor, URPGMapWidgetBase* MapReference)
 					OverlaySlot->SetVerticalAlignment(VAlign_Center);
 				}
 
-				// TODO: Collapse in to a function
-				// Ensure the player icon is always on top to have the highest render priority (since ZOrder is not available)
-				if (MapOverlay->GetChildIndex(PlayerPOI) != INDEX_NONE)
-				{
-					MapOverlay->RemoveChildAt(MapOverlay->GetChildIndex(PlayerPOI));
-
-					UOverlaySlot* PlayerIconSlot = MapOverlay->AddChildToOverlay(PlayerPOI);
-					if (PlayerIconSlot)
-					{
-						PlayerIconSlot->SetHorizontalAlignment(HAlign_Center);
-						PlayerIconSlot->SetVerticalAlignment(VAlign_Center);
-					}
-				}
+				MovePlayerIconToTop();
 			}
 			
 			LOG_WITH_FUNCTION_NAME(LogRPGMap, Log, TEXT("PARENT CALL: Added POI for %s"), *Actor->GetName());
+		}
+	}
+}
+
+void URPGMapWidgetBase::RemovePOI(AActor* Actor, URPGMapWidgetBase* MapReference)
+{
+	
+}
+
+void URPGMapWidgetBase::CleanupPOIWidgets()
+{
+	for (URPGMapPOIWidget* MapPOIWidget : MapPOIWidgets)
+	{
+		if (MapPOIWidget)
+		{
+			// Should be fine for now
+			if (!IsValid(MapPOIWidget->Owner))
+			{
+				LOG_WITH_FUNCTION_NAME(LogRPGMap, Warning, TEXT("Removing icon %s"), *MapPOIWidget->GetName());
+				MapPOIWidgets.Remove(MapPOIWidget);
+				MapPOIWidget->RemoveFromParent();
+				return; // Trying to escape ensure condition
+			}
 		}
 	}
 }
@@ -270,6 +256,27 @@ void URPGMapWidgetBase::ToggleWorldMarker(const FGeometry& InGeometry, const FPo
 			
 			MapSubsystem->OnWorldMarkerToggled.Broadcast(true, FVector2D(CursorPositionOnWidgetX, CursorPositionOnWidgetY));
 			MapSubsystem->On3DWorldMarkerSpawned.Broadcast(true, NewWorldMarkerLocation);
+		}
+	}
+}
+
+void URPGMapWidgetBase::MovePlayerIconToTop()
+{
+	if (!PlayerPOI)
+	{
+		return;
+	}
+	
+	// Ensure the player icon is always on top to have the highest render priority (since ZOrder is not available)
+	if (MapOverlay->GetChildIndex(PlayerPOI) != INDEX_NONE)
+	{
+		MapOverlay->RemoveChildAt(MapOverlay->GetChildIndex(PlayerPOI));
+
+		UOverlaySlot* PlayerIconSlot = MapOverlay->AddChildToOverlay(PlayerPOI);
+		if (PlayerIconSlot)
+		{
+			PlayerIconSlot->SetHorizontalAlignment(HAlign_Center);
+			PlayerIconSlot->SetVerticalAlignment(VAlign_Center);
 		}
 	}
 }

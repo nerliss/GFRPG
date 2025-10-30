@@ -21,18 +21,6 @@ void URPGMapSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	On3DWorldMarkerSpawned.AddUObject(this, &URPGMapSubsystem::Spawn3DWorldMarker);
 }
 
-void URPGMapSubsystem::RegisterIcon(URPGMapIconComponent* Icon)
-{
-	UE_LOG(LogRPGMap, Verbose, TEXT("[URPGMapSubsystem::RegisterIcon] Adding icon %s"), *GetNameSafe(Icon));
-	Icons.AddUnique(Icon);
-}
-
-void URPGMapSubsystem::UnregisterIcon(URPGMapIconComponent* Icon)
-{
-	UE_LOG(LogRPGMap, Verbose, TEXT("[URPGMapSubsystem::UnregisterIcon] Removing icon %s"), *GetNameSafe(Icon));
-	Icons.Remove(Icon);
-}
-
 void URPGMapSubsystem::RevealAtWorld(const FVector& World, float RadiusWorldUnits, float Opacity)
 {
 	if (!FogRT)

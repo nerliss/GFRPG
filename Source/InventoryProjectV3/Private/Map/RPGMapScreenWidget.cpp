@@ -10,7 +10,7 @@
 #include "Map/RPGMiniMapWidget.h"
 #include "Utility/LogDefinitions.h"
 #include "Utility/Utility.h"
-#include "Widgets/Map/RPGMapPOIWidget.h"
+#include "Map/RPGMapPOIWidget.h"
 
 void URPGMapScreenWidget::NativeConstruct()
 {

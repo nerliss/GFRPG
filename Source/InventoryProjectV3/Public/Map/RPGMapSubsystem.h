@@ -95,7 +95,11 @@ public:
 	// TODO: Find a better way to match widget's actual size and this
 	/* Map widget size. Used in map calculations. The widget's size MUST match */
 	UPROPERTY(EditAnywhere, Config, Category = "Settings")
-	float WidgetMapSize;
+	float WidgetMapSize = 1000.f;
+
+	/* Screenshot resolution for Map Image Generator. It is advised to not use huge number like 10k+ */
+	UPROPERTY(EditAnywhere, Config, Category = "Settings")
+	FVector2D MapScreenshotResolution = FVector2D(4000, 4000);
 };
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnWorldMarkerToggled, bool /*bSpawn*/, FVector2D /*MarkerMapLocation*/);
@@ -135,9 +139,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Map|Fog")
 	UTextureRenderTarget2D* FogRT = nullptr;
 
-	/** World icons registered by components */
-	const TArray<TWeakObjectPtr<URPGMapIconComponent>>& GetIcons() const { return Icons; }
-
 	FOnWorldMarkerToggled OnWorldMarkerToggled;
 	FOn3DWorldMarkerSpawned On3DWorldMarkerSpawned;
 	FOnMapZoomChanged OnMapZoomChanged;
@@ -156,6 +157,4 @@ private:
 
 	void UpdateMapDimensions();
 	
-	UPROPERTY(Transient)
-	TArray<TWeakObjectPtr<URPGMapIconComponent>> Icons;
 };

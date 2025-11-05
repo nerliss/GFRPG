@@ -37,6 +37,8 @@ public:
 
 private:
 
+	void UpdateIconVisibility();
+	void UpdateIconTransform();
 	void SetPOIIcon();
 	void UpdateTooltipText();
 

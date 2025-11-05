@@ -6,10 +6,10 @@
 #include "AutomationBlueprintFunctionLibrary.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Camera/CameraActor.h"
-#include "Camera/CameraComponent.h"
 #include "Components/InstancedStaticMeshComponent.h"
 #include "Components/SplineComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Map/RPGMapSubsystem.h"
 
 ARPGMapImageGenerator::ARPGMapImageGenerator()
 {
@@ -91,6 +91,9 @@ void ARPGMapImageGenerator::OnConstruction(const FTransform& Transform)
 void ARPGMapImageGenerator::TakeScreenshot()
 {
 #if WITH_EDITOR
+	const UMapSubsystemSettings* MapSettings = UMapSubsystemSettings::Get();
+	check(MapSettings);
+	
 	UWidgetLayoutLibrary::RemoveAllWidgets(GetWorld());
 	
 	const FRotator CameraRotation = FRotator(-90.f, -90.f, 0.f);
@@ -102,7 +105,7 @@ void ARPGMapImageGenerator::TakeScreenshot()
 		{
 			PC->SetViewTarget(SpawnedCamera);
 			//SpawnedCamera->GetCameraComponent()->SetProjectionMode(ECameraProjectionMode::Orthographic); // TODO: To try out
-			UAutomationBlueprintFunctionLibrary::TakeHighResScreenshot(3840, 2160, "", SpawnedCamera);
+			UAutomationBlueprintFunctionLibrary::TakeHighResScreenshot(MapSettings->MapScreenshotResolution.X, MapSettings->MapScreenshotResolution.Y, "", SpawnedCamera);
 			
 			SpawnedCamera->Destroy();
 		}

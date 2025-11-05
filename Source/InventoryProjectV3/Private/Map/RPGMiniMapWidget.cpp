@@ -13,7 +13,7 @@
 #include "Widgets/Map/RPGMapPlayerIconWidget.h"
 #include "Utility/LogDefinitions.h"
 #include "Utility/Utility.h"
-#include "Widgets/Map/RPGMapPOIWidget.h"
+#include "Map/RPGMapPOIWidget.h"
 
 void URPGMiniMapWidget::NativeConstruct()
 {
@@ -38,33 +38,34 @@ void URPGMiniMapWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 
 void URPGMiniMapWidget::UpdateMiniMapTranslation()
 {
-	const ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
-	if (PlayerCharacter)
+	if (!MinimapWidget)
 	{
-		if (MinimapWidget)
-		{
-			const float MinimapTranslationX = (PlayerCharacter->GetActorLocation().X + MinimapWidget->MapDimensions.MapXOffset) / MinimapWidget->MapDimensions.MapYDiv * -1.f;
-			const float MinimapTranslationY = (PlayerCharacter->GetActorLocation().Y + MinimapWidget->MapDimensions.MapYOffset) / MinimapWidget->MapDimensions.MapXDiv * -1.f;
-			
-			MinimapWidget->SetRenderTranslation(FVector2D(MinimapTranslationX, MinimapTranslationY));
-		}
+		return;
 	}
+	
+	const ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+	if (!PlayerCharacter)
+	{
+		return;
+	}
+	
+	const float MinimapTranslationX = (PlayerCharacter->GetActorLocation().X + MinimapWidget->MapDimensions.MapXOffset) / MinimapWidget->MapDimensions.MapYDiv * -1.f;
+	const float MinimapTranslationY = (PlayerCharacter->GetActorLocation().Y + MinimapWidget->MapDimensions.MapYOffset) / MinimapWidget->MapDimensions.MapXDiv * -1.f;
+			
+	MinimapWidget->SetRenderTranslation(FVector2D(MinimapTranslationX, MinimapTranslationY));
 }
 
 void URPGMiniMapWidget::InitMap()
 {
 	Super::InitMap();
-
-	const UMapSubsystemSettings* MapSettings = UMapSubsystemSettings::Get();
-	check(MapSettings);
-	if (!MapSettings->MapDataTable)
+	
+	URPGMapSubsystem* MapSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<URPGMapSubsystem>();
+	if (!MapSubsystem)
 	{
-		LOG_WITH_FUNCTION_NAME(LogRPGMap, Error, TEXT("MapDataTable is empty"));
 		return;
 	}
 	
-	const FString LevelName = UGameplayStatics::GetCurrentLevelName(GetWorld());
-	const FMapValuesTableRow* FoundRow = MapSettings->MapDataTable->FindRow<FMapValuesTableRow>(*LevelName, TEXT("Map Table Context"));
+	const FMapValuesTableRow* FoundRow = MapSubsystem->GetMapValuesTableRow();
 	if (FoundRow)
 	{
 		if (FoundRow->bUseSeparateTextureForMinimap)

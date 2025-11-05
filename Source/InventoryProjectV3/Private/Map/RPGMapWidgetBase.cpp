@@ -13,7 +13,7 @@
 #include "Map/RPGMapSubsystem.h"
 #include "Utility/LogDefinitions.h"
 #include "Utility/Utility.h"
-#include "Widgets/Map/RPGMapPOIWidget.h"
+#include "Map/RPGMapPOIWidget.h"
 
 void URPGMapWidgetBase::NativeConstruct()
 {
@@ -132,6 +132,12 @@ void URPGMapWidgetBase::AddPOI(AActor* Actor, URPGMapWidgetBase* MapReference)
 			POIWidget->Owner = Actor;
 			POIWidget->OwningMapWidget = MapReference; // Also works with 'this', but better to leave it as explicitly as this
 
+			// TODO: Make it more versatile
+			if (bMiniMap)
+			{
+				POIWidget->POIImage->SetRenderScale(FVector2D(1.f / 5)); // 5 is currently a user specified scale for ScaleBox for Minimap
+			}
+			
 			MapPOIWidgets.AddUnique(POIWidget);
 
 			URPGMapSubsystem* MapSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<URPGMapSubsystem>();
@@ -196,6 +202,7 @@ void URPGMapWidgetBase::CleanupPOIWidgets()
 
 void URPGMapWidgetBase::ToggleWorldMarker(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
+	// TODO: Remake to not utilize UImage WorldMarker ptr
 	if (!bLeftButtonDown)
 	{
 		LOG_WITH_FUNCTION_NAME(LogRPGMap, Error, TEXT("Left mouse button is not pressed"));
@@ -211,6 +218,13 @@ void URPGMapWidgetBase::ToggleWorldMarker(const FGeometry& InGeometry, const FPo
 	if (bMiniMap)
 	{
 		LOG_WITH_FUNCTION_NAME(LogRPGMap, Error, TEXT("Called on minimap, do nothing"));
+		return;
+	}
+
+	URPGMapSubsystem* MapSubsystem = GetGameInstance()->GetSubsystem<URPGMapSubsystem>();
+	if (!MapSubsystem)
+	{
+		LOG_WITH_FUNCTION_NAME(LogRPGMap, Error, TEXT("MapSubsystem is nullptr"));
 		return;
 	}
 	
@@ -233,27 +247,19 @@ void URPGMapWidgetBase::ToggleWorldMarker(const FGeometry& InGeometry, const FPo
 	{
 		WorldMarker->SetVisibility(ESlateVisibility::Hidden);
 		WorldMarker->SetRenderTranslation(FVector2D(FLT_MAX));
-
-		URPGMapSubsystem* MapSubsystem = GetGameInstance()->GetSubsystem<URPGMapSubsystem>();
-		if (MapSubsystem)
-		{
-			MapSubsystem->OnWorldMarkerToggled.Broadcast(false, FVector2D(0.f));
-			MapSubsystem->On3DWorldMarkerSpawned.Broadcast(false, FVector(0.f));
-		}
+		
+		MapSubsystem->OnWorldMarkerToggled.Broadcast(false, FVector2D(0.f));
+		MapSubsystem->On3DWorldMarkerSpawned.Broadcast(false, FVector(0.f));
 	}
 	else
 	{
 		WorldMarker->SetVisibility(ESlateVisibility::Visible);
 		WorldMarker->SetRenderTranslation(FVector2D(CursorPositionOnWidgetX, CursorPositionOnWidgetY));
-
-		URPGMapSubsystem* MapSubsystem = GetGameInstance()->GetSubsystem<URPGMapSubsystem>();
-		if (MapSubsystem)
-		{
-			const FVector NewWorldMarkerLocation = FVector((CursorPositionOnWidgetX - MapDimensions.MapXOffset) * MapDimensions.MapXDiv, (CursorPositionOnWidgetY - MapDimensions.MapYOffset) * MapDimensions.MapYDiv, 0.f);
+		
+		const FVector NewWorldMarkerLocation = FVector((CursorPositionOnWidgetX - MapDimensions.MapXOffset) * MapDimensions.MapXDiv, (CursorPositionOnWidgetY - MapDimensions.MapYOffset) * MapDimensions.MapYDiv, 0.f);
 			
-			MapSubsystem->OnWorldMarkerToggled.Broadcast(true, FVector2D(CursorPositionOnWidgetX, CursorPositionOnWidgetY));
-			MapSubsystem->On3DWorldMarkerSpawned.Broadcast(true, NewWorldMarkerLocation);
-		}
+		MapSubsystem->OnWorldMarkerToggled.Broadcast(true, FVector2D(CursorPositionOnWidgetX, CursorPositionOnWidgetY));
+		MapSubsystem->On3DWorldMarkerSpawned.Broadcast(true, NewWorldMarkerLocation);
 	}
 }
 

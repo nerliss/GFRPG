@@ -13,6 +13,20 @@ class URPGMapIconComponent;
 class ARPG3DWorldMarker;
 class URPGMapWidgetBase;
 
+USTRUCT(Blueprintable)
+struct FMapDimensions
+{
+	GENERATED_BODY()
+
+	float MapXDiv;
+
+	float MapYDiv;
+
+	float MapXOffset;
+
+	float MapYOffset;
+};
+
 USTRUCT()
 struct FMapValuesTableRow : public FTableRowBase
 {
@@ -41,7 +55,6 @@ struct FMapValuesTableRow : public FTableRowBase
 	/* Minimap texture. Usually is just a render of the level. Used only if bUseSeparateTextureForMinimap is true */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Map", meta=(EditCondition = "bUseSeparateTextureForMinimap"))
 	UTexture2D* MinimapTexture;
-	
 };
 
 UCLASS(Config=Game, DefaultConfig, meta=(DisplayName="Map Subsystem"))
@@ -78,6 +91,11 @@ public:
 	
 	UPROPERTY(EditAnywhere, Config, Category = "Settings")
 	TSubclassOf<URPGMapScreenWidget> MapScreenWidgetClass;
+
+	// TODO: Find a better way to match widget's actual size and this
+	/* Map widget size. Used in map calculations. The widget's size MUST match */
+	UPROPERTY(EditAnywhere, Config, Category = "Settings")
+	float WidgetMapSize;
 };
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnWorldMarkerToggled, bool /*bSpawn*/, FVector2D /*MarkerMapLocation*/);
@@ -105,13 +123,13 @@ public:
 	void InitializeMapScreen();
 	void ToggleMapScreen();
 	
+	FMapValuesTableRow* GetMapValuesTableRow() const;
+	
+	FMapDimensions GetMapDimensions() const;
+	
 	/** Static world map image (or set at runtime) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Map")
 	TSoftObjectPtr<UTexture2D> MapTexture;
-
-	/** If map image is flipped vertically vs world Y */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Map")
-	bool bFlipY = false;
 
 	/** Optional fog-of-war render target. If null, fog is disabled */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Map|Fog")
@@ -131,8 +149,12 @@ public:
 
 	UPROPERTY()
 	URPGMapScreenWidget* MapScreenWidget;
+
+	FMapDimensions MapDimensions;
 	
 private:
+
+	void UpdateMapDimensions();
 	
 	UPROPERTY(Transient)
 	TArray<TWeakObjectPtr<URPGMapIconComponent>> Icons;

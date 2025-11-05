@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "RPG3DWorldMarker.generated.h"
 
+class URPGPointOfInterestComponent;
 class URPG3DWorldMarkerWidget;
 class UWidgetComponent;
 class USphereComponent;
@@ -34,6 +35,9 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "3D World Marker")
 	UStaticMeshComponent* HighlightMeshComponent;
 
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "3D World Marker")
+	URPGPointOfInterestComponent* PointOfInterestComponent;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "3D World Marker")
 	TSubclassOf<URPG3DWorldMarkerWidget> WorldMarkerWidgetClass;
 	
@@ -48,7 +52,6 @@ protected:
 	virtual void BeginPlay() override;
 	
 	void UpdateDistance();
-	void UpdateOwner();
 	void Initialize();
 
 	float PlayerDistance;

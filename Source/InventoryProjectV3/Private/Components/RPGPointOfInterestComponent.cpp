@@ -19,6 +19,9 @@ URPGPointOfInterestComponent::URPGPointOfInterestComponent()
 	Mobility = EPOIMobility::None;
 	bQuestObjective = false;
 	bRotateWithActor = false;
+	bAlwaysShow = false;
+	
+	bSpawned = false;
 }
 
 void URPGPointOfInterestComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)

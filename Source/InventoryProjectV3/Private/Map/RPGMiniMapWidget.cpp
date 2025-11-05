@@ -43,8 +43,8 @@ void URPGMiniMapWidget::UpdateMiniMapTranslation()
 	{
 		if (MinimapWidget)
 		{
-			const float MinimapTranslationX = (PlayerCharacter->GetActorLocation().X + MinimapWidget->MapXOffset) / MinimapWidget->MapYDiv * -1.f;
-			const float MinimapTranslationY = (PlayerCharacter->GetActorLocation().Y + MinimapWidget->MapYOffset) / MinimapWidget->MapXDiv * -1.f;
+			const float MinimapTranslationX = (PlayerCharacter->GetActorLocation().X + MinimapWidget->MapDimensions.MapXOffset) / MinimapWidget->MapDimensions.MapYDiv * -1.f;
+			const float MinimapTranslationY = (PlayerCharacter->GetActorLocation().Y + MinimapWidget->MapDimensions.MapYOffset) / MinimapWidget->MapDimensions.MapXDiv * -1.f;
 			
 			MinimapWidget->SetRenderTranslation(FVector2D(MinimapTranslationX, MinimapTranslationY));
 		}

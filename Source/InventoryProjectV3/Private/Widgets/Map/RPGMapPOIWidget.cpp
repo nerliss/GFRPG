@@ -68,20 +68,20 @@ void URPGMapPOIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime
 					}
 				}
 			}
-			
-			URPGMiniMapWidget* Minimap = PlayerController->GetHUDWidget()->MiniMapWidget;
-			if (Minimap)
+
+			URPGMapSubsystem* MapSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<URPGMapSubsystem>();
+			if (MapSubsystem)
 			{
 				const FVector OwnerLoc = Owner->GetActorLocation();
-				const float OwnerIconX = OwnerLoc.X / Minimap->MapXDiv + Minimap->MapXOffset;
-				const float OwnerIconY = OwnerLoc.Y / Minimap->MapYDiv + Minimap->MapYOffset;
+				const float OwnerIconX = OwnerLoc.X / MapSubsystem->MapDimensions.MapXDiv + MapSubsystem->MapDimensions.MapXOffset;
+				const float OwnerIconY = OwnerLoc.Y / MapSubsystem->MapDimensions.MapYDiv + MapSubsystem->MapDimensions.MapYOffset;
 				POIImage->SetRenderTranslation(FVector2D(OwnerIconX, OwnerIconY));
 
-				URPGPointOfInterestComponent* OwnerPOIComp = Owner->FindComponentByClass<URPGPointOfInterestComponent>();
+				const URPGPointOfInterestComponent* OwnerPOIComp = Owner->FindComponentByClass<URPGPointOfInterestComponent>();
 				if (OwnerPOIComp && OwnerPOIComp->bRotateWithActor)
 				{
 					const float OwnerIconAngle = Owner->GetActorRotation().Yaw + 90.f;
-					POIImage->SetRenderTransformAngle(OwnerIconAngle); 
+					POIImage->SetRenderTransformAngle(OwnerIconAngle);
 				}
 			}
 		}

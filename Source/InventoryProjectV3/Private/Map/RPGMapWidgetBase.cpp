@@ -10,7 +10,6 @@
 #include "Components/Overlay.h"
 #include "Components/OverlaySlot.h"
 #include "Components/RPGPointOfInterestComponent.h"
-#include "Kismet/GameplayStatics.h"
 #include "Map/RPGMapSubsystem.h"
 #include "Utility/LogDefinitions.h"
 #include "Utility/Utility.h"
@@ -63,27 +62,25 @@ void URPGMapWidgetBase::InitMap()
 		UE_LOG(LogRPGMap, Warning, TEXT("[URPGMapWidgetBase::InitMap] Map is already initialized!"));
 		return;
 	}
-
-	const UMapSubsystemSettings* MapSettings = UMapSubsystemSettings::Get();
-	check(MapSettings);
-	if (!MapSettings->MapDataTable)
+	
+	URPGMapSubsystem* MapSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<URPGMapSubsystem>();
+	if (!MapSubsystem)
 	{
 		return;
 	}
-	
-	const FString LevelName = UGameplayStatics::GetCurrentLevelName(GetWorld());
-	const FMapValuesTableRow* FoundRow = MapSettings->MapDataTable->FindRow<FMapValuesTableRow>(*LevelName, TEXT("Map Table Context"));
-	if (FoundRow)
-	{
-		MapXDiv = FoundRow->MapSizeX / WidgetMapSize;
-		MapYDiv = FoundRow->MapSizeY / WidgetMapSize;
-		MapXOffset = FoundRow->MapOffsetX / MapXDiv;
-		MapYOffset = FoundRow->MapOffsetY / MapYDiv;
 
-		if (MapImage)
-		{
-			MapImage->SetBrushFromTexture(FoundRow->MapTexture);
-		}
+	const UMapSubsystemSettings* MapSettings = UMapSubsystemSettings::Get();
+	check(MapSettings);
+
+	WidgetMapSize = MapSettings->WidgetMapSize;
+	WidgetHalfSize = WidgetMapSize / 2;
+	
+	MapDimensions = MapSubsystem->GetMapDimensions();
+	
+	const FMapValuesTableRow* FoundRow = MapSubsystem->GetMapValuesTableRow();
+	if (FoundRow && MapImage)
+	{
+		MapImage->SetBrushFromTexture(FoundRow->MapTexture);
 	}
 	
 	bInitComplete = true;
@@ -98,8 +95,8 @@ void URPGMapWidgetBase::UpdateQuestMarkers(FVector WaypointLocation)
 void URPGMapWidgetBase::VectorToPoint(FVector WaypointLocation, float& XValue, float& YValue)
 {
 	// Converts the provided waypoint location to the correct X and Y based on the map UI size
-	XValue = ((((WaypointLocation.X / MapXDiv) + MapXOffset) - WorldIconHalfSize) + 500.f);
-	YValue = ((((WaypointLocation.Y / MapYDiv) + MapYOffset) - WorldIconHalfSize) + 500.f);
+	XValue = ((((WaypointLocation.X / MapDimensions.MapXDiv) + MapDimensions.MapXOffset) - WorldIconHalfSize) + 500.f);
+	YValue = ((((WaypointLocation.Y / MapDimensions.MapYDiv) + MapDimensions.MapYOffset) - WorldIconHalfSize) + 500.f);
 }
 
 void URPGMapWidgetBase::AddWaypoint(FVector WaypointLocation)
@@ -252,7 +249,7 @@ void URPGMapWidgetBase::ToggleWorldMarker(const FGeometry& InGeometry, const FPo
 		URPGMapSubsystem* MapSubsystem = GetGameInstance()->GetSubsystem<URPGMapSubsystem>();
 		if (MapSubsystem)
 		{
-			const FVector NewWorldMarkerLocation = FVector((CursorPositionOnWidgetX - MapXOffset) * MapXDiv, (CursorPositionOnWidgetY - MapYOffset) * MapYDiv, 0.f);
+			const FVector NewWorldMarkerLocation = FVector((CursorPositionOnWidgetX - MapDimensions.MapXOffset) * MapDimensions.MapXDiv, (CursorPositionOnWidgetY - MapDimensions.MapYOffset) * MapDimensions.MapYDiv, 0.f);
 			
 			MapSubsystem->OnWorldMarkerToggled.Broadcast(true, FVector2D(CursorPositionOnWidgetX, CursorPositionOnWidgetY));
 			MapSubsystem->On3DWorldMarkerSpawned.Broadcast(true, NewWorldMarkerLocation);

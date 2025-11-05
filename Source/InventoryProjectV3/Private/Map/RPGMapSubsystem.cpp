@@ -7,7 +7,6 @@
 #include "Kismet/KismetRenderingLibrary.h"
 #include "Map/RPG3DWorldMarker.h"
 #include "Utility/LogDefinitions.h"
-#include "Map/RPGMapIconComponent.h"
 #include "Map/RPGMapScreenWidget.h"
 #include "PlayerController/RPGPlayer_Controller.h"
 #include "Utility/Utility.h"
@@ -15,7 +14,8 @@
 void URPGMapSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
-
+	
+	UpdateMapDimensions();
 	InitializeMapScreen();
 	
 	On3DWorldMarkerSpawned.AddUObject(this, &URPGMapSubsystem::Spawn3DWorldMarker);
@@ -157,4 +157,39 @@ void URPGMapSubsystem::ToggleMapScreen()
 			RPGPlayerController->SetDefaultInputMode();
 		}
 	}
+}
+
+FMapValuesTableRow* URPGMapSubsystem::GetMapValuesTableRow() const
+{
+	const UMapSubsystemSettings* MapSettings = UMapSubsystemSettings::Get();
+	check(MapSettings);
+	if (!MapSettings->MapDataTable)
+	{
+		return nullptr;
+	}
+	
+	const FString LevelName = UGameplayStatics::GetCurrentLevelName(GetWorld());
+	return MapSettings->MapDataTable->FindRow<FMapValuesTableRow>(*LevelName, TEXT("Map Table Context"));
+}
+
+void URPGMapSubsystem::UpdateMapDimensions()
+{
+	const FMapValuesTableRow* MapRow = GetMapValuesTableRow();
+	if (!MapRow)
+	{
+		return;
+	}
+
+	const UMapSubsystemSettings* MapSettings = UMapSubsystemSettings::Get();
+	check(MapSettings);
+
+	MapDimensions.MapXDiv = MapRow->MapSizeX / MapSettings->WidgetMapSize;
+	MapDimensions.MapYDiv = MapRow->MapSizeY / MapSettings->WidgetMapSize;
+	MapDimensions.MapXOffset = MapRow->MapOffsetX / MapDimensions.MapXDiv;
+	MapDimensions.MapYOffset = MapRow->MapOffsetY / MapDimensions.MapYDiv;
+}
+
+FMapDimensions URPGMapSubsystem::GetMapDimensions() const
+{
+	return MapDimensions;
 }

@@ -29,17 +29,24 @@ public:
 
 	FSlateBrush GetIcon() const { return Icon; }
 
+	// TODO: Remove
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Point of interest")
 	bool bQuestObjective;
 
+	// TODO: Remove
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Point of interest")
 	EPOIMobility Mobility;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Point of interest")
 	FSlateBrush Icon;
 
+	/* Should icon be rotated with actor? Useful for Player icon */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Point of interest")
 	bool bRotateWithActor;
+
+	/* Should icon always be visible on a map? Currently, affects only Minimap since Map Screen's icons are always visible by default */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Point of interest")
+	bool bAlwaysShow;
 	
 protected:
 

@@ -3,6 +3,7 @@
 
 #include "Map/RPG3DWorldMarker.h"
 
+#include "Components/RPGPointOfInterestComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Map/RPG3DWorldMarkerWidget.h"
@@ -30,9 +31,13 @@ ARPG3DWorldMarker::ARPG3DWorldMarker()
 	MeshComponent->SetupAttachment(SphereComp);
 	MeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	
-	HighlightMeshComponent =  CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HighlightMeshComponent"));
+	HighlightMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HighlightMeshComponent"));
 	HighlightMeshComponent->SetupAttachment(RootComponent);
 	HighlightMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	PointOfInterestComponent = CreateDefaultSubobject<URPGPointOfInterestComponent>(TEXT("PointOfInterestComponent"));
+	PointOfInterestComponent->Icon = FSlateBrush();
+	PointOfInterestComponent->bAlwaysShow = true;
 	
 	WaypointName = FText::FromString("Waypoint");
 	bQuestWaypoint = false;
@@ -55,7 +60,6 @@ void ARPG3DWorldMarker::UpdateDistance()
 	if (!GetOwner())
 	{
 		LOG_WITH_FUNCTION_NAME(LogRPGMap, Warning, TEXT("Owner was null, updating the owner and reinitializing..."))
-		UpdateOwner();
 		Initialize();
 	}
 
@@ -71,12 +75,6 @@ void ARPG3DWorldMarker::UpdateDistance()
 	// Restart the timer
 	LOG_WITH_FUNCTION_NAME(LogRPGMap, VeryVerbose, TEXT("Reinitializing..."))
 	Initialize();
-}
-
-void ARPG3DWorldMarker::UpdateOwner()
-{
-	// TODO: Do we actually need this function?
-	LOG_WITH_FUNCTION_NAME(LogRPGMap, Warning, TEXT("Called but is empty"))
 }
 
 void ARPG3DWorldMarker::Initialize()

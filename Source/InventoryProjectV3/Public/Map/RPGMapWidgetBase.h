@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "RPGMapSubsystem.h"
 #include "Blueprint/UserWidget.h"
 #include "RPGMapWidgetBase.generated.h"
 
@@ -10,7 +11,6 @@ class URPGMapPOIWidget;
 class UOverlay;
 class UImage;
 class UCanvasPanel;
-class URPGMapSubsystem;
 class UDataTable;
 class USlateBrushAsset;
 
@@ -53,23 +53,15 @@ public:
 	USlateBrushAsset* SlateBrushWaypoint = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Map")
-	float MapXDiv = 0.f;
+	FMapDimensions MapDimensions;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Map")
-	float MapYDiv = 0.f;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Map")
-	float MapXOffset = 0.f;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Map")
-	float MapYOffset = 0.f;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Map")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="Map")
 	float WidgetMapSize = 1000.f;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Map")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="Map")
 	float WidgetHalfSize = 500.f;
 
+	// TODO: Unused - Remove
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Map")
 	float WorldIconHalfSize = 16.f;
 

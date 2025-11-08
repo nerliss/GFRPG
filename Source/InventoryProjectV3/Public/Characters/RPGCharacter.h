@@ -7,6 +7,7 @@
 #include "Interfaces/RPGInteract_Interface.h"
 #include "RPGCharacter.generated.h"
 
+class URPGAbilityComponent;
 class URPGPointOfInterestComponent;
 class URPGQuestLogComponent;
 class URPGStatsComponent;
@@ -55,4 +56,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
 	URPGPointOfInterestComponent* PointOfInterestComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
+	URPGAbilityComponent* AbilityComponent;
 };

@@ -165,11 +165,17 @@ FMapValuesTableRow* URPGMapSubsystem::GetMapValuesTableRow() const
 	check(MapSettings);
 	if (!MapSettings->MapDataTable)
 	{
-		return nullptr;
+		if (!MapSettings->MapDataTable.LoadSynchronous())
+		{
+			LOG_WITH_FUNCTION_NAME(LogRPGMap, Error, TEXT("MapDataTable couldn't be loaded, probably it is null"));
+			return nullptr;
+		}
+		LOG_WITH_FUNCTION_NAME(LogRPGMap, Warning, TEXT("MapDataTable loaded"));
 	}
 	
 	const FString LevelName = UGameplayStatics::GetCurrentLevelName(GetWorld());
-	return MapSettings->MapDataTable->FindRow<FMapValuesTableRow>(*LevelName, TEXT("Map Table Context"));
+	FMapValuesTableRow* MapRow = MapSettings->MapDataTable->FindRow<FMapValuesTableRow>(*LevelName, TEXT("Map Table Context"));
+	return MapRow;
 }
 
 void URPGMapSubsystem::UpdateMapDimensions()

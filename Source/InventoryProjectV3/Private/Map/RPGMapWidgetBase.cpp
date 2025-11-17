@@ -10,6 +10,7 @@
 #include "Components/Overlay.h"
 #include "Components/OverlaySlot.h"
 #include "Components/RPGPointOfInterestComponent.h"
+#include "Map/RPG3DWorldMarker.h"
 #include "Map/RPGMapSubsystem.h"
 #include "Utility/LogDefinitions.h"
 #include "Utility/Utility.h"
@@ -132,6 +133,7 @@ void URPGMapWidgetBase::AddPOI(AActor* Actor, URPGMapWidgetBase* MapReference)
 			POIWidget->Owner = Actor;
 			POIWidget->OwningMapWidget = MapReference; // Also works with 'this', but better to leave it as explicitly as this
 
+			//POIWidget->GetToolTipText()
 			// TODO: Make it more versatile
 			if (bMiniMap)
 			{
@@ -208,13 +210,7 @@ void URPGMapWidgetBase::ToggleWorldMarker(const FGeometry& InGeometry, const FPo
 		LOG_WITH_FUNCTION_NAME(LogRPGMap, Error, TEXT("Left mouse button is not pressed"));
 		return;
 	}
-
-	if (!WorldMarker)
-	{
-		LOG_WITH_FUNCTION_NAME(LogRPGMap, Error, TEXT("WorldMarker is nullptr"));
-		return;
-	}
-	
+		
 	if (bMiniMap)
 	{
 		LOG_WITH_FUNCTION_NAME(LogRPGMap, Error, TEXT("Called on minimap, do nothing"));
@@ -229,38 +225,48 @@ void URPGMapWidgetBase::ToggleWorldMarker(const FGeometry& InGeometry, const FPo
 	}
 	
 	const FVector2D CursorLocalCoords = InGeometry.AbsoluteToLocal(InMouseEvent.GetScreenSpacePosition());
-	const float WorldMarkerX = WorldMarker->GetRenderTransform().Translation.X;
-	const float WorldMarkerY = WorldMarker->GetRenderTransform().Translation.Y;
+	//const float WorldMarkerX = WorldMarker->GetRenderTransform().Translation.X;
+	//const float WorldMarkerY = WorldMarker->GetRenderTransform().Translation.Y;
 	const float CursorPositionOnWidgetX = CursorLocalCoords.X - WidgetHalfSize;
 	const float CursorPositionOnWidgetY = CursorLocalCoords.Y - WidgetHalfSize;
 	const float CursorInMarkerRangeForXMin = CursorPositionOnWidgetX - 10.f;
 	const float CursorInMarkerRangeForXMax = CursorPositionOnWidgetX + 10.f;
 	const float CursorInMarkerRangeForYMin = CursorPositionOnWidgetY - 10.f;
 	const float CursorInMarkerRangeForYMax = CursorPositionOnWidgetY + 10.f;
-	const bool bCursorInMarkerRangeForX = ((CursorInMarkerRangeForXMin <= WorldMarkerX) && (CursorInMarkerRangeForXMax >= WorldMarkerX));
-	const bool bCursorInMarkerRangeForY = ((CursorInMarkerRangeForYMin <= WorldMarkerY) && (CursorInMarkerRangeForYMax >= WorldMarkerY));
-	const bool bRemoveWorldMaker = bCursorInMarkerRangeForX && bCursorInMarkerRangeForY;
-
-	LOG_WITH_FUNCTION_NAME(LogRPGMap, Verbose, TEXT("Toggling world marker at X=%f, Y=%f (Cursor's position: x = %f, y = %f. Removing marker = %s."), CursorPositionOnWidgetX, CursorPositionOnWidgetY, CursorLocalCoords.X, CursorLocalCoords.Y, *LexToString(bRemoveWorldMaker));
+	// const bool bCursorInMarkerRangeForX = ((CursorInMarkerRangeForXMin <= WorldMarkerX) && (CursorInMarkerRangeForXMax >= WorldMarkerX));
+	// const bool bCursorInMarkerRangeForY = ((CursorInMarkerRangeForYMin <= WorldMarkerY) && (CursorInMarkerRangeForYMax >= WorldMarkerY));
+	// const bool bRemoveWorldMaker = bCursorInMarkerRangeForX && bCursorInMarkerRangeForY;
 	
-	if (bRemoveWorldMaker)
-	{
-		WorldMarker->SetVisibility(ESlateVisibility::Hidden);
-		WorldMarker->SetRenderTranslation(FVector2D(FLT_MAX));
-		
-		MapSubsystem->OnWorldMarkerToggled.Broadcast(false, FVector2D(0.f));
-		MapSubsystem->On3DWorldMarkerSpawned.Broadcast(false, FVector(0.f));
-	}
-	else
-	{
-		WorldMarker->SetVisibility(ESlateVisibility::Visible);
-		WorldMarker->SetRenderTranslation(FVector2D(CursorPositionOnWidgetX, CursorPositionOnWidgetY));
-		
-		const FVector NewWorldMarkerLocation = FVector((CursorPositionOnWidgetX - MapDimensions.MapXOffset) * MapDimensions.MapXDiv, (CursorPositionOnWidgetY - MapDimensions.MapYOffset) * MapDimensions.MapYDiv, 0.f);
-			
-		MapSubsystem->OnWorldMarkerToggled.Broadcast(true, FVector2D(CursorPositionOnWidgetX, CursorPositionOnWidgetY));
-		MapSubsystem->On3DWorldMarkerSpawned.Broadcast(true, NewWorldMarkerLocation);
-	}
+	//LOG_WITH_FUNCTION_NAME(LogRPGMap, Verbose, TEXT("Toggling world marker at X=%f, Y=%f (Cursor's position: x = %f, y = %f. Removing marker = %s."), CursorPositionOnWidgetX, CursorPositionOnWidgetY, CursorLocalCoords.X, CursorLocalCoords.Y, *LexToString(bRemoveWorldMaker));
+	
+	// if (bRemoveWorldMaker)
+	// {
+	// 	// WorldMarker->SetVisibility(ESlateVisibility::Hidden);
+	// 	// WorldMarker->SetRenderTranslation(FVector2D(FLT_MAX));
+	// 	
+	// 	MapSubsystem->On3DWorldMarkerSpawned.Broadcast(false, FVector(0.f));
+	// }
+	// else
+	// {
+		// WorldMarker->SetVisibility(ESlateVisibility::Visible);
+		// WorldMarker->SetRenderTranslation(FVector2D(CursorPositionOnWidgetX, CursorPositionOnWidgetY));
+		//
+	const FVector NewWorldMarkerLocation = FVector((CursorPositionOnWidgetX - MapDimensions.MapXOffset) * MapDimensions.MapXDiv, (CursorPositionOnWidgetY - MapDimensions.MapYOffset) * MapDimensions.MapYDiv, 0.f);
+	const FVector WorldMarkerLocation = MapSubsystem->WorldMarker ? MapSubsystem->WorldMarker->GetActorLocation() : FVector(0.f);
+	//MapSubsystem->On3DWorldMarkerSpawned.Broadcast(true, NewWorldMarkerLocation);
+	 float DistanceBetweenMarkerLocations = FVector::Distance(WorldMarkerLocation, NewWorldMarkerLocation);
+	 if (DistanceBetweenMarkerLocations < 250.f)
+	 {
+	 	MapSubsystem->On3DWorldMarkerSpawned.Broadcast(false, FVector(0.f));
+	 }
+	 else
+	 {
+	 	MapSubsystem->On3DWorldMarkerSpawned.Broadcast(true, NewWorldMarkerLocation);
+	 }
+	
+	 LOG_WITH_FUNCTION_NAME(LogRPGMap, Display, TEXT("Distance between WorldMarker and its new desired position is %f"), DistanceBetweenMarkerLocations);	
+	
+	//}
 }
 
 void URPGMapWidgetBase::MovePlayerIconToTop()

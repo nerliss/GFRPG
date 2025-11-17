@@ -75,7 +75,7 @@ void URPGMapSubsystem::Spawn3DWorldMarker(bool bSpawn, FVector Location)
 		{
 			WorldMarker->Destroy();
 		}
-
+	
 		FHitResult Hit;
 		FCollisionObjectQueryParams Params;
 		Params.AddObjectTypesToQuery(ECC_WorldStatic);
@@ -105,6 +105,37 @@ void URPGMapSubsystem::Spawn3DWorldMarker(bool bSpawn, FVector Location)
 			// Update compass marker (if we are going to have a compass system)
 		}
 	}
+	// FHitResult Hit;
+	// FCollisionObjectQueryParams Params;
+	// Params.AddObjectTypesToQuery(ECC_WorldStatic);
+	// Params.AddObjectTypesToQuery(ECC_WorldDynamic);
+	// const FVector StartLocation = FVector(Location.X, Location.Y, Location.Z + 250000.f);
+	// const FVector EndLocation = FVector(Location.X, Location.Y, Location.Z - 500000.f);
+	// if (GetWorld()->LineTraceSingleByObjectType(Hit, StartLocation, EndLocation, Params))
+	// {
+	// 	DrawDebugLine(GetWorld(), StartLocation, EndLocation, FColor::Black, false, 10.f, 0, 20);
+	// 	
+	// 	if (WorldMarker)
+	// 	{
+	// 		float Distance = FVector::Distance(Hit.ImpactPoint, WorldMarker->GetActorLocation());
+	// 		LOG_WITH_FUNCTION_NAME(LogRPGMap, Warning, TEXT("Distance is %f"), Distance);
+	// 		if (Distance < 700.f)
+	// 		{
+	// 			WorldMarker->Destroy();
+	// 			LOG_WITH_FUNCTION_NAME(LogRPGMap, Warning, TEXT("Destroying WorldMarker, Distance is %f"), Distance);
+	// 		}
+	// 	}
+	// 	
+	// 	WorldMarker = GetWorld()->SpawnActor<ARPG3DWorldMarker>(MapSettings->RPG3DWorldMarker, Hit.ImpactPoint, FRotator(0.f));
+	// 	if (WorldMarker)
+	// 	{
+	// 		WorldMarker->SetOwner(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+	// 		WorldMarker->bQuestWaypoint = false;
+	// 		WorldMarker->WaypointName = FText::FromString(TEXT("Waypoint"));
+	// 		WorldMarker->MaxShowDistance = 999999.f;
+	// 	}
+	// 	// Update compass marker (if we are going to have a compass system)
+	// }
 }
 
 void URPGMapSubsystem::InitializeMapScreen()

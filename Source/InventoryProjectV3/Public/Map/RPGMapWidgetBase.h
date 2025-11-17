@@ -45,10 +45,6 @@ public:
 	UPROPERTY(meta=(BindWidgetOptional))
 	UOverlay* MapOverlay = nullptr;
 
-	// TODO: Remake to use Point of Interest component
-	UPROPERTY(meta=(BindWidgetOptional))
-	UImage* WorldMarker = nullptr;
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Map")
 	USlateBrushAsset* SlateBrushWaypoint = nullptr;
 

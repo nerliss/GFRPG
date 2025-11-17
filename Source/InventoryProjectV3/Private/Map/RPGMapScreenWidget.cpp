@@ -17,7 +17,7 @@ void URPGMapScreenWidget::NativeConstruct()
 	Super::NativeConstruct();
 
 	// Assign map's world marker ptr to this class' world marker ptr since the latter is null hence world marker logic doesn't work
-	WorldMarker = MapWidget->WorldMarker;
+	//WorldMarker = MapWidget->WorldMarker;
 	MapOverlay = MapWidget->MapOverlay;
 
 	URPGMapSubsystem* MapSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<URPGMapSubsystem>();

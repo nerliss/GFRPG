@@ -50,6 +50,6 @@ void ARPGCharacter::InteractNative(AActor* Interactor)
 
 FText ARPGCharacter::GetNameNative() const
 {
-	return CharacterName;
+	return GetCharacterName();
 }
 

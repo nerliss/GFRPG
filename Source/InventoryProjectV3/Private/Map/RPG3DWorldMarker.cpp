@@ -39,10 +39,16 @@ ARPG3DWorldMarker::ARPG3DWorldMarker()
 	PointOfInterestComponent->Icon = FSlateBrush();
 	PointOfInterestComponent->bAlwaysShow = true;
 	
-	WaypointName = FText::FromString("Waypoint");
+	WaypointName = FText::FromString("Custom Waypoint");
 	bQuestWaypoint = false;
 	MaxShowDistance = 100.f;
 	PlayerDistance = 0.f;
+}
+
+void ARPG3DWorldMarker::InteractNative(AActor* Interactor)
+{
+	// Must have this function for project to compile
+	return;
 }
 
 void ARPG3DWorldMarker::BeginPlay()
@@ -51,6 +57,11 @@ void ARPG3DWorldMarker::BeginPlay()
 
 	LOG_WITH_FUNCTION_NAME(LogRPGMap, VeryVerbose, TEXT("Initial initialization"))
 	Initialize();
+}
+
+FText ARPG3DWorldMarker::GetNameNative() const
+{
+	return WaypointName;
 }
 
 void ARPG3DWorldMarker::UpdateDistance()

@@ -81,23 +81,23 @@ void URPGMiniMapWidget::InitMap()
 
 void URPGMiniMapWidget::AddWorldMarker(bool bSpawn, FVector2D MarkerLocation)
 {
-	LOG_WITH_FUNCTION_NAME(LogRPGMap, Verbose, TEXT("Function called with params bSpawn = %s, MarkerLocation = %s"), *LexToString(bSpawn), *MarkerLocation.ToString());
-	
-	if (!MinimapWidget || !MinimapWidget->WorldMarker)
-	{
-		return;
-	}
-	
-	if (bSpawn)
-	{
-		MinimapWidget->WorldMarker->SetVisibility(ESlateVisibility::Visible);
-		MinimapWidget->WorldMarker->SetRenderTranslation(MarkerLocation);
-	}
-	else
-	{
-		MinimapWidget->WorldMarker->SetVisibility(ESlateVisibility::Hidden);
-		MinimapWidget->WorldMarker->SetRenderTranslation(FVector2D(FLT_MAX));
-	}
+	// LOG_WITH_FUNCTION_NAME(LogRPGMap, Verbose, TEXT("Function called with params bSpawn = %s, MarkerLocation = %s"), *LexToString(bSpawn), *MarkerLocation.ToString());
+	//
+	// if (!MinimapWidget || !MinimapWidget->WorldMarker)
+	// {
+	// 	return;
+	// }
+	//
+	// if (bSpawn)
+	// {
+	// 	MinimapWidget->WorldMarker->SetVisibility(ESlateVisibility::Visible);
+	// 	MinimapWidget->WorldMarker->SetRenderTranslation(MarkerLocation);
+	// }
+	// else
+	// {
+	// 	MinimapWidget->WorldMarker->SetVisibility(ESlateVisibility::Hidden);
+	// 	MinimapWidget->WorldMarker->SetRenderTranslation(FVector2D(FLT_MAX));
+	// }
 }
 
 void URPGMiniMapWidget::AddPOI(AActor* Actor, URPGMapWidgetBase* MapReference)

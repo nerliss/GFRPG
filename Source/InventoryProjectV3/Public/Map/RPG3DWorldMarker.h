@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Interfaces/RPGInteract_Interface.h"
 #include "RPG3DWorldMarker.generated.h"
 
 class URPGPointOfInterestComponent;
@@ -13,7 +14,7 @@ class USphereComponent;
 class UStaticMeshComponent;
 
 UCLASS()
-class INVENTORYPROJECTV3_API ARPG3DWorldMarker : public AActor
+class INVENTORYPROJECTV3_API ARPG3DWorldMarker : public AActor, public IRPGInteract_Interface
 {
 	GENERATED_BODY()
 	
@@ -21,6 +22,10 @@ public:
 	
 	ARPG3DWorldMarker();
 
+	/* RPGInteractable_Interface */
+	virtual void InteractNative(AActor* Interactor) override;
+	virtual FText GetNameNative() const override;
+	
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "3D World Marker")
 	USphereComponent* SphereComp;
 
@@ -34,7 +39,7 @@ public:
 	/* A pillar of light-like that is visible from far away mesh component */
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "3D World Marker")
 	UStaticMeshComponent* HighlightMeshComponent;
-
+	
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "3D World Marker")
 	URPGPointOfInterestComponent* PointOfInterestComponent;
 	

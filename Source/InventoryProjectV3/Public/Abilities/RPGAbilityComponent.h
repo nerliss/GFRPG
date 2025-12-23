@@ -7,7 +7,7 @@
 #include "RPGAbilityComponent.generated.h"
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(Blueprintable, BlueprintType, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class INVENTORYPROJECTV3_API URPGAbilityComponent : public UActorComponent
 {
 	GENERATED_BODY()

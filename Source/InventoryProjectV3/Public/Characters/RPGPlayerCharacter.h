@@ -119,17 +119,14 @@ public:
 	
 #if WITH_EDITORONLY_DATA
 	virtual void OnConstruction(const FTransform& Transform) override;
+	static FString GetLastSavedCharacterFileName() { return LastSavedCharacterFileName; }
 #endif
 
 	UFUNCTION(BlueprintCallable, Category = "Health")
 	void Death();
 
 	void SetPOV(const EPlayerPOV DesiredPOV);
-
-#if WITH_EDITORONLY_DATA
-	static FString GetLastSavedCharacterFileName() { return LastSavedCharacterFileName; }
-#endif
-
+	
 	float GetStealthedMaxWalkSpeed() const { return StealthedMaxWalkSpeed; }
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Movement")

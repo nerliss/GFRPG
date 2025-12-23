@@ -1,23 +1,9 @@
-// Oleksandr Tkachov 2022-2025
+// Oleksandr Tkachov 2022-2026
 
 
 #include "Abilities/RPGAbilityBase.h"
 
-ARPGAbilityBase::ARPGAbilityBase()
+URPGAbilityBase::URPGAbilityBase()
 {
-	PrimaryActorTick.bCanEverTick = true;
-
-}
-
-void ARPGAbilityBase::BeginPlay()
-{
-	Super::BeginPlay();
 	
 }
-
-void ARPGAbilityBase::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-

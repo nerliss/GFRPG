@@ -1,20 +1,16 @@
-// Oleksandr Tkachov 2022-2025
+// Oleksandr Tkachov 2022-2026
 
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
 #include "RPGAbilityBase.generated.h"
 
 UCLASS()
-class INVENTORYPROJECTV3_API ARPGAbilityBase : public AActor
+class INVENTORYPROJECTV3_API URPGAbilityBase : public UObject
 {
 	GENERATED_BODY()
 	
 public:	
-	ARPGAbilityBase();
-
-	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaTime) override;
+	URPGAbilityBase();
 
 };

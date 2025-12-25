@@ -6,6 +6,7 @@
 #include "Engine/DataAsset.h"
 #include "RPGAbilityDefinitionData.generated.h"
 
+class ARPGProjectileBase;
 class URPGAbilityBase;
 class UParticleSystem;
 class UTexture2D;
@@ -49,3 +50,41 @@ public:
 	
 	
 };
+
+UCLASS()
+class INVENTORYPROJECTV3_API URPGSummonAbilityDefinitionData : public URPGAbilityDefinitionData
+{
+	GENERATED_BODY()
+	
+public:
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability System")
+	TSubclassOf<AActor> ActorToSpawn;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability System")
+	FTransform SpawnTransform;
+	
+};
+
+UCLASS()
+class INVENTORYPROJECTV3_API URPGAOEAbilityDefinitionData : public URPGAbilityDefinitionData
+{
+	GENERATED_BODY()
+	
+public:
+	
+	
+};
+
+UCLASS()
+class INVENTORYPROJECTV3_API URPGProjectileAbilityDefinitionData : public URPGAbilityDefinitionData
+{
+	GENERATED_BODY()
+	
+public:
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability System")
+	TSubclassOf<ARPGProjectileBase> ProjectileToSpawn;
+	
+};
+

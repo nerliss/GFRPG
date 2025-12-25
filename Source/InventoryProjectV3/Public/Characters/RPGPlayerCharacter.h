@@ -1,4 +1,4 @@
-// Oleksandr Tkachov 2022-2025
+// Oleksandr Tkachov 2022-2026
 
 #pragma once
 

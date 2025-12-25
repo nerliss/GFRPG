@@ -7,3 +7,8 @@ URPGAbilityBase::URPGAbilityBase()
 {
 	
 }
+
+// void URPGAbilityBase::Init()
+// {
+// 	
+// }

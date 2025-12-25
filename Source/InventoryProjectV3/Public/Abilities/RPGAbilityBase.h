@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "RPGAbilityBase.generated.h"
 
-UCLASS()
+UCLASS(BlueprintType, Blueprintable)
 class INVENTORYPROJECTV3_API URPGAbilityBase : public UObject
 {
 	GENERATED_BODY()
@@ -13,4 +13,6 @@ class INVENTORYPROJECTV3_API URPGAbilityBase : public UObject
 public:	
 	URPGAbilityBase();
 
+	//virtual void Init();
+	
 };

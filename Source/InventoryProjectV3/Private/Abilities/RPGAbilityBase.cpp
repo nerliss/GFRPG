@@ -5,7 +5,7 @@
 
 URPGAbilityBase::URPGAbilityBase()
 {
-	
+	AbilityDefinition = nullptr;
 }
 
 // void URPGAbilityBase::Init()

@@ -11,6 +11,45 @@ class URPGAbilityBase;
 class UParticleSystem;
 class UTexture2D;
 
+UENUM(BlueprintType)
+enum class EAbilityActivationMode : uint8
+{
+	AAM_Instant,
+	AAM_Toggle,
+	AAM_Channel,
+	AAM_Max UMETA(Hidden)
+};
+
+USTRUCT(BlueprintType)
+struct FChannelParams
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Channel")
+	float ChannelDuration;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Channel")
+	float TickPeriod;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Channel")
+	bool bTickOnStart;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Channel")
+	bool bRequiresButtonHold;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Channel")
+	bool bUpdateTargetEachTick;
+	
+	FChannelParams()
+	{
+		ChannelDuration = 3.0f;
+		TickPeriod = 0.25f;
+		bTickOnStart = true;
+		bRequiresButtonHold = false;
+		bUpdateTargetEachTick = false;
+	}
+};
+
 /**
  * 
  */
@@ -42,8 +81,11 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability System")
 	float CastRange;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability System")
-	float CastTime;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Activation Mode")
+	EAbilityActivationMode ActivationMode;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Activation Mode", meta = (EditCondition = "ActivationMode == EAbilityActivationMode::AAM_Channel"))
+	FChannelParams ChannelParams;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability System")
 	UParticleSystem* ParticleSystem;

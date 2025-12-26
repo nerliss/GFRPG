@@ -10,7 +10,24 @@
 class URPGAbilityBase;
 class URPGAbilityDefinitionData;
 
-// TODO: Send only Ability without its Definition since we can get that from Ability itself
+USTRUCT(BlueprintType)
+struct FRPGTargetData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadOnly) 
+	TObjectPtr<AActor> HitActor = nullptr;
+	
+	UPROPERTY(BlueprintReadOnly) 
+	FVector HitLocation = FVector::ZeroVector;
+	
+	UPROPERTY(BlueprintReadOnly) 
+	FVector AimDirection = FVector::ForwardVector;
+	
+	UPROPERTY(BlueprintReadOnly) 
+	bool bHasHit = false;
+};
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAbilityCooldownStarted, URPGAbilityBase*, Ability);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAbilityCooldownEnded, URPGAbilityBase*, Ability);
 

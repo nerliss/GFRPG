@@ -1,6 +1,9 @@
 # Disclaimer
 This is a source code repository for GenericFantasyRPG (GFRPG), it doesn't contain any assets. Currently is in heavy WIP since a lot of logic was written in blueprints which is obviously not accessible from here.
 
+# Attention
+This desription hasn't been updated for years, so, you know, is only partially true :)
+
 # Generic Fantasy RPG
 Just a passion project of mine. Heavily inspired by World of Warcraft, The Elder Scrolls series.
 

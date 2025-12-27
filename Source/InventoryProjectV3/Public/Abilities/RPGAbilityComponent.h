@@ -50,6 +50,12 @@ public:
 	UFUNCTION()
 	void OnCooldownTimerExpired(URPGAbilityBase* Ability);
 	
+	UFUNCTION(BlueprintCallable)
+	FTimerHandle SetTimerForCastAbility(URPGAbilityBase* Ability);
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnCastFinished(URPGAbilityBase* Ability);
+	
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnAbilityCooldownStarted OnAbilityCooldownStarted;
 	

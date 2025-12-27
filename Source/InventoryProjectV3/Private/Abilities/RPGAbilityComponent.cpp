@@ -40,12 +40,34 @@ void URPGAbilityComponent::SetTimerForAbilityCooldownExpiration(URPGAbilityBase*
 	TimerDelegate.BindUFunction(this, FName("OnCooldownTimerExpired"), Ability);
 	
 	FTimerHandle TimerHandle;
-	
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, AbilityCooldown, false);
 }
 
 void URPGAbilityComponent::OnCooldownTimerExpired(URPGAbilityBase* Ability)
 {
 	OnAbilityCooldownEnded.Broadcast(Ability);
+}
+
+FTimerHandle URPGAbilityComponent::SetTimerForCastAbility(URPGAbilityBase* Ability)
+{
+	if (!Ability)
+	{
+		return FTimerHandle();
+	}
+	
+	if (!Ability->AbilityDefinition)
+	{
+		return FTimerHandle();
+	}
+	
+	const float AbilityCastTime = Ability->AbilityDefinition->CastParams.CastTime;
+	
+	FTimerDelegate TimerDelegate;
+	TimerDelegate.BindUFunction(this, FName("OnCastFinished"), Ability);
+	
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, AbilityCastTime, false);
+	
+	return TimerHandle;
 }
 

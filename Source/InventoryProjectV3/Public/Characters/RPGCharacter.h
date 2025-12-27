@@ -21,6 +21,8 @@ enum class ECharacterGender : uint8
 	Undefined
 };
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCharacterMoved);
+
 UCLASS()
 class INVENTORYPROJECTV3_API ARPGCharacter : public ACharacter, public IRPGInteract_Interface
 {
@@ -59,4 +61,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
 	URPGAbilityComponent* AbilityComponent;
+	
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Movement")
+	FOnCharacterMoved OnCharacterMoved;
 };

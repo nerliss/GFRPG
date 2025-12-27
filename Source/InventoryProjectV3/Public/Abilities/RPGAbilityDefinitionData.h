@@ -14,10 +14,20 @@ class UTexture2D;
 UENUM(BlueprintType)
 enum class EAbilityActivationMode : uint8
 {
-	AAM_Instant,
-	AAM_Toggle,
-	AAM_Channel,
-	AAM_Max UMETA(Hidden)
+	AAM_Instant			UMETA(DisplayName = "Instant"),
+	AAM_Toggle			UMETA(DisplayName = "Toggle"),
+	AAM_Channel			UMETA(DisplayName = "Channel"),
+	AAM_Max				UMETA(Hidden)
+};
+
+UENUM(BlueprintType)
+enum class EAbilityChannelStopReason : uint8
+{
+	DurationEnd,
+	Interrupt,
+	InputRelease,
+	Moved,
+	Max UMETA(Hidden)
 };
 
 USTRUCT(BlueprintType)
@@ -40,6 +50,9 @@ struct FChannelParams
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Channel")
 	bool bUpdateTargetEachTick;
 	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Channel")
+	bool bInterruptOnMove;
+	
 	FChannelParams()
 	{
 		ChannelDuration = 3.0f;
@@ -47,6 +60,7 @@ struct FChannelParams
 		bTickOnStart = true;
 		bRequiresButtonHold = false;
 		bUpdateTargetEachTick = false;
+		bInterruptOnMove = true;
 	}
 };
 

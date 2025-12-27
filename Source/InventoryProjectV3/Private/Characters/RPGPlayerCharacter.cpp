@@ -163,6 +163,8 @@ void ARPGPlayerCharacter::OnForwardMoved(float Value)
 	// Get forward vector
 	const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 	AddMovementInput(Direction, Value);
+	
+	OnCharacterMoved.Broadcast();
 }
 
 void ARPGPlayerCharacter::OnRightMoved(float Value)
@@ -184,6 +186,8 @@ void ARPGPlayerCharacter::OnRightMoved(float Value)
 	// Get right vector 
 	const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 	AddMovementInput(Direction, Value);
+	
+	OnCharacterMoved.Broadcast();
 }
 
 void ARPGPlayerCharacter::OnJumpStarted()
@@ -201,6 +205,8 @@ void ARPGPlayerCharacter::OnJumpStarted()
 #endif
 
 	ACharacter::Jump();
+	
+	OnCharacterMoved.Broadcast();
 }
 
 void ARPGPlayerCharacter::OnJumpEnded()
@@ -253,6 +259,8 @@ void ARPGPlayerCharacter::OnStealthPressed()
 	BlueprintOnStealthPressed();
 
 	UE_LOG(LogRPGPlayerCharacter, Warning, TEXT("Stealth mode changed. %s now."), bStealthed ? TEXT("Active") : TEXT("Disabled"));
+	
+	OnCharacterMoved.Broadcast();
 }
 
 void ARPGPlayerCharacter::TurnAtRate(float Rate)

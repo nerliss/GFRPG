@@ -131,7 +131,7 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Movement")
 	void BlueprintOnStealthPressed();
-
+	
 	UFUNCTION(BlueprintGetter, Category = "Character")
 	ECharacterGender GetCharacterGender() const { return CharacterGender; }
 

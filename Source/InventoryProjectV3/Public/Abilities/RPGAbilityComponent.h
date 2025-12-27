@@ -15,16 +15,17 @@ struct FRPGTargetData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(BlueprintReadOnly) 
+	// TODO: Probably doesn't need to be EditDefaultsOnly
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite) 
 	TObjectPtr<AActor> HitActor = nullptr;
 	
-	UPROPERTY(BlueprintReadOnly) 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite) 
 	FVector HitLocation = FVector::ZeroVector;
 	
-	UPROPERTY(BlueprintReadOnly) 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite) 
 	FVector AimDirection = FVector::ForwardVector;
 	
-	UPROPERTY(BlueprintReadOnly) 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite) 
 	bool bHasHit = false;
 };
 

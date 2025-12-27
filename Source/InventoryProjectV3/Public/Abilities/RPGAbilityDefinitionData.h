@@ -149,9 +149,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability System")
 	TSubclassOf<AActor> ActorToSpawn;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability System")
-	FTransform SpawnTransform;
-	
 };
 
 UCLASS()

@@ -484,6 +484,7 @@ FHitResult ARPGPlayerCharacter::TraceForTargetData(const float InTraceLength, FR
 		OutTargetData.HitLocation = HitResult.ImpactPoint;
 		OutTargetData.AimDirection = CameraComp->GetForwardVector();
 		//OutTargetData.AimDirection = (HitResult.ImpactPoint - StartLoc).GetSafeNormal();
+		OutTargetData.HitResult = HitResult;
 		
 		return HitResult;
 	}

@@ -27,6 +27,9 @@ struct FRPGTargetData
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite) 
 	bool bHasHit = false;
+	
+	UPROPERTY(BlueprintReadWrite)
+	FHitResult HitResult;
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAbilityCooldownStarted, URPGAbilityBase*, Ability);
@@ -51,10 +54,10 @@ public:
 	void OnCooldownTimerExpired(URPGAbilityBase* Ability);
 	
 	UFUNCTION(BlueprintCallable)
-	FTimerHandle SetTimerForCastAbility(URPGAbilityBase* Ability);
+	FTimerHandle SetTimerForCastAbility(URPGAbilityBase* Ability, FRPGTargetData TargetData);
 	
 	UFUNCTION(BlueprintImplementableEvent)
-	void OnCastFinished(URPGAbilityBase* Ability);
+	void OnCastFinished(URPGAbilityBase* Ability, FRPGTargetData TargetData);
 	
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnAbilityCooldownStarted OnAbilityCooldownStarted;

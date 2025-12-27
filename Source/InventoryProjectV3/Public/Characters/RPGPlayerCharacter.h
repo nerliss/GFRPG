@@ -6,6 +6,7 @@
 #include "RPGCharacter.h"
 #include "RPGPlayerCharacter.generated.h"
 
+struct FRPGTargetData;
 class URPGMapScreenWidget;
 class URPGXP_Component;
 class URPGHealth_Component;
@@ -183,6 +184,9 @@ public:
 	bool bMounted;
 
 	void OnMapScreenToggled();
+	
+	UFUNCTION(BlueprintCallable, Category = "Trace")
+	FHitResult TraceForTargetData(const float InTraceLength, FRPGTargetData& OutTargetData);
 	
 protected:
 

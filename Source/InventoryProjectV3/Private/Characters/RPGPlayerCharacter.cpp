@@ -14,6 +14,7 @@
 #include "Components/RPGInventory_Component.h"
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
+#include "Abilities/RPGAbilityComponent.h"
 #include "Components/RPGPointOfInterestComponent.h"
 #include "Components/RPGQuestLogComponent.h"
 #include "Components/RPGStatsComponent.h"
@@ -404,7 +405,7 @@ AActor* ARPGPlayerCharacter::TraceForInteractableObjects(const float InTraceLeng
 		return nullptr;
 	}
 
-	const FVector StartLoc = CameraComp->GetComponentLocation();
+	const FVector StartLoc = CameraComp->GetComponentLocation() + CameraComp->GetForwardVector() * SpringArmComp->TargetArmLength;
 	const FVector EndLoc = (StartLoc + (CameraComp->GetForwardVector() * InTraceLength));
 	constexpr ECollisionChannel ECC_Interact = ECC_GameTraceChannel1; // Interact channel
 
@@ -454,6 +455,40 @@ AActor* ARPGPlayerCharacter::TraceForInteractableObjects(const float InTraceLeng
 
 		GetMainHUDWidget()->DisplayInteractionMessage(false, FText::FromString(""));
 		return InteractActor = nullptr;*/
+}
+
+FHitResult ARPGPlayerCharacter::TraceForTargetData(const float InTraceLength, FRPGTargetData& OutTargetData)
+{
+	const FVector StartLoc = CameraComp->GetComponentLocation() + CameraComp->GetForwardVector() * SpringArmComp->TargetArmLength; // Compensate for camera distance
+	const FVector EndLoc = (StartLoc + (CameraComp->GetForwardVector() * InTraceLength));
+	constexpr ECollisionChannel ECC_Interact = ECC_Visibility;
+	
+	FHitResult HitResult;
+
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+
+	const bool bHitResult = GetWorld()->LineTraceSingleByChannel(HitResult, StartLoc, EndLoc, ECC_Interact, Params);
+
+#if !UE_BUILD_SHIPPING
+	if (CVarDebugInteractLine.GetValueOnGameThread() > 0)
+	{
+		DrawDebugLine(GetWorld(), StartLoc, EndLoc, FColor::Purple, false, 4.f, 0, 2.f);
+	}
+#endif
+	
+	if (bHitResult)
+	{
+		OutTargetData.bHasHit = true;
+		OutTargetData.HitActor = HitResult.GetActor();
+		OutTargetData.HitLocation = HitResult.ImpactPoint;
+		OutTargetData.AimDirection = CameraComp->GetForwardVector();
+		//OutTargetData.AimDirection = (HitResult.ImpactPoint - StartLoc).GetSafeNormal();
+		
+		return HitResult;
+	}
+	
+	return FHitResult();
 }
 
 void ARPGPlayerCharacter::OnInteractPressed()

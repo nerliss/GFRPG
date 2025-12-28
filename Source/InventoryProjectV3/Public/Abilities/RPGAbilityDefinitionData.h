@@ -22,6 +22,15 @@ enum class EAbilityActivationMode : uint8
 };
 
 UENUM(BlueprintType)
+enum class EAbilityTargetingFlow : uint8
+{
+	Instant,
+	PreviewConfirm,
+	HoldRelease,
+	Max UMETA(Hidden)
+};
+
+UENUM(BlueprintType)
 enum class EAbilityInterruptReason : uint8
 {
 	DurationEnd,
@@ -105,6 +114,8 @@ class INVENTORYPROJECTV3_API URPGAbilityDefinitionData : public UPrimaryDataAsse
 	
 public:
 	
+	URPGAbilityDefinitionData();
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability System")
 	TSubclassOf<URPGAbilityBase> AbilityClass;
 	
@@ -126,8 +137,19 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability System")
 	float CastRange;
 	
+	/* Perform a ground trace from original target trace's end location to try getting Target Data even if the cast thrown in air and didn't hit anything */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability System")
+	bool bDoGroundTrace;
+	
+	/* Distance to trace below from original target trace's end */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability System", meta = (EditCondition = "bDoGroundTrace"))
+	float GroundTraceDistance;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability System")
 	UParticleSystem* ParticleSystem;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Targeting Flow")
+	EAbilityTargetingFlow TargetingFlow;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Activation Mode")
 	EAbilityActivationMode ActivationMode;
@@ -137,6 +159,7 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Activation Mode", meta = (EditCondition = "ActivationMode == EAbilityActivationMode::AAM_Cast"))
 	FCastParams CastParams;
+	
 };
 
 UCLASS()
@@ -146,9 +169,24 @@ class INVENTORYPROJECTV3_API URPGSummonAbilityDefinitionData : public URPGAbilit
 	
 public:
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability System")
+	URPGSummonAbilityDefinitionData();
+	
+	virtual void PreSave(FObjectPreSaveContext ObjectSaveContext) override; 
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Summon Data")
 	TSubclassOf<AActor> ActorToSpawn;
 	
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Summon Data")
+	USkeletalMesh* PreviewMesh;
+	
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Summon Data")
+	TSubclassOf<UAnimInstance> PreviewAnimClass;
+	
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Summon Data")
+	FVector SpawnScale;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Summon Data")
+	UMaterial* PreviewMaterial;
 };
 
 UCLASS()
@@ -158,6 +196,7 @@ class INVENTORYPROJECTV3_API URPGAOEAbilityDefinitionData : public URPGAbilityDe
 	
 public:
 	
+	URPGAOEAbilityDefinitionData();
 	
 };
 
@@ -168,7 +207,9 @@ class INVENTORYPROJECTV3_API URPGProjectileAbilityDefinitionData : public URPGAb
 	
 public:
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability System")
+	URPGProjectileAbilityDefinitionData();
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Projectile Data")
 	TSubclassOf<ARPGProjectileBase> ProjectileToSpawn;
 	
 };

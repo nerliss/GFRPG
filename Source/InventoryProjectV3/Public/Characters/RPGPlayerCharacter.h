@@ -185,9 +185,6 @@ public:
 
 	void OnMapScreenToggled();
 	
-	UFUNCTION(BlueprintCallable, Category = "Trace")
-	FHitResult TraceForTargetData(const float InTraceLength, FRPGTargetData& OutTargetData);
-	
 protected:
 
 	void OnForwardMoved(float Value);

@@ -17,19 +17,28 @@ struct FRPGTargetData
 
 	// TODO: Probably doesn't need to be EditDefaultsOnly
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite) 
-	TObjectPtr<AActor> HitActor = nullptr;
+	TObjectPtr<AActor> HitActor;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite) 
-	FVector HitLocation = FVector::ZeroVector;
+	FVector HitLocation;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite) 
-	FVector AimDirection = FVector::ForwardVector;
+	FVector AimDirection;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite) 
-	bool bHasHit = false;
+	bool bHasHit;
 	
 	UPROPERTY(BlueprintReadWrite)
 	FHitResult HitResult;
+	
+	FRPGTargetData()
+	{
+		HitActor = nullptr;
+		HitLocation = FVector::ZeroVector;
+		AimDirection = FVector::ForwardVector;
+		bHasHit = false;
+		HitResult = FHitResult();
+	}
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAbilityCooldownStarted, URPGAbilityBase*, Ability);
@@ -47,6 +56,9 @@ public:
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	UFUNCTION(BlueprintPure, Category = "Trace")
+	void TraceForTargetData(const float InTraceLength, URPGAbilityBase* Ability, FRPGTargetData& OutTargetData);
+	
 	UFUNCTION(BlueprintCallable)
 	void SetTimerForAbilityCooldownExpiration(URPGAbilityBase* Ability);	
 	

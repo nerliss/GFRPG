@@ -198,6 +198,8 @@ public:
 	
 	URPGAOEAbilityDefinitionData();
 	
+	
+	
 };
 
 UCLASS()

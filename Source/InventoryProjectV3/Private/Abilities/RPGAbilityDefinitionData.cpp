@@ -55,7 +55,6 @@ void URPGSummonAbilityDefinitionData::PreSave(FObjectPreSaveContext ObjectSaveCo
 		return;
 	}
 	
-	UE_LOG(LogTemp, Log, TEXT("SkeletalMeshComp: %s"), *SkeletalMeshComp->GetName());
 	PreviewAnimClass = SkeletalMeshComp->AnimClass;
 	PreviewMesh = SkeletalMeshComp->GetSkeletalMeshAsset();
 	SpawnScale = SkeletalMeshComp->GetRelativeScale3D();

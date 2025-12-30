@@ -63,6 +63,9 @@ struct FChannelParams
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Channel")
 	bool bInterruptOnMove;
 	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool bStartCooldownOnStart;
+	
 	FChannelParams()
 	{
 		ChannelDuration = 3.0f;
@@ -71,6 +74,7 @@ struct FChannelParams
 		bRequiresButtonHold = false;
 		bUpdateTargetEachTick = false;
 		bInterruptOnMove = true;
+		bStartCooldownOnStart = false;
 	}
 };
 
@@ -100,7 +104,7 @@ struct FCastParams
 		bLockTargetAtStart = true;
 		bInterruptOnMove = true;
 		bPayCostOnStart = false;
-		bStartCooldownOnStart = true;
+		bStartCooldownOnStart = false;
 	}
 };
 
@@ -128,6 +132,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability System")
 	FText Description;
 	
+	/* How long will ability be unusable after successful cast? 0 means no cooldown. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability System")
 	float Cooldown;
 	

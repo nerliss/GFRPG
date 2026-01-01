@@ -26,6 +26,9 @@ public:
 
 protected:
 
+	UFUNCTION(BlueprintImplementableEvent, Category = "Character")
+	void BlueprintOnInitializeAnimationInstance();
+	
 	UPROPERTY(BlueprintReadOnly, Category = "Character")
 	ARPGPlayerCharacter* Character;
 

@@ -49,6 +49,8 @@ void URPGAnimInstance::NativeInitializeAnimation()
 	Super::NativeInitializeAnimation();
 
 	Character = Cast<ARPGPlayerCharacter>(TryGetPawnOwner());
+	
+	BlueprintOnInitializeAnimationInstance();
 }
 
 void URPGAnimInstance::NativeUpdateAnimation(float DeltaSeconds)

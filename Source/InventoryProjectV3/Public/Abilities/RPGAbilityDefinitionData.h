@@ -6,6 +6,7 @@
 #include "Engine/DataAsset.h"
 #include "RPGAbilityDefinitionData.generated.h"
 
+class URPGEffectDefinitionData;
 class ARPGProjectileBase;
 class URPGAbilityBase;
 class UParticleSystem;
@@ -164,6 +165,12 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Activation Mode", meta = (EditCondition = "ActivationMode == EAbilityActivationMode::AAM_Cast"))
 	FCastParams CastParams;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Effects")
+	TArray<URPGEffectDefinitionData*> EffectsToApplyOnTarget;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Effects")
+	TArray<URPGEffectDefinitionData*> EffectsToApplyOnSelf;
 	
 };
 

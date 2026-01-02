@@ -21,6 +21,8 @@ URPGAbilityDefinitionData::URPGAbilityDefinitionData()
 	TargetingFlow = EAbilityTargetingFlow::Instant;
 	ChannelParams = FChannelParams();
 	CastParams = FCastParams();
+	EffectsToApplyOnTarget = TArray<URPGEffectDefinitionData*>();
+	EffectsToApplyOnSelf = TArray<URPGEffectDefinitionData*>();
 }
 
 URPGSummonAbilityDefinitionData::URPGSummonAbilityDefinitionData()

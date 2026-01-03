@@ -110,7 +110,7 @@ struct FCastParams
 };
 
 /**
- * 
+ * Ability Definition Data base class. Allows the Ability System to be Data-driven. Creating a derived class basically means to create a new ability
  */
 UCLASS()
 class INVENTORYPROJECTV3_API URPGAbilityDefinitionData : public UPrimaryDataAsset

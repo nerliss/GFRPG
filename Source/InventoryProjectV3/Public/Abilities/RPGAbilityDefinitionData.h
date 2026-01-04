@@ -140,6 +140,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability System")
 	float Cost;
 	
+	/* How far TargetData for this ability can be gathered from? */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability System")
 	float CastRange;
 	

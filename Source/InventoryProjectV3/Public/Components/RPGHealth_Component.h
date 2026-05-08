@@ -1,4 +1,4 @@
-// Oleksandr Tkachov 2022-2025
+// Oleksandr Tkachov 2021-2026
 
 #pragma once
 
@@ -18,26 +18,30 @@ public:
 	
 	URPGHealth_Component();
 
+#if WITH_EDITORONLY_DATA
+	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health")
 	bool bDiedAlready;
-
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Health")
-	float GetCurrentHealth();
 
 	UFUNCTION(BlueprintCallable, Category = "Health")
 	void SetCurrentHealth(float NewHealth);
 
 	UFUNCTION(BlueprintCallable, Category = "Health")
-	void AddCurrentHealth(float HealthToAdd);
+	void ModifyCurrentHealth(float HealthToAdd);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Health")
-	float GetMaxHealth();
+	float GetMaxHealth() const { return MaxHealth; }
+	
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Health")
+	float GetCurrentHealth() const { return CurrentHealth; }
 
 	UFUNCTION(BlueprintCallable, Category = "Health")
 	void SetMaxHealth(float NewHealth);
 
 	UFUNCTION(BlueprintCallable, Category = "Health")
-	void AddMaxHealth(float HealthToAdd);
+	void ModifyMaxHealth(float HealthToAdd);
 
 	UPROPERTY(BlueprintCallable, Category = "Health")
 	FOnHealthChangedSignature OnHealthChanged;
@@ -49,14 +53,8 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Health")
 	float CurrentHealth;
-
-public:	
-
+	
 	virtual void OnRegister() override;
-
-#if WITH_EDITORONLY_DATA
-	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent) override;
-#endif
 
 	UFUNCTION()
 	void TakeDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);

@@ -1,4 +1,4 @@
-// Oleksandr Tkachov 2022-2025
+// Oleksandr Tkachov 2021-2026
 
 
 #include "Components/RPGReputation_Component.h"
@@ -19,11 +19,6 @@ URPGReputation_Component::URPGReputation_Component()
 void URPGReputation_Component::BeginPlay()
 {
 	Super::BeginPlay();	
-}
-
-void URPGReputation_Component::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
 void URPGReputation_Component::GetReputation(const TEnumAsByte<EFactions> FactionToGet, float& OutAmount,

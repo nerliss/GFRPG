@@ -1,4 +1,4 @@
-// Oleksandr Tkachov 2022-2026
+// Oleksandr Tkachov 2021-2026
 
 
 #include "Characters/RPGPlayerCharacter.h"
@@ -101,7 +101,7 @@ void ARPGPlayerCharacter::BeginPlay()
 	// TODO: Collapse to a function when more related variables are added
 	GetCharacterMovement()->MaxWalkSpeed = DefaultMaxWalkSpeed;
 
-	GetHealthComponent()->AddMaxHealth(GetStatsComponent()->Stamina); // TODO: Review this usage
+	GetHealthComponent()->ModifyMaxHealth(GetStatsComponent()->Stamina); // TODO: Review this usage
 	GetHealthComponent()->SetCurrentHealth(HPComp->GetMaxHealth());
 }
 

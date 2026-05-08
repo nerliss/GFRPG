@@ -1,4 +1,4 @@
-// Oleksandr Tkachov 2022-2025
+// Oleksandr Tkachov 2021-2026
 
 #pragma once
 
@@ -53,5 +53,4 @@ public:
 protected:
 
 	virtual void BeginPlay() override;
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 };

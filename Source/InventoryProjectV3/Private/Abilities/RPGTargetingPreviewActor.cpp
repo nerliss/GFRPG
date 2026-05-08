@@ -1,4 +1,4 @@
-// Oleksandr Tkachov 2022-2026
+// Oleksandr Tkachov 2021-2026
 
 
 #include "Abilities/RPGTargetingPreviewActor.h"

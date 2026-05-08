@@ -1,8 +1,7 @@
-// Oleksandr Tkachov 2022-2025
+// Oleksandr Tkachov 2021-2026
 
 
 #include "Components/RPGHealth_Component.h"
-#include "Utility//Utility.h"
 #include "Characters/RPGPlayerCharacter.h"
 
 URPGHealth_Component::URPGHealth_Component()
@@ -64,24 +63,14 @@ void URPGHealth_Component::TakeDamage(AActor* DamagedActor, float Damage, const 
 	}
 }
 
-float URPGHealth_Component::GetCurrentHealth()
-{
-	return CurrentHealth;
-}
-
 void URPGHealth_Component::SetCurrentHealth(float NewHealth)
 {
 	CurrentHealth = NewHealth;
 }
 
-void URPGHealth_Component::AddCurrentHealth(float HealthToAdd)
+void URPGHealth_Component::ModifyCurrentHealth(float HealthToAdd)
 {
 	CurrentHealth += HealthToAdd;
-}
-
-float URPGHealth_Component::GetMaxHealth()
-{
-	return MaxHealth;
 }
 
 void URPGHealth_Component::SetMaxHealth(float NewHealth)
@@ -89,7 +78,7 @@ void URPGHealth_Component::SetMaxHealth(float NewHealth)
 	MaxHealth = NewHealth;
 }
 
-void URPGHealth_Component::AddMaxHealth(float HealthToAdd)
+void URPGHealth_Component::ModifyMaxHealth(float HealthToAdd)
 {
 	MaxHealth += HealthToAdd;
 }

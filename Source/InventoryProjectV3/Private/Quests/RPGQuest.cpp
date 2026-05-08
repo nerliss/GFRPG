@@ -1,4 +1,4 @@
-// Oleksandr Tkachov 2022-2025
+// Oleksandr Tkachov 2021-2026
 
 
 #include "Quests/RPGQuest.h"
@@ -36,8 +36,6 @@ ARPGQuest::ARPGQuest()
 	QuestGiver = nullptr;
 	bCanBeTurnedInToSomeoneElse = false;
 	QuestTurnInTarget = nullptr;
-	PlayerRef = nullptr;
-	PCRef = nullptr;
 }
 
 void ARPGQuest::BeginPlay()

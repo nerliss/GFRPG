@@ -1,4 +1,4 @@
-// Oleksandr Tkachov 2022-2026
+// Oleksandr Tkachov 2021-2026
 
 
 #include "Abilities/RPGAbilityComponent.h"
@@ -6,7 +6,6 @@
 #include "Abilities/RPGAbilityBase.h"
 #include "Abilities/RPGAbilityDefinitionData.h"
 #include "Camera/CameraComponent.h"
-#include "Characters/RPGCharacter.h"
 #include "Characters/RPGPlayerCharacter.h"
 #include "GameFramework/SpringArmComponent.h"
 

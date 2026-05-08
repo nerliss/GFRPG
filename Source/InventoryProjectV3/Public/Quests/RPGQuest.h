@@ -1,4 +1,4 @@
-// Oleksandr Tkachov 2022-2025
+// Oleksandr Tkachov 2021-2026
 
 #pragma once
 
@@ -171,15 +171,6 @@ protected:
 	// TODO: Maybe use TSubclassOf<ARPGQuest> or TSoftObjectPtr/TSoftClassPtr?
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
 	ARPGQuest* Prerequisite;
-
-	// TODO: Never used these two below, probably will not use, so remove later
-	// TODO: Not sure if this is supposed to be a soft obj since player is always loaded
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
-	TSoftObjectPtr<ACharacter> PlayerRef;
-
-	// TODO: Not sure about soft obj
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
-	TSoftObjectPtr<ARPGPlayer_Controller> PCRef;
 
 private:
 

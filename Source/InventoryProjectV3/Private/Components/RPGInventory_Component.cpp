@@ -1,4 +1,4 @@
-// Oleksandr Tkachov 2022-2025
+// Oleksandr Tkachov 2021-2026
 
 
 #include "Components/RPGInventory_Component.h"
@@ -51,7 +51,6 @@ void URPGInventory_Component::TickComponent(float DeltaTime, ELevelTick TickType
 
 bool URPGInventory_Component::AddToInventory(FInventorySlot ContentToAdd)
 {
-	// Check if the item is stackable
 	if (ContentToAdd.Item.bStackable)
 	{
 		int32 StackSlotIndex = 0;
@@ -78,7 +77,6 @@ bool URPGInventory_Component::CreateStack(FInventorySlot ContentToAdd)
 	bool bHasEmptySlot = false;
 	int32 EmptySlotIndex = 0;
 
-	// Find first empty slot
 	for (int i = 0; i < Inventory.Num(); i++)
 	{
 		const FInventorySlot Slot = Inventory[i];
@@ -111,31 +109,24 @@ bool URPGInventory_Component::AddToStack(FInventorySlot ContentToAdd, int32 Slot
 	FInventorySlot& ExistingStack = Inventory[SlotIndex];
 	const int32 CurrentQuantity = ExistingStack.Quantity;
 
-	// Check if potential quantity exceeds max stack size
 	const bool bNeedToCreateAdditionalStack = (CurrentQuantity + ContentToAdd.Quantity) > ExistingStack.Item.MaxStackSize; 
 
 	if (bNeedToCreateAdditionalStack)
 	{
 		UE_LOG(LogRPGInventory, Log, TEXT("[RPGInventory_Component::AddToStack] Additional stack created for %s"), *ContentToAdd.Item.Name.ToString());
 
-		// Complete the existing stack
 		ExistingStack.Item = ContentToAdd.Item;
 		ExistingStack.Quantity = ContentToAdd.Item.MaxStackSize;
 
-		// Find out how many items are left to add and create a new stack with this new quantity
 		const int32 ItemsLeftToAdd = ContentToAdd.Quantity - (ContentToAdd.Item.MaxStackSize - CurrentQuantity);
 
 		FInventorySlot TemporarySlot;
 		TemporarySlot.Item = ContentToAdd.Item;
 		TemporarySlot.Quantity = ItemsLeftToAdd;
-
-		AddToInventory(TemporarySlot);
-
-		// MyTODO: figure out when and why should this function return false
-		return true;
+		
+		return AddToInventory(TemporarySlot);
 	}
 	
-	// Add to existing stack
 	ExistingStack.Quantity += ContentToAdd.Quantity;
 
 	UE_LOG(LogRPGInventory, Log, TEXT("[RPGInventory_Component::AddToStack] Item %s added without creating an additional stack"), *ContentToAdd.Item.Name.ToString());
@@ -244,11 +235,10 @@ void URPGInventory_Component::PrepareInventory()
 
 	for (int i = 0; i < Inventory.Num(); i++)
 	{
-		FInventorySlot Slot = Inventory[i];
+		FInventorySlot& Slot = Inventory[i];
 		const TSubclassOf<ARPGItem_Base> ItemClass = Slot.Item.Class;
 		if (!ItemClass)
 		{
-			// Item class is invalid
 			continue;
 		}
 
@@ -257,7 +247,6 @@ void URPGInventory_Component::PrepareInventory()
 		const ARPGItem_Base* ItemBaseCDO = ItemClass.GetDefaultObject();
 		if (!ItemBaseCDO)
 		{
-			// Item CDO is invalid
 			continue;
 		}
 
@@ -281,7 +270,6 @@ void URPGInventory_Component::ToggleInventory()
 		return;
 	}
 
-	// Close window if it already exists
 	if (InventoryWindowWidget)
 	{
 		InventoryWindowWidget->RemoveFromParent();
@@ -297,7 +285,6 @@ void URPGInventory_Component::ToggleInventory()
 	// Prepare inventory again in case we are opening not player's inventory (container, corpse etc.)
 	PrepareInventory();
 
-	// Create inventory window
 	InventoryWindowWidget = Cast<URPGInventory_Window_Widget>(CreateWidget(GetWorld(), InventoryWindowWidgetClass));
 	if (!InventoryWindowWidget)
 	{
@@ -310,11 +297,11 @@ void URPGInventory_Component::ToggleInventory()
 	PC->GetHUDWidget()->HUDCanvas->AddChildToCanvas(InventoryWindowWidget);
 
 	// This will probably get us the most recently-created slot (last slot)
+	// TODO: Investigate if there are better options to get this
 	const int32 LastSlot = PC->GetHUDWidget()->HUDCanvas->GetChildrenCount() - 1;
 
 	UCanvasPanelSlot* InventoryWindowSlot = CastChecked<UCanvasPanelSlot>(PC->GetHUDWidget()->HUDCanvas->GetSlots()[LastSlot]);
 
-	// Setup inventory window slot
 	InventoryWindowSlot->SetAutoSize(true);
 	InventoryWindowSlot->SetAlignment(Alignment);
 	InventoryWindowSlot->SetAnchors(Anchors);

@@ -71,3 +71,12 @@ URPGProjectileAbilityDefinitionData::URPGProjectileAbilityDefinitionData()
 {
 	ProjectileToSpawn = nullptr;
 }
+
+URPGModifyStatAbilityDefinitionData::URPGModifyStatAbilityDefinitionData()
+{
+	StatToModify = EAbilityStatToModifyType::Health;
+	StatModificationType = EStatModificationType::Percentage;
+	StatModificationOperation = EStatModificationOperation::Add;
+	AmountToModify = 1.f;
+	PercentageToModify = 10.f;
+}

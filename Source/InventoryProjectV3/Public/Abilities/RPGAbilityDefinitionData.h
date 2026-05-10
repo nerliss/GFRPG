@@ -41,6 +41,37 @@ enum class EAbilityInterruptReason : uint8
 	Max UMETA(Hidden)
 };
 
+UENUM(BlueprintType)
+enum class EAbilityStatToModifyType : uint8
+{
+	// TODO: Reuse from Stats system once that is implemented
+	Health,
+	Resource,
+	Strength,
+	Agility,
+	Intellect,
+	Damage,
+	XP,
+	Reputation,
+	Max UMETA(Hidden)
+};
+
+UENUM(BlueprintType)
+enum class EStatModificationType : uint8
+{
+	Flat,			// A flat number to modify a stat by (+50, -33 etc.)
+	Percentage,		// A percentage of that stat to modify it by (modify Health by 20% of that Max Health amount) 
+	Max UMETA(Hidden)
+};
+
+UENUM(BlueprintType)
+enum class EStatModificationOperation : uint8
+{
+	Add,			
+	Subtract,		
+	Max UMETA(Hidden)
+};
+
 USTRUCT(BlueprintType)
 struct FChannelParams
 {
@@ -229,3 +260,27 @@ public:
 	
 };
 
+UCLASS()
+class INVENTORYPROJECTV3_API URPGModifyStatAbilityDefinitionData : public URPGAbilityDefinitionData
+{
+	GENERATED_BODY()
+	
+public:
+	
+	URPGModifyStatAbilityDefinitionData();
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Modify Stat Data")
+	EAbilityStatToModifyType StatToModify;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Modify Stat Data")
+	EStatModificationType StatModificationType;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Modify Stat Data")
+	EStatModificationOperation StatModificationOperation;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Modify Stat Data", meta = (EditCondition = "StatModificationType == EStatModificationType::Flat"))
+	float AmountToModify;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Modify Stat Data", meta = (EditCondition = "StatModificationType == EStatModificationType::Percentage"))
+	float PercentageToModify;
+};

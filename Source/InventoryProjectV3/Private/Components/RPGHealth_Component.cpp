@@ -17,7 +17,6 @@ void URPGHealth_Component::OnRegister()
 {
 	Super::OnRegister();
 	
-	// Bind TakeDamage function to OnTakeAnyDamage event for owner 
 	AActor* Owner = GetOwner();
 	if (Owner)
 	{
@@ -37,7 +36,6 @@ void URPGHealth_Component::PostEditChangeProperty(struct FPropertyChangedEvent& 
 
 void URPGHealth_Component::TakeDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser)
 {
-	// If damage is invalid - ignore
 	if (Damage <= 0 || bDiedAlready)
 	{
 		return;
@@ -49,11 +47,11 @@ void URPGHealth_Component::TakeDamage(AActor* DamagedActor, float Damage, const 
 
 	SetCurrentHealth(ClampedNewHealth);
 
-	// MyTODO: Either bind some functionality to this delegate or remove it, right now nothing is bound
+	// TODO: Either bind some functionality to this delegate or remove it, right now nothing is bound
 	OnHealthChanged.Broadcast(this, ClampedNewHealth, Damage, DamageType, InstigatedBy, DamageCauser);
 
-	// MyTODO: Move death function to this component, redesign if needed
-	auto* Owner = Cast<ARPGPlayerCharacter>(GetOwner());
+	// TODO: Move death function to this component, redesign if needed
+	ARPGPlayerCharacter* Owner = Cast<ARPGPlayerCharacter>(GetOwner());
 	if (Owner)
 	{
 		if (GetCurrentHealth() <= 0)
@@ -70,7 +68,7 @@ void URPGHealth_Component::SetCurrentHealth(float NewHealth)
 
 void URPGHealth_Component::ModifyCurrentHealth(float HealthToAdd)
 {
-	CurrentHealth += HealthToAdd;
+	CurrentHealth = FMath::Clamp(CurrentHealth + HealthToAdd, 0.0f, MaxHealth);
 }
 
 void URPGHealth_Component::SetMaxHealth(float NewHealth)

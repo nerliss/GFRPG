@@ -17,7 +17,7 @@ URPGAbilityDefinitionData::URPGAbilityDefinitionData()
 	bDoGroundTrace = false;
 	GroundTraceDistance = 400.f;
 	ParticleSystem = nullptr;
-	ActivationMode = EAbilityActivationMode::AAM_Instant;
+	ActivationMode = EAbilityActivationMode::Instant;
 	TargetingFlow = EAbilityTargetingFlow::Instant;
 	ChannelParams = FChannelParams();
 	CastParams = FCastParams();
@@ -29,7 +29,7 @@ URPGSummonAbilityDefinitionData::URPGSummonAbilityDefinitionData()
 {
 	ActorToSpawn = nullptr;
 	PreviewMesh = nullptr;
-	ActivationMode = EAbilityActivationMode::AAM_Cast;
+	ActivationMode = EAbilityActivationMode::Cast;
 	TargetingFlow = EAbilityTargetingFlow::PreviewConfirm;
 }
 

@@ -15,11 +15,11 @@ class UTexture2D;
 UENUM(BlueprintType)
 enum class EAbilityActivationMode : uint8
 {
-	AAM_Instant			UMETA(DisplayName = "Instant"),
-	AAM_Toggle			UMETA(DisplayName = "Toggle"),
-	AAM_Channel			UMETA(DisplayName = "Channel"),
-	AAM_Cast			UMETA(DisplayName = "Cast"),
-	AAM_Max				UMETA(Hidden)
+	Instant			UMETA(DisplayName = "Instant"),
+	Toggle			UMETA(DisplayName = "Toggle"),
+	Channel			UMETA(DisplayName = "Channel"),
+	Cast			UMETA(DisplayName = "Cast"),
+	Max				UMETA(Hidden)
 };
 
 UENUM(BlueprintType)
@@ -192,10 +192,10 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Activation Mode")
 	EAbilityActivationMode ActivationMode;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Activation Mode", meta = (EditCondition = "ActivationMode == EAbilityActivationMode::AAM_Channel"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Activation Mode", meta = (EditCondition = "ActivationMode == EAbilityActivationMode::Channel"))
 	FChannelParams ChannelParams;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Activation Mode", meta = (EditCondition = "ActivationMode == EAbilityActivationMode::AAM_Cast"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Activation Mode", meta = (EditCondition = "ActivationMode == EAbilityActivationMode::Cast"))
 	FCastParams CastParams;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Effects")

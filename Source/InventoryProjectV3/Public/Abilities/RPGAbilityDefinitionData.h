@@ -115,19 +115,19 @@ struct FCastParams
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin="0.0"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Cast", meta=(ClampMin="0.0"))
 	float CastTime;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Cast")
 	bool bLockTargetAtStart;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Cast")
 	bool bInterruptOnMove;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Cast")
 	bool bPayCostOnStart;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Cast")
 	bool bStartCooldownOnStart;
 	
 	FCastParams()

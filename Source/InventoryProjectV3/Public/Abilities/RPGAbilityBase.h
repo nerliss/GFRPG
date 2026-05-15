@@ -31,4 +31,7 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Ability")
 	AActor* OwnerActor;
 	
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Ability")
+	float CooldownEndTime;
+	
 };

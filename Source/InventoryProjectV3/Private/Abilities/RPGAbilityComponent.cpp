@@ -13,6 +13,7 @@ URPGAbilityComponent::URPGAbilityComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
+	TemplateAbilityDefinitions.Empty();
 }
 
 void URPGAbilityComponent::BeginPlay()
@@ -118,4 +119,88 @@ FTimerHandle URPGAbilityComponent::SetTimerForCastAbility(URPGAbilityBase* Abili
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, AbilityCastTime, false);
 	
 	return TimerHandle;
+}
+
+float URPGAbilityComponent::GetCooldownRemainingForAbility(URPGAbilityBase* Ability) const
+{
+	if (!Ability)
+	{
+		return 0.0f;
+	}
+	
+	if (!Ability->AbilityDefinition)
+	{
+		return 0.0f;
+	}
+	
+	const float RemainingCooldown = FMath::Clamp(Ability->CooldownEndTime - GetWorld()->GetTimeSeconds(), 0.f, Ability->AbilityDefinition->Cooldown);
+	return RemainingCooldown;	
+}
+
+float URPGAbilityComponent::GetCooldownPercentForAbility(URPGAbilityBase* Ability) const
+{
+	if (!Ability)
+	{
+		return 0.0f;
+	}
+	
+	if (!Ability->AbilityDefinition)
+	{
+		return 0.0f;
+	}
+	
+	const float RemainingCooldownPercent = FMath::Clamp(FMath::Max(0, Ability->CooldownEndTime - GetWorld()->GetTimeSeconds()) / Ability->AbilityDefinition->Cooldown, 0.0f, 1.0f);
+	return RemainingCooldownPercent;
+}
+
+float URPGAbilityComponent::GetCooldownDurationForAbility(URPGAbilityBase* Ability) const
+{
+	if (!Ability)
+	{
+		return 0.0f;
+	}
+	
+	if (!Ability->AbilityDefinition)
+	{
+		return 0.0f;
+	}
+	
+	return Ability->AbilityDefinition->Cooldown;
+}
+
+bool URPGAbilityComponent::IsAbilityOnCooldown(URPGAbilityBase* Ability) const
+{
+	if (!Ability)
+	{
+		return false;
+	}
+	
+	return !FMath::IsNearlyEqual(GetCooldownRemainingForAbility(Ability), 0.f); 
+}
+
+void URPGAbilityComponent::AddAbility(URPGAbilityDefinitionData* NewAbilityDefinition)
+{
+	if (!NewAbilityDefinition)
+	{
+		return;
+	}
+	
+	if (!NewAbilityDefinition->AbilityClass)
+	{
+		return;
+	}
+	
+	TemplateAbilityDefinitions.Add(NewAbilityDefinition);
+	
+	URPGAbilityBase* NewAbility = NewObject<URPGAbilityBase>(this, NewAbilityDefinition->AbilityClass);
+	if (!NewAbility)
+	{
+		return;
+	}
+	
+	NewAbility->InitAbility(this, GetOwner(), NewAbilityDefinition);
+	
+	SpawnedAbilityDefinitions.Add(NewAbilityDefinition, NewAbility);
+	
+	OnAbilityAdded.Broadcast(NewAbilityDefinition);
 }

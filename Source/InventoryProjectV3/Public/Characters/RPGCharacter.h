@@ -34,6 +34,8 @@ public:
 
 	URPGQuestLogComponent* GetQuestLogComponent() const { return QuestLogComponent; }
 	URPGStatsComponent* GetStatsComponent() const { return StatsComponent; }
+	URPGAbilityComponent* GetAbilityComponent() const { return AbilityComponent; }
+	URPGPointOfInterestComponent* GetPointOfInterestComponent() const { return PointOfInterestComponent; }
 	
 	FText GetCharacterName() const { return CharacterName; }
 	

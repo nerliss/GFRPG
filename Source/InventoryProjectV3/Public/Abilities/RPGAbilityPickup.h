@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "RPGAbilityPickup.generated.h"
 
+class URPGAbilityDefinitionData;
 class USphereComponent;
 class UInterpToMovementComponent;
 class UStaticMeshComponent;
@@ -28,11 +29,21 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
 	UStaticMeshComponent* AbilityIconMeshComponent;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ability")
+	URPGAbilityDefinitionData* AbilityDefinition;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability")
+	UMaterialInterface* AbilityIconMeshMaterial;
+	
 protected:
 	
 	virtual void BeginPlay() override;
 	
 	UFUNCTION()
 	void OnSphereComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+	
+private:
+	
+	void CreateAbilityIconMeshDynamicMaterial();
 	
 };

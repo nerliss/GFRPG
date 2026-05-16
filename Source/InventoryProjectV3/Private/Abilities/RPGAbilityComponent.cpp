@@ -3,7 +3,7 @@
 
 #include "Abilities/RPGAbilityComponent.h"
 
-#include "Abilities/RPGAbilityBase.h"
+#include "Abilities/Archetypes/RPGAbilityBase.h"
 #include "Abilities/RPGAbilityDefinitionData.h"
 #include "Camera/CameraComponent.h"
 #include "Characters/RPGPlayerCharacter.h"

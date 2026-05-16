@@ -78,27 +78,27 @@ const ARPGPlayerCharacter* URPGXPBar_Widget::GetPlayerReference()
 
 const float URPGXPBar_Widget::GetCurrentXP()
 {
-	return GetPlayerReference() ? PlayerRef->XPComp->GetXP_Current() : -1.f;
+	return GetPlayerReference() ? PlayerRef->XPComp->GetCurrentXP() : -1.f;
 }
 
 const float URPGXPBar_Widget::GetMaxXP()
 {
-	return GetPlayerReference() ? PlayerRef->XPComp->GetXP_Current_Max() : -1.f;
+	return GetPlayerReference() ? PlayerRef->XPComp->GetCurrentMaxXP() : -1.f;
 }
 
 const int32 URPGXPBar_Widget::GetCurrentLevel()
 {
-	return GetPlayerReference() ? PlayerRef->XPComp->GetLevelCurrent() : -1;
+	return GetPlayerReference() ? PlayerRef->XPComp->GetCurrentLevel() : -1;
 }
 
 const float URPGXPBar_Widget::GetCurrentPercentageBuffer()
 {
-	return GetPlayerReference() ? PlayerRef->XPComp->GetCurrentPercentage_Buffer() : -1.f;
+	return GetPlayerReference() ? PlayerRef->XPComp->GetCurrentPercentageBuffer() : -1.f;
 }
 
 const float URPGXPBar_Widget::GetCurrentPercentageXP()
 {
-	return GetPlayerReference() ? PlayerRef->XPComp->GetCurrentPercentage_XP() : -1.f;
+	return GetPlayerReference() ? PlayerRef->XPComp->GetCurrentXPPercentage() : -1.f;
 }
 
 const void URPGXPBar_Widget::GetExperience(float& OutCurrentExperience, float& OutMaxExperience)

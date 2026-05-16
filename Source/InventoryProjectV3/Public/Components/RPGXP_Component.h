@@ -38,17 +38,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "XP|Functions")
 	float CalculateXPReward(bool bQuestReward, float Multiplier = 1.f);
 
-	float GetXP_Current();
-
-	float GetXP_Current_Max();
-
-	float GetCurrentPercentage_XP();
-
-	float GetCurrentPercentage_Buffer();
-
-	int32 GetSkillPoints();
-
-	int32 GetLevelCurrent();
+	float GetCurrentXP() const { return XP_Current; }
+	float GetCurrentMaxXP() const { return XP_Current_Max; } 
+	float GetCurrentXPPercentage() const { return CurrentPercentage_XP; }
+	float GetCurrentPercentageBuffer() const { return CurrentPercentage_Buffer; }
+	
+	int32 GetCurrentLevel() const { return Level_Current; }
+	int32 GetSkillPoints() const { return SkillPoints; }
 
 	/** Create an instance of OnLevelGained event */
 	UPROPERTY(BlueprintAssignable, Category = "Events")

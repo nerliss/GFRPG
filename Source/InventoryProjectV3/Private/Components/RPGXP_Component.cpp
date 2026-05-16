@@ -128,33 +128,3 @@ float URPGXP_Component::CalculateXPReward(bool bQuestReward, float Multiplier)
 		return XP_Current_Max * 0.033 * Multiplier; // Kills (and maybe something else) award 3.3% of required XP
 	}
 }
-
-float URPGXP_Component::GetXP_Current()
-{
-	return XP_Current;
-}
-
-float URPGXP_Component::GetXP_Current_Max()
-{
-	return XP_Current_Max;
-}
-
-float URPGXP_Component::GetCurrentPercentage_XP()
-{
-	return CurrentPercentage_XP;
-}
-
-float URPGXP_Component::GetCurrentPercentage_Buffer()
-{
-	return CurrentPercentage_Buffer;
-}
-
-int32 URPGXP_Component::GetSkillPoints()
-{
-	return SkillPoints;
-}
-
-int32 URPGXP_Component::GetLevelCurrent()
-{
-	return Level_Current;
-}

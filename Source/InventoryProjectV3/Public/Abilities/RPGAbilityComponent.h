@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "RPGAbilityDefinitionData.h"
 #include "Components/ActorComponent.h"
 #include "RPGAbilityComponent.generated.h"
 
@@ -44,6 +45,13 @@ struct FRPGTargetData
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAbilityCooldownStarted, URPGAbilityBase*, Ability);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAbilityCooldownEnded, URPGAbilityBase*, Ability);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAbilityAdded, URPGAbilityDefinitionData*, AbilityDefinition);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAbilityUsed, URPGAbilityBase*, Ability);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAbilityChannelStarted, URPGAbilityBase*, Ability);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAbilityChannelStopped, URPGAbilityBase*, Ability, EAbilityInterruptReason, Reason);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAbilityToggled, URPGAbilityBase*, Ability, bool, bToggled);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAbilityTargetingPreviewStarted, URPGAbilityBase*, Ability);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAbilityTargetingPreviewConfirmed, URPGAbilityBase*, Ability);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAbilityTargetingPreviewCanceled, URPGAbilityBase*, Ability);
 
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class INVENTORYPROJECTV3_API URPGAbilityComponent : public UActorComponent
@@ -96,6 +104,27 @@ public:
 	
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnAbilityAdded OnAbilityAdded;
+	
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnAbilityUsed OnAbilityUsed;
+	
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnAbilityChannelStarted OnAbilityChannelStarted;
+	
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnAbilityChannelStopped OnAbilityChannelStopped;
+	
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnAbilityToggled OnAbilityToggled;
+	
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnAbilityTargetingPreviewStarted OnAbilityTargetingPreviewStarted;
+	
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnAbilityTargetingPreviewConfirmed OnAbilityTargetingPreviewConfirmed;
+	
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnAbilityTargetingPreviewCanceled OnAbilityTargetingPreviewCanceled;
 	
 	// TODO: Change property params later on to be more read only
 	/* Abilities to spawn from. Literally a set of abilities that will be spawned upon starting a game for specific component*/

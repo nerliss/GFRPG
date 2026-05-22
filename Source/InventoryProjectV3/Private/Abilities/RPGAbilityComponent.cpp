@@ -168,6 +168,123 @@ float URPGAbilityComponent::GetCooldownDurationForAbility(URPGAbilityBase* Abili
 	return Ability->AbilityDefinition->Cooldown;
 }
 
+TArray<FHitResult> URPGAbilityComponent::QuerySphereTargets(FVector SweepStart, FVector SweepEnd, float SweepRadius)
+{
+	TArray<FHitResult> HitResults;
+	
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(GetOwner());
+	
+	GetWorld()->SweepMultiByChannel(HitResults, SweepStart, SweepEnd, FQuat::Identity, ECC_Visibility, FCollisionShape::MakeSphere(SweepRadius), Params);
+	return HitResults;
+}
+
+FHitResult URPGAbilityComponent::QueryLinetrace(FVector Start, FVector End)
+{
+	FHitResult HitResult;
+	
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(GetOwner());
+	
+	GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params);
+	return HitResult;
+}
+
+void URPGAbilityComponent::StartChannel(URPGAbilityBase* Ability, FRPGTargetData TargetData)
+{
+}
+
+void URPGAbilityComponent::UpdateChannels()
+{
+}
+
+void URPGAbilityComponent::StopChannel(URPGAbilityBase* Ability, EAbilityInterruptReason Reason)
+{
+}
+
+bool URPGAbilityComponent::HasActiveAbilities() const
+{
+	return false;
+}
+
+float URPGAbilityComponent::GetChannelDurationPercentForAbility(URPGAbilityBase* Ability) const
+{
+	return 0.f;
+}
+
+float URPGAbilityComponent::GetChannelRemainingTimeForAbility(URPGAbilityBase* Ability) const
+{
+	return 0.f;
+}
+
+void URPGAbilityComponent::StartCast(URPGAbilityBase* Ability, FRPGTargetData TargetData)
+{
+}
+
+void URPGAbilityComponent::FinishCast(URPGAbilityBase* Ability, FRPGTargetData TargetData)
+{
+}
+
+void URPGAbilityComponent::InterruptCast(URPGAbilityBase* Ability, EAbilityInterruptReason Reason,
+	FRPGTargetData TargetData)
+{
+}
+
+float URPGAbilityComponent::GetCastDurationPercentForAbility(URPGAbilityBase* Ability) const
+{
+	return 0.f;
+}
+
+float URPGAbilityComponent::GetCastRemainingTimeForAbility(URPGAbilityBase* Ability) const
+{
+	return 0.f;
+}
+
+void URPGAbilityComponent::StartToggle(URPGAbilityBase* Ability, FRPGTargetData TargetData)
+{
+}
+
+void URPGAbilityComponent::StopToggle(URPGAbilityBase* Ability, FRPGTargetData TargetData)
+{
+}
+
+void URPGAbilityComponent::BeginTargetingPreview(URPGAbilityBase* Ability)
+{
+}
+
+void URPGAbilityComponent::UpdateTargetingPreview()
+{
+}
+
+void URPGAbilityComponent::CancelTargetingPreview()
+{
+}
+
+void URPGAbilityComponent::ConfirmTargetingPreview()
+{
+}
+
+void URPGAbilityComponent::SpawnPreviewActor(URPGAbilitySummon* SummonAbility)
+{
+}
+
+AActor* URPGAbilityComponent::SpawnSummonActor(TSubclassOf<AActor> ClassToSpawn, FTransform SpawnTransform)
+{
+	return nullptr;
+}
+
+void URPGAbilityComponent::TryUsingAbility(int32 AbilityArrayIndex)
+{
+}
+
+void URPGAbilityComponent::TryInterruptingActiveAbilities()
+{
+}
+
+void URPGAbilityComponent::StartCooldown(URPGAbilityBase* Ability)
+{
+}
+
 bool URPGAbilityComponent::IsAbilityOnCooldown(URPGAbilityBase* Ability) const
 {
 	if (!Ability)

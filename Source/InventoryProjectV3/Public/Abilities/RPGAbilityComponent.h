@@ -8,6 +8,7 @@
 #include "RPGAbilityComponent.generated.h"
 
 
+class URPGAbilitySummon;
 class URPGAbilityBase;
 class URPGAbilityDefinitionData;
 
@@ -89,6 +90,79 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	float GetCooldownDurationForAbility(URPGAbilityBase* Ability) const;
+	
+	UFUNCTION(BlueprintCallable)
+	TArray<FHitResult> QuerySphereTargets(FVector SweepStart, FVector SweepEnd, float SweepRadius);
+	
+	UFUNCTION(BlueprintCallable)
+	FHitResult QueryLinetrace(FVector Start, FVector End);
+	
+	UFUNCTION(BlueprintCallable)
+	void StartChannel(URPGAbilityBase* Ability, FRPGTargetData TargetData);
+	
+	UFUNCTION(BlueprintCallable)
+	void UpdateChannels();
+	
+	UFUNCTION(BlueprintCallable)
+	void StopChannel(URPGAbilityBase* Ability, EAbilityInterruptReason Reason);
+	
+	UFUNCTION(BlueprintCallable)
+	bool HasActiveAbilities() const;
+	
+	UFUNCTION(BlueprintCallable)
+	float GetChannelDurationPercentForAbility(URPGAbilityBase* Ability) const;
+	
+	UFUNCTION(BlueprintCallable)
+	float GetChannelRemainingTimeForAbility(URPGAbilityBase* Ability) const;
+	
+	UFUNCTION(BlueprintCallable)
+	void StartCast(URPGAbilityBase* Ability, FRPGTargetData TargetData);
+	
+	UFUNCTION(BlueprintCallable)
+	void FinishCast(URPGAbilityBase* Ability, FRPGTargetData TargetData);
+	
+	UFUNCTION(BlueprintCallable)
+	void InterruptCast(URPGAbilityBase* Ability, EAbilityInterruptReason Reason, FRPGTargetData TargetData);
+	
+	UFUNCTION(BlueprintCallable)
+	float GetCastDurationPercentForAbility(URPGAbilityBase* Ability) const;
+	
+	UFUNCTION(BlueprintCallable)
+	float GetCastRemainingTimeForAbility(URPGAbilityBase* Ability) const;
+	
+	UFUNCTION(BlueprintCallable)
+	void StartToggle(URPGAbilityBase* Ability, FRPGTargetData TargetData);
+	
+	UFUNCTION(BlueprintCallable)
+	void StopToggle(URPGAbilityBase* Ability, FRPGTargetData TargetData);
+
+	UFUNCTION(BlueprintCallable)
+	void BeginTargetingPreview(URPGAbilityBase* Ability);
+	
+	UFUNCTION(BlueprintCallable)
+	void UpdateTargetingPreview();
+	
+	UFUNCTION(BlueprintCallable)
+	void CancelTargetingPreview();
+	
+	UFUNCTION(BlueprintCallable)
+	void ConfirmTargetingPreview();
+	
+	// TODO: Review params
+	UFUNCTION(BlueprintCallable)
+	void SpawnPreviewActor(URPGAbilitySummon* SummonAbility);
+	
+	UFUNCTION(BlueprintCallable)
+	AActor* SpawnSummonActor(TSubclassOf<AActor> ClassToSpawn, FTransform SpawnTransform);
+	
+	UFUNCTION(BlueprintCallable)
+	void TryUsingAbility(int32 AbilityArrayIndex);
+	
+	UFUNCTION(BlueprintCallable)
+	void TryInterruptingActiveAbilities();
+	
+	UFUNCTION(BlueprintCallable)
+	void StartCooldown(URPGAbilityBase* Ability);
 	
 	UFUNCTION(BlueprintCallable)
 	bool IsAbilityOnCooldown(URPGAbilityBase* Ability) const;

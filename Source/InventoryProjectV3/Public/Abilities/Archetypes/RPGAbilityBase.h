@@ -21,6 +21,7 @@ public:
 	virtual void InitAbility(URPGAbilityComponent* FromAbilityComponent, AActor* FromOwnerActor, URPGAbilityDefinitionData* FromAbilityDefinitionData);
 	virtual bool CanUseAbility();
 	virtual bool UseAbility(FRPGTargetData& TargetData); 
+	virtual URPGAbilityDefinitionData* GetAbilityDefinition() const { return AbilityDefinition; }
 	
 	// Channeling
 	virtual void OnChannelStart(FRPGTargetData& TargetData);

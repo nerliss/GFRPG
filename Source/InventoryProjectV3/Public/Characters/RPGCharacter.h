@@ -39,6 +39,9 @@ public:
 	
 	FText GetCharacterName() const { return CharacterName; }
 	
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Movement")
+	FOnCharacterMoved OnCharacterMoved;
+	
 protected:
 
 	virtual void BeginPlay() override;
@@ -64,6 +67,4 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
 	URPGAbilityComponent* AbilityComponent;
 	
-	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Movement")
-	FOnCharacterMoved OnCharacterMoved;
 };

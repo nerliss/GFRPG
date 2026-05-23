@@ -8,17 +8,31 @@
 #include "Camera/CameraComponent.h"
 #include "Characters/RPGPlayerCharacter.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Utility/LogDefinitions.h"
+#include "Utility/Utility.h"
 
 URPGAbilityComponent::URPGAbilityComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
 	TemplateAbilityDefinitions.Empty();
+	SpawnedAbilityDefinitions.Empty();
+	ActiveAbilityUpdateTimer = FTimerHandle();
+	ActiveChannels.Empty();
+	ActiveCast = nullptr;
 }
 
 void URPGAbilityComponent::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	InitAbilities();
+	
+	auto RPGCharacter = Cast<ARPGCharacter>(GetOwner());
+	if (RPGCharacter)
+	{
+		RPGCharacter->OnCharacterMoved.AddDynamic(this, &URPGAbilityComponent::OnOwnerCharacterMoved);
+	}
 }
 
 void URPGAbilityComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -72,6 +86,13 @@ void URPGAbilityComponent::TraceForTargetData(const float InTraceLength, URPGAbi
 	UE_LOG(LogTemp, Log, TEXT("TargetData.HitLocation = %s, TargetData.TraceEnd = %s, EndLoc = %s"), *OutTargetData.HitResult.Location.ToString(), *OutTargetData.HitResult.TraceEnd.ToString(), *EndLoc.ToString());
 }
 
+FRPGTargetData URPGAbilityComponent::TraceForTargetData(const float InTraceLength, URPGAbilityBase* Ability)
+{
+	FRPGTargetData TargetData;
+	TraceForTargetData(InTraceLength, Ability, TargetData);
+	return TargetData;
+}
+
 void URPGAbilityComponent::SetTimerForAbilityCooldownExpiration(URPGAbilityBase* Ability)
 {
 	if (!Ability)
@@ -79,12 +100,12 @@ void URPGAbilityComponent::SetTimerForAbilityCooldownExpiration(URPGAbilityBase*
 		return;
 	}
 	
-	if (!Ability->AbilityDefinition)
+	if (!Ability->GetAbilityDefinition())
 	{
 		return;
 	}
 	
-	const float AbilityCooldown = Ability->AbilityDefinition->Cooldown;
+	const float AbilityCooldown = Ability->GetAbilityDefinition()->Cooldown;
 	
 	FTimerDelegate TimerDelegate;
 	TimerDelegate.BindUFunction(this, FName("OnCooldownTimerExpired"), Ability);
@@ -105,12 +126,12 @@ FTimerHandle URPGAbilityComponent::SetTimerForCastAbility(URPGAbilityBase* Abili
 		return FTimerHandle();
 	}
 	
-	if (!Ability->AbilityDefinition)
+	if (!Ability->GetAbilityDefinition())
 	{
 		return FTimerHandle();
 	}
 	
-	const float AbilityCastTime = Ability->AbilityDefinition->CastParams.CastTime;
+	const float AbilityCastTime = Ability->GetAbilityDefinition()->CastParams.CastTime;
 	
 	FTimerDelegate TimerDelegate;
 	TimerDelegate.BindUFunction(this, FName("OnCastFinished"), Ability, TargetData);
@@ -128,12 +149,12 @@ float URPGAbilityComponent::GetCooldownRemainingForAbility(URPGAbilityBase* Abil
 		return 0.0f;
 	}
 	
-	if (!Ability->AbilityDefinition)
+	if (!Ability->GetAbilityDefinition())
 	{
 		return 0.0f;
 	}
 	
-	const float RemainingCooldown = FMath::Clamp(Ability->CooldownEndTime - GetWorld()->GetTimeSeconds(), 0.f, Ability->AbilityDefinition->Cooldown);
+	const float RemainingCooldown = FMath::Clamp(Ability->CooldownEndTime - GetWorld()->GetTimeSeconds(), 0.f, Ability->GetAbilityDefinition()->Cooldown);
 	return RemainingCooldown;	
 }
 
@@ -144,12 +165,12 @@ float URPGAbilityComponent::GetCooldownPercentForAbility(URPGAbilityBase* Abilit
 		return 0.0f;
 	}
 	
-	if (!Ability->AbilityDefinition)
+	if (!Ability->GetAbilityDefinition())
 	{
 		return 0.0f;
 	}
 	
-	const float RemainingCooldownPercent = FMath::Clamp(FMath::Max(0, Ability->CooldownEndTime - GetWorld()->GetTimeSeconds()) / Ability->AbilityDefinition->Cooldown, 0.0f, 1.0f);
+	const float RemainingCooldownPercent = FMath::Clamp(FMath::Max(0, Ability->CooldownEndTime - GetWorld()->GetTimeSeconds()) / Ability->GetAbilityDefinition()->Cooldown, 0.0f, 1.0f);
 	return RemainingCooldownPercent;
 }
 
@@ -160,12 +181,12 @@ float URPGAbilityComponent::GetCooldownDurationForAbility(URPGAbilityBase* Abili
 		return 0.0f;
 	}
 	
-	if (!Ability->AbilityDefinition)
+	if (!Ability->GetAbilityDefinition())
 	{
 		return 0.0f;
 	}
 	
-	return Ability->AbilityDefinition->Cooldown;
+	return Ability->GetAbilityDefinition()->Cooldown;
 }
 
 TArray<FHitResult> URPGAbilityComponent::QuerySphereTargets(FVector SweepStart, FVector SweepEnd, float SweepRadius)
@@ -192,19 +213,111 @@ FHitResult URPGAbilityComponent::QueryLinetrace(FVector Start, FVector End)
 
 void URPGAbilityComponent::StartChannel(URPGAbilityBase* Ability, FRPGTargetData TargetData)
 {
+	if (!Ability)
+	{
+		return;
+	}
+	
+	const URPGAbilityDefinitionData* AbilityDefinition = Ability->GetAbilityDefinition();
+	if (!AbilityDefinition)
+	{
+		return;
+	}
+	
+	const FChannelParams ChannelParams = AbilityDefinition->ChannelParams;
+	
+	Ability->bIsChanneling = true;
+	Ability->ChannelEndTime = GetWorld()->GetTimeSeconds() + ChannelParams.ChannelDuration;
+	Ability->ChannelTickPeriod = ChannelParams.TickPeriod;
+	Ability->NextTickTime = ChannelParams.bTickOnStart ? GetWorld()->GetTimeSeconds() : GetWorld()->GetTimeSeconds() + ChannelParams.TickPeriod;
+	Ability->ActiveAbilityTargetData = TargetData;
+	Ability->bTickOnStart = ChannelParams.bTickOnStart;
+	Ability->bRequiresHold = ChannelParams.bRequiresButtonHold;
+	Ability->bUpdateTargetEachTick = ChannelParams.bUpdateTargetEachTick;
+	Ability->bInterruptOnMove = ChannelParams.bInterruptOnMove;
+	
+	ActiveChannels.Add(Ability);
+	
+	Ability->OnChannelStart(TargetData);
+	
+	if (Ability->bTickOnStart)
+	{
+		UpdateChannels();
+	}
+	
+	GetWorld()->GetTimerManager().SetTimer(ActiveAbilityUpdateTimer, this, &URPGAbilityComponent::UpdateChannels, Ability->ChannelTickPeriod, true);
+	
+	OnAbilityChannelStarted.Broadcast(Ability);
 }
 
 void URPGAbilityComponent::UpdateChannels()
 {
+	if (ActiveChannels.Num() <= 0)
+	{
+		LOG_WITH_FUNCTION_NAME(LogRPGAbilitySystem, Error, TEXT("ActiveChannels is empty, function will not be executed"));
+		return;
+	}
+	
+	// TODO: Test this out since I might have messed up the loop flow :|
+	for (int i = ActiveChannels.Num() - 1; i >= 0; i--)
+	{
+		URPGAbilityBase*& ActiveChannel = ActiveChannels[i];
+		if (!ActiveChannel || !ActiveChannel->GetAbilityDefinition())
+		{
+			// TODO: We might want to add this ability's index removal from ActiveChannel in case if it's not valid somewhere down the line
+			// though this should not happen
+			StopChannel(ActiveChannel, EAbilityInterruptReason::Interrupt);
+			continue;
+		}
+		
+		if (GetWorld()->GetTimeSeconds() >= ActiveChannel->NextTickTime)
+		{
+			if (ActiveChannel->bUpdateTargetEachTick)
+			{
+				ActiveChannel->ActiveAbilityTargetData = TraceForTargetData(ActiveChannel->GetAbilityDefinition()->CastRange, ActiveChannel);
+			}
+			
+			ActiveChannel->OnChannelTick(ActiveChannel->ActiveAbilityTargetData);
+			ActiveChannel->NextTickTime += ActiveChannel->ChannelTickPeriod;
+			
+			if (GetWorld()->GetTimeSeconds() >= ActiveChannel->ChannelEndTime)
+			{
+				StopChannel(ActiveChannel, EAbilityInterruptReason::DurationEnd);
+			}
+		}
+		else
+		{
+			StopChannel(ActiveChannel, EAbilityInterruptReason::DurationEnd);
+		}
+	}
 }
 
 void URPGAbilityComponent::StopChannel(URPGAbilityBase* Ability, EAbilityInterruptReason Reason)
 {
+	if (!Ability)
+	{
+		return;
+	}
+	
+	if (!Ability->bIsChanneling)
+	{
+		return;
+	}
+	
+	Ability->bIsChanneling = false;
+	
+	ActiveChannels.Remove(Ability);
+	
+	Ability->OnChannelEnd(Ability->ActiveAbilityTargetData, Reason);
+	
+	GetWorld()->GetTimerManager().ClearTimer(ActiveAbilityUpdateTimer);
+	
+	OnAbilityChannelStopped.Broadcast(Ability, Reason);
 }
 
 bool URPGAbilityComponent::HasActiveAbilities() const
 {
-	return false;
+	return ActiveChannels.Num() > 0 || ActiveCast;
 }
 
 float URPGAbilityComponent::GetChannelDurationPercentForAbility(URPGAbilityBase* Ability) const
@@ -302,22 +415,46 @@ void URPGAbilityComponent::AddAbility(URPGAbilityDefinitionData* NewAbilityDefin
 		return;
 	}
 	
-	if (!NewAbilityDefinition->AbilityClass)
-	{
-		return;
-	}
-	
 	TemplateAbilityDefinitions.Add(NewAbilityDefinition);
 	
-	URPGAbilityBase* NewAbility = NewObject<URPGAbilityBase>(this, NewAbilityDefinition->AbilityClass);
-	if (!NewAbility)
-	{
-		return;
-	}
-	
-	NewAbility->InitAbility(this, GetOwner(), NewAbilityDefinition);
-	
-	SpawnedAbilityDefinitions.Add(NewAbilityDefinition, NewAbility);
+	SpawnAbilityObject(NewAbilityDefinition);
 	
 	OnAbilityAdded.Broadcast(NewAbilityDefinition);
+}
+
+void URPGAbilityComponent::InitAbilities()
+{
+	for (URPGAbilityDefinitionData* TemplateAbilityDefinition : TemplateAbilityDefinitions)
+	{
+		if (!TemplateAbilityDefinition)
+		{
+			continue;
+		}
+		
+		SpawnAbilityObject(TemplateAbilityDefinition);
+	}
+}
+
+URPGAbilityBase* URPGAbilityComponent::SpawnAbilityObject(URPGAbilityDefinitionData* AbilityDefinition)
+{
+	if (!AbilityDefinition || !AbilityDefinition->AbilityClass)
+	{
+		return nullptr;
+	}
+	
+	URPGAbilityBase* NewAbility = NewObject<URPGAbilityBase>(this, AbilityDefinition->AbilityClass);
+	if (!NewAbility)
+	{
+		return nullptr;
+	}
+		
+	NewAbility->InitAbility(this, GetOwner(), AbilityDefinition);
+	SpawnedAbilityDefinitions.Add(AbilityDefinition, NewAbility);
+	
+	return NewAbility;
+}
+
+void URPGAbilityComponent::OnOwnerCharacterMoved()
+{
+	TryInterruptingActiveAbilities();
 }

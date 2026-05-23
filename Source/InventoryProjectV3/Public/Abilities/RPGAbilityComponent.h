@@ -68,6 +68,7 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Trace")
 	void TraceForTargetData(const float InTraceLength, URPGAbilityBase* Ability, FRPGTargetData& OutTargetData);
+	FRPGTargetData TraceForTargetData(const float InTraceLength, URPGAbilityBase* Ability);
 	
 	UFUNCTION(BlueprintCallable)
 	void SetTimerForAbilityCooldownExpiration(URPGAbilityBase* Ability);	
@@ -170,6 +171,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AddAbility(URPGAbilityDefinitionData* NewAbilityDefinition);
 	
+	UFUNCTION(BlueprintCallable)
+	void InitAbilities();
+	
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnAbilityCooldownStarted OnAbilityCooldownStarted;
 	
@@ -208,5 +212,22 @@ public:
 	/* Spawned abilities for this component, mapped to a spawned object */
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
 	TMap<URPGAbilityDefinitionData*, URPGAbilityBase*> SpawnedAbilityDefinitions;
+	
+	// TODO: Not sure that we need to have multiple channels, since a cast can only be one, why several channels then?
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	TArray<URPGAbilityBase*> ActiveChannels;
+	
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	URPGAbilityBase* ActiveCast;
+	
+	UPROPERTY()
+	FTimerHandle ActiveAbilityUpdateTimer;
+	
+private:
+	
+	URPGAbilityBase* SpawnAbilityObject(URPGAbilityDefinitionData* AbilityDefinition);
+	
+	UFUNCTION()
+	void OnOwnerCharacterMoved();
 	
 };

@@ -387,7 +387,12 @@ void URPGAbilityComponent::StartCast(URPGAbilityBase* Ability, FRPGTargetData Ta
 	
 	Ability->OnCastStart(TargetData);
 	
-	ActiveAbilityUpdateTimer = SetTimerForCastAbility(Ability, TargetData);
+	FTimerDelegate TimerDelegate;
+	TimerDelegate.BindUFunction(this, FName("FinishCast"), Ability,  Ability->bLockTargetAtCastStart ? TargetData : TraceForTargetData(AbilityDefinition->CastRange, Ability));
+	
+	//FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(ActiveAbilityUpdateTimer, TimerDelegate, CastParams.CastTime, false);
+	//ActiveAbilityUpdateTimer = SetTimerForCastAbility(Ability, TargetData);
 	
 	OnAbilityChannelStarted.Broadcast(Ability);
 }

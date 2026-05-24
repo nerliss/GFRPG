@@ -80,6 +80,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FTimerHandle SetTimerForCastAbility(URPGAbilityBase* Ability, FRPGTargetData TargetData);
 	
+	// TODO: Might need to remove this function since it was created for bypassing blueprints limitation
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnCastFinished(URPGAbilityBase* Ability, FRPGTargetData TargetData);
 	

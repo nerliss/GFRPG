@@ -185,6 +185,17 @@ public:
 
 	void OnMapScreenToggled();
 	
+	void OnActionBarPressed(int32 AbilityActionBarIndex);
+	
+	template<int32 SlotIndex>
+	void OnActionBarPressed()
+	{
+		OnActionBarPressed(SlotIndex);
+	}
+	
+	void OnConfirmTargetingPreview();
+	void OnCancelTargetingPreview();
+	
 protected:
 
 	void OnForwardMoved(float Value);

@@ -63,7 +63,7 @@ bool URPGAbilityBase::CanUseAbility()
 	}
 }
 
-bool URPGAbilityBase::UseAbility(FRPGTargetData& TargetData)
+bool URPGAbilityBase::UseAbility(FRPGTargetData TargetData)
 {
 	if (!AbilityComponent)
 	{
@@ -89,62 +89,62 @@ bool URPGAbilityBase::UseAbility(FRPGTargetData& TargetData)
 	return true;
 }
 
-void URPGAbilityBase::OnChannelStart(FRPGTargetData& TargetData)
+void URPGAbilityBase::OnChannelStart(FRPGTargetData TargetData)
 {
 	LOG_WITH_FUNCTION_NAME(LogRPGAbilitySystem, Warning, TEXT("Base implementation used"));
 }
 
-void URPGAbilityBase::OnChannelTick(FRPGTargetData& TargetData)
+void URPGAbilityBase::OnChannelTick(FRPGTargetData TargetData)
 {
 	LOG_WITH_FUNCTION_NAME(LogRPGAbilitySystem, Warning, TEXT("Base implementation used"));
 }
 
-void URPGAbilityBase::OnChannelEnd(FRPGTargetData& TargetData, EAbilityInterruptReason Reason)
+void URPGAbilityBase::OnChannelEnd(FRPGTargetData TargetData, EAbilityInterruptReason Reason)
 {
 	LOG_WITH_FUNCTION_NAME(LogRPGAbilitySystem, Warning, TEXT("Base implementation used"));
 }
 
-void URPGAbilityBase::OnCastStart(FRPGTargetData& TargetData)
+void URPGAbilityBase::OnCastStart(FRPGTargetData TargetData)
 {
 	LOG_WITH_FUNCTION_NAME(LogRPGAbilitySystem, Warning, TEXT("Base implementation used"));
 }
 
-void URPGAbilityBase::OnCastComplete(FRPGTargetData& TargetData)
+void URPGAbilityBase::OnCastComplete(FRPGTargetData TargetData)
 {
 	LOG_WITH_FUNCTION_NAME(LogRPGAbilitySystem, Warning, TEXT("Base implementation used"));
 }
 
-void URPGAbilityBase::OnCastInterrupted(FRPGTargetData& TargetData, EAbilityInterruptReason Reason)
+void URPGAbilityBase::OnCastInterrupted(FRPGTargetData TargetData, EAbilityInterruptReason Reason)
 {
 	LOG_WITH_FUNCTION_NAME(LogRPGAbilitySystem, Warning, TEXT("Base implementation used"));
 }
 
-void URPGAbilityBase::OnToggleStarted(FRPGTargetData& TargetData)
+void URPGAbilityBase::OnToggleStarted(FRPGTargetData TargetData)
 {
 	LOG_WITH_FUNCTION_NAME(LogRPGAbilitySystem, Warning, TEXT("Base implementation used"));
 }
 
-void URPGAbilityBase::OnToggleEnded(FRPGTargetData& TargetData)
+void URPGAbilityBase::OnToggleEnded(FRPGTargetData TargetData)
 {
 	LOG_WITH_FUNCTION_NAME(LogRPGAbilitySystem, Warning, TEXT("Base implementation used"));
 }
 
-void URPGAbilityBase::OnTargetingPreviewStarted(FRPGTargetData& TargetData)
+void URPGAbilityBase::OnTargetingPreviewStarted(FRPGTargetData TargetData)
 {
 	LOG_WITH_FUNCTION_NAME(LogRPGAbilitySystem, Warning, TEXT("Base implementation used"));
 }
 
-void URPGAbilityBase::OnTargetingPreviewUpdated(FRPGTargetData& TargetData)
+void URPGAbilityBase::OnTargetingPreviewUpdated(FRPGTargetData TargetData)
 {
 	LOG_WITH_FUNCTION_NAME(LogRPGAbilitySystem, Warning, TEXT("Base implementation used"));
 }
 
-void URPGAbilityBase::OnTargetingPreviewConfirmed(FRPGTargetData& TargetData)
+void URPGAbilityBase::OnTargetingPreviewConfirmed(FRPGTargetData TargetData)
 {
 	LOG_WITH_FUNCTION_NAME(LogRPGAbilitySystem, Warning, TEXT("Base implementation used"));
 }
 
-void URPGAbilityBase::OnTargetingPreviewCanceled(FRPGTargetData& TargetData)
+void URPGAbilityBase::OnTargetingPreviewCanceled(FRPGTargetData TargetData)
 {
 	LOG_WITH_FUNCTION_NAME(LogRPGAbilitySystem, Warning, TEXT("Base implementation used"));
 }

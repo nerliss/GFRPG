@@ -14,7 +14,7 @@ void URPGAbilityModifyStat::InitAbility(URPGAbilityComponent* FromAbilityCompone
 	ModifyStatAbilityDefinitionData = Cast<URPGModifyStatAbilityDefinitionData>(FromAbilityDefinitionData);
 }
 
-bool URPGAbilityModifyStat::UseAbility(FRPGTargetData& TargetData)
+bool URPGAbilityModifyStat::UseAbility(FRPGTargetData TargetData)
 {
 	if (!Super::UseAbility(TargetData))
 	{
@@ -76,7 +76,7 @@ bool URPGAbilityModifyStat::UseAbility(FRPGTargetData& TargetData)
 	}
 }
 
-void URPGAbilityModifyStat::OnCastComplete(FRPGTargetData& TargetData)
+void URPGAbilityModifyStat::OnCastComplete(FRPGTargetData TargetData)
 {
 	UseAbility(TargetData);
 }

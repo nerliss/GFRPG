@@ -8,6 +8,7 @@
 #include "RPGAbilityComponent.generated.h"
 
 
+class ARPGTargetingPreviewActor;
 class URPGAbilitySummon;
 class URPGAbilityBase;
 class URPGAbilityDefinitionData;
@@ -222,6 +223,30 @@ public:
 	
 	UPROPERTY()
 	FTimerHandle ActiveAbilityUpdateTimer;
+	
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	bool bIsInTargetingPreview;
+	
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	URPGAbilityBase* PendingAbility;
+	
+	UPROPERTY()
+	FTimerHandle TargetingPreviewTimer;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Targeting Preview")
+	float TargetingPreviewUpdateRate;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Targeting Preview")
+	TSubclassOf<ARPGTargetingPreviewActor> TargetingPreviewActorClass;
+	
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	FRPGTargetData TargetingPreviewTargetData;
+	
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	ARPGTargetingPreviewActor* TargetingPreviewActor;
+	
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	TArray<UMaterialInstanceDynamic*> TargetingPreviewActorMIDs; 
 	
 private:
 	

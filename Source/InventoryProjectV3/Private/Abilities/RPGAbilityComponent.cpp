@@ -5,6 +5,8 @@
 
 #include "Abilities/Archetypes/RPGAbilityBase.h"
 #include "Abilities/RPGAbilityDefinitionData.h"
+#include "Abilities/RPGTargetingPreviewActor.h"
+#include "Abilities/Archetypes/RPGAbilitySummon.h"
 #include "Camera/CameraComponent.h"
 #include "Characters/RPGPlayerCharacter.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -20,6 +22,11 @@ URPGAbilityComponent::URPGAbilityComponent()
 	ActiveAbilityUpdateTimer = FTimerHandle();
 	ActiveChannels.Empty();
 	ActiveCast = nullptr;
+	bIsInTargetingPreview = false;
+	PendingAbility = nullptr;
+	TargetingPreviewTimer = FTimerHandle();
+	TargetingPreviewUpdateRate = 0.1f;
+	TargetingPreviewActorClass = nullptr;
 }
 
 void URPGAbilityComponent::BeginPlay()
@@ -28,7 +35,7 @@ void URPGAbilityComponent::BeginPlay()
 	
 	InitAbilities();
 	
-	auto RPGCharacter = Cast<ARPGCharacter>(GetOwner());
+	ARPGCharacter* RPGCharacter = Cast<ARPGCharacter>(GetOwner());
 	if (RPGCharacter)
 	{
 		RPGCharacter->OnCharacterMoved.AddDynamic(this, &URPGAbilityComponent::OnOwnerCharacterMoved);
@@ -454,47 +461,364 @@ float URPGAbilityComponent::GetCastRemainingTimeForAbility(URPGAbilityBase* Abil
 
 void URPGAbilityComponent::StartToggle(URPGAbilityBase* Ability, FRPGTargetData TargetData)
 {
+	if (!Ability)
+	{
+		return;
+	}
+	
+	Ability->OnToggleStarted(TargetData);
+	
+	Ability->bIsToggled = true;
+	
+	OnAbilityToggled.Broadcast(Ability, true);
 }
 
 void URPGAbilityComponent::StopToggle(URPGAbilityBase* Ability, FRPGTargetData TargetData)
 {
+	if (!Ability)
+	{
+		return;
+	}
+	
+	Ability->OnToggleEnded(TargetData);
+	
+	Ability->bIsToggled = false;
+	
+	OnAbilityToggled.Broadcast(Ability, false);
 }
 
 void URPGAbilityComponent::BeginTargetingPreview(URPGAbilityBase* Ability)
 {
+	if (!Ability)
+	{
+		return;
+	}
+	
+	if (!Ability->GetAbilityDefinition())
+	{
+		return;
+	}
+	
+	bIsInTargetingPreview = true;
+	
+	PendingAbility = Ability;
+	
+	Ability->OnTargetingPreviewStarted(TraceForTargetData(Ability->GetAbilityDefinition()->CastRange, Ability));
+	
+	GetWorld()->GetTimerManager().SetTimer(TargetingPreviewTimer, this, &URPGAbilityComponent::UpdateTargetingPreview, TargetingPreviewUpdateRate, true);
+	
+	OnAbilityTargetingPreviewStarted.Broadcast(Ability);
 }
 
 void URPGAbilityComponent::UpdateTargetingPreview()
 {
+	if (!PendingAbility)
+	{
+		return;
+	}
+	
+	if (!PendingAbility->GetAbilityDefinition())
+	{
+		return;
+	}
+	
+	FRPGTargetData TargetData;
+	TraceForTargetData(PendingAbility->GetAbilityDefinition()->CastRange, PendingAbility, TargetData);
+	
+	if (!TargetData.HitResult.bBlockingHit)
+	{
+		CancelTargetingPreview();
+		return;
+	}
+	
+	TargetingPreviewTargetData = TargetData;
+	PendingAbility->OnTargetingPreviewUpdated(TargetingPreviewTargetData);
 }
 
 void URPGAbilityComponent::CancelTargetingPreview()
 {
+	if (!bIsInTargetingPreview)
+	{
+		return;
+	}
+	
+	if (!PendingAbility)
+	{
+		return;
+	}
+	
+	PendingAbility->OnTargetingPreviewCanceled(TargetingPreviewTargetData);
+	OnAbilityTargetingPreviewCanceled.Broadcast(PendingAbility);
+	
+	bIsInTargetingPreview = false;
+	PendingAbility = nullptr;
+	GetWorld()->GetTimerManager().ClearTimer(TargetingPreviewTimer);
 }
 
 void URPGAbilityComponent::ConfirmTargetingPreview()
 {
+	if (!bIsInTargetingPreview)
+	{
+		return;
+	}
+	
+	if (!PendingAbility)
+	{
+		return;
+	}
+	
+	if (!PendingAbility->GetAbilityDefinition())
+	{
+		return;
+	}
+	
+	PendingAbility->OnTargetingPreviewConfirmed(TargetingPreviewTargetData);
+	OnAbilityTargetingPreviewConfirmed.Broadcast(PendingAbility);
+
+	switch (PendingAbility->GetAbilityDefinition()->ActivationMode)
+	{
+	case EAbilityActivationMode::Cast:
+		{
+			// TODO: Incomplete logic
+			StartCast(PendingAbility, TargetingPreviewTargetData);
+			
+			bIsInTargetingPreview = false;
+			
+			GetWorld()->GetTimerManager().ClearTimer(TargetingPreviewTimer);
+			
+			PendingAbility = nullptr;
+			break;
+		}
+	case EAbilityActivationMode::Channel:
+		{
+			break;
+		}
+	case EAbilityActivationMode::Instant:
+		{
+			PendingAbility->UseAbility(TargetingPreviewTargetData);
+			
+			StartCooldown(PendingAbility);
+			
+			bIsInTargetingPreview = false;
+			
+			GetWorld()->GetTimerManager().ClearTimer(TargetingPreviewTimer);
+			
+			TargetingPreviewActor->Destroy();
+			TargetingPreviewActor = nullptr;
+			
+			TargetingPreviewActorMIDs.Empty();
+			
+			PendingAbility = nullptr;
+			break;
+		}
+	case EAbilityActivationMode::Toggle:
+		{
+			break;	
+		}
+		default:
+		break;
+	}
+	
 }
 
 void URPGAbilityComponent::SpawnPreviewActor(URPGAbilitySummon* SummonAbility)
 {
+	if (!SummonAbility)
+	{
+		return;
+	}
+	
+	URPGSummonAbilityDefinitionData* SummonAbilityDefinitionData = SummonAbility->GetAbilityDefinition();
+	if (!SummonAbilityDefinitionData)
+	{
+		return;
+	}
+	
+	if (!TargetingPreviewActorClass)
+	{
+		LOG_WITH_FUNCTION_NAME(LogRPGAbilitySystem, Error, TEXT("Can't spawn preview actor since TargetingPreviewActorClass is null"));
+		return;
+	}
+	
+	if (TargetingPreviewActor)
+	{
+		LOG_WITH_FUNCTION_NAME(LogRPGAbilitySystem, Error, TEXT("Failed to spawn a preview actor for ability %s since TargetingPreviewActor already exists (%s)"), *SummonAbility->GetName(), *TargetingPreviewActor->GetName());
+		return;
+	}
+	
+	FRPGTargetData TargetData = TraceForTargetData(SummonAbilityDefinitionData->CastRange, SummonAbility);
+	
+	FTransform SpawnTransform;
+	SpawnTransform.SetLocation(TargetData.HitResult.Location);
+	
+	TargetingPreviewActor = GetWorld()->SpawnActor<ARPGTargetingPreviewActor>(TargetingPreviewActorClass, SpawnTransform);
+	if (!TargetingPreviewActor)
+	{
+		LOG_WITH_FUNCTION_NAME(LogRPGAbilitySystem, Error, TEXT("Failed to spawn a preview actor for ability %s. Possible reason - TargetingPreviewActorClass is not set (%s)"), *SummonAbility->GetName(), *GetNameSafe(TargetingPreviewActorClass));
+		return;
+	}
+	
+	USkeletalMeshComponent* SkeletalMeshComponent = TargetingPreviewActor->SkeletalMesh;
+	if (!SkeletalMeshComponent)
+	{
+		return;
+	}
+	
+	SkeletalMeshComponent->SetSkeletalMesh(SummonAbilityDefinitionData->PreviewMesh);
+	SkeletalMeshComponent->SetRelativeScale3D(SummonAbilityDefinitionData->SpawnScale);
+	SkeletalMeshComponent->SetAnimInstanceClass(SummonAbilityDefinitionData->PreviewAnimClass);
+	
+	for (int i = 0; i < SkeletalMeshComponent->GetNumMaterials(); i++)
+	{
+		TargetingPreviewActorMIDs.Add(SkeletalMeshComponent->CreateDynamicMaterialInstance(i, SummonAbilityDefinitionData->PreviewMaterial));
+	}
 }
 
 AActor* URPGAbilityComponent::SpawnSummonActor(TSubclassOf<AActor> ClassToSpawn, FTransform SpawnTransform)
 {
-	return nullptr;
+	if (!ClassToSpawn)
+	{
+		return nullptr;
+	}
+	
+	return GetWorld()->SpawnActor<AActor>(ClassToSpawn, SpawnTransform);
 }
 
 void URPGAbilityComponent::TryUsingAbility(int32 AbilityArrayIndex)
 {
+	TArray<URPGAbilityBase*> SpawnedAbilities;
+	SpawnedAbilityDefinitions.GenerateValueArray(SpawnedAbilities);
+	
+	if (!SpawnedAbilities.IsValidIndex(AbilityArrayIndex))
+	{
+		return;
+	}
+	
+	URPGAbilityBase*& Ability = SpawnedAbilities[AbilityArrayIndex];
+	if (!Ability)
+	{
+		return;
+	}
+	
+	const URPGAbilityDefinitionData* AbilityDefinitionData = Ability->GetAbilityDefinition();
+	if (!AbilityDefinitionData)
+	{
+		return;
+	}
+	
+	if (!Ability->CanUseAbility())
+	{
+		return;
+	}
+
+	switch (AbilityDefinitionData->TargetingFlow)
+	{
+	case EAbilityTargetingFlow::Instant:
+		{
+			const FRPGTargetData TargetData = TraceForTargetData(AbilityDefinitionData->CastRange, Ability);
+
+			switch (AbilityDefinitionData->ActivationMode)
+			{
+			case EAbilityActivationMode::Instant:
+				{
+					Ability->UseAbility(TargetData);
+					break;
+				}
+			case EAbilityActivationMode::Toggle:
+				{
+					if (Ability->bIsToggled)
+					{
+						StopToggle(Ability, TargetData);
+					}
+					else
+					{
+						StartToggle(Ability, TargetData);
+						
+						// We don't want to start a cd when toggling an ability 
+						OnAbilityUsed.Broadcast(Ability);
+						return;
+					}
+					break;
+				}
+			case EAbilityActivationMode::Channel:
+				{
+					StartChannel(Ability, TargetData);
+					break;
+				}
+			case EAbilityActivationMode::Cast:
+				{
+					StartCast(Ability, TargetData);
+					break;
+				}
+				default:
+				break;
+			}
+			
+			StartCooldown(Ability);
+			OnAbilityUsed.Broadcast(Ability);
+			
+			break;
+		}
+	case EAbilityTargetingFlow::PreviewConfirm:
+		{
+			BeginTargetingPreview(Ability);
+			break;
+		}
+	case EAbilityTargetingFlow::HoldRelease:
+		{
+			// TODO: Implement
+			break;
+		}
+		default:
+		break;
+	}
 }
 
 void URPGAbilityComponent::TryInterruptingActiveAbilities()
 {
+	if (!HasActiveAbilities())
+	{
+		return;
+	}
+	
+	for (URPGAbilityBase* ActiveChannel : ActiveChannels)
+	{
+		if (!ActiveChannel)
+		{
+			continue;
+		}
+		
+		// TODO: Add possible reasons here
+		if (ActiveChannel->bInterruptOnMove)
+		{
+			StopChannel(ActiveChannel, EAbilityInterruptReason::Moved);
+		}
+	}
+	
+	if (ActiveCast && ActiveCast->bInterruptOnMove)
+	{
+		InterruptCast(ActiveCast, EAbilityInterruptReason::Moved, ActiveCast->ActiveAbilityTargetData);
+	}
 }
 
 void URPGAbilityComponent::StartCooldown(URPGAbilityBase* Ability)
 {
+	if (!Ability)
+	{
+		return;
+	}
+	
+	if (!Ability->GetAbilityDefinition())
+	{
+		return;
+	}
+	
+	Ability->CooldownEndTime = GetWorld()->GetTimeSeconds() + Ability->GetAbilityDefinition()->Cooldown;
+	
+	OnAbilityCooldownStarted.Broadcast(Ability);
+	
+	// TODO: In blueprints it is stated that this function should be removed upon moving the logic to C++. Investigate
+	SetTimerForAbilityCooldownExpiration(Ability);
 }
 
 bool URPGAbilityComponent::IsAbilityOnCooldown(URPGAbilityBase* Ability) const

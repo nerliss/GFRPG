@@ -20,28 +20,28 @@ public:
 
 	virtual void InitAbility(URPGAbilityComponent* FromAbilityComponent, AActor* FromOwnerActor, URPGAbilityDefinitionData* FromAbilityDefinitionData);
 	virtual bool CanUseAbility();
-	virtual bool UseAbility(FRPGTargetData& TargetData); 
+	virtual bool UseAbility(FRPGTargetData TargetData); 
 	virtual URPGAbilityDefinitionData* GetAbilityDefinition() const { return AbilityDefinition; }
 	
 	// Channeling
-	virtual void OnChannelStart(FRPGTargetData& TargetData);
-	virtual void OnChannelTick(FRPGTargetData& TargetData);
-	virtual void OnChannelEnd(FRPGTargetData& TargetData, EAbilityInterruptReason Reason);
+	virtual void OnChannelStart(FRPGTargetData TargetData);
+	virtual void OnChannelTick(FRPGTargetData TargetData);
+	virtual void OnChannelEnd(FRPGTargetData TargetData, EAbilityInterruptReason Reason);
 	
 	// Casting
-	virtual void OnCastStart(FRPGTargetData& TargetData);
-	virtual void OnCastComplete(FRPGTargetData& TargetData);
-	virtual void OnCastInterrupted(FRPGTargetData& TargetData, EAbilityInterruptReason Reason);
+	virtual void OnCastStart(FRPGTargetData TargetData);
+	virtual void OnCastComplete(FRPGTargetData TargetData);
+	virtual void OnCastInterrupted(FRPGTargetData TargetData, EAbilityInterruptReason Reason);
 	
 	// Toggling
-	virtual void OnToggleStarted(FRPGTargetData& TargetData);
-	virtual void OnToggleEnded(FRPGTargetData& TargetData);
+	virtual void OnToggleStarted(FRPGTargetData TargetData);
+	virtual void OnToggleEnded(FRPGTargetData TargetData);
 	
 	// Preview Targeting (used when EAbilityTargetingFlow::PreviewConfirm)
-	virtual void OnTargetingPreviewStarted(FRPGTargetData& TargetData);
-	virtual void OnTargetingPreviewUpdated(FRPGTargetData& TargetData);
-	virtual void OnTargetingPreviewConfirmed(FRPGTargetData& TargetData);
-	virtual void OnTargetingPreviewCanceled(FRPGTargetData& TargetData);
+	virtual void OnTargetingPreviewStarted(FRPGTargetData TargetData);
+	virtual void OnTargetingPreviewUpdated(FRPGTargetData TargetData);
+	virtual void OnTargetingPreviewConfirmed(FRPGTargetData TargetData);
+	virtual void OnTargetingPreviewCanceled(FRPGTargetData TargetData);
 	
 	// TODO: Implement EAbilityTargetingFlow::HoldRelease
 	

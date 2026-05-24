@@ -17,8 +17,8 @@ class INVENTORYPROJECTV3_API URPGAbilityModifyStat : public URPGAbilityBase
 public:
 	
 	virtual void InitAbility(URPGAbilityComponent* FromAbilityComponent, AActor* FromOwnerActor, URPGAbilityDefinitionData* FromAbilityDefinitionData) override;
-	virtual bool UseAbility(FRPGTargetData& TargetData) override;
-	virtual void OnCastComplete(FRPGTargetData& TargetData) override;
+	virtual bool UseAbility(FRPGTargetData TargetData) override;
+	virtual void OnCastComplete(FRPGTargetData TargetData) override;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	URPGModifyStatAbilityDefinitionData* ModifyStatAbilityDefinitionData;

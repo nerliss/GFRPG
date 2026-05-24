@@ -127,6 +127,19 @@ void ARPGPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	PlayerInputComponent->BindAction("ToggleQuestLog", IE_Pressed, this, &ARPGPlayerCharacter::OnQuestLogToggled);
 	PlayerInputComponent->BindAction("StealthToggle", IE_Pressed, this, &ARPGPlayerCharacter::OnStealthPressed);
 	PlayerInputComponent->BindAction("ToggleMapScreen", IE_Pressed, this, &ARPGPlayerCharacter::OnMapScreenToggled);
+	
+	PlayerInputComponent->BindAction("ActionBar1", IE_Pressed, this, &ARPGPlayerCharacter::OnActionBarPressed<0>);
+	PlayerInputComponent->BindAction("ActionBar2", IE_Pressed, this, &ARPGPlayerCharacter::OnActionBarPressed<1>);
+	PlayerInputComponent->BindAction("ActionBar3", IE_Pressed, this, &ARPGPlayerCharacter::OnActionBarPressed<2>);
+	PlayerInputComponent->BindAction("ActionBar4", IE_Pressed, this, &ARPGPlayerCharacter::OnActionBarPressed<3>);
+	PlayerInputComponent->BindAction("ActionBar5", IE_Pressed, this, &ARPGPlayerCharacter::OnActionBarPressed<4>);
+	PlayerInputComponent->BindAction("ActionBar6", IE_Pressed, this, &ARPGPlayerCharacter::OnActionBarPressed<5>);
+	PlayerInputComponent->BindAction("ActionBar7", IE_Pressed, this, &ARPGPlayerCharacter::OnActionBarPressed<6>);
+	PlayerInputComponent->BindAction("ActionBar8", IE_Pressed, this, &ARPGPlayerCharacter::OnActionBarPressed<7>);
+	PlayerInputComponent->BindAction("ActionBar9", IE_Pressed, this, &ARPGPlayerCharacter::OnActionBarPressed<8>);
+	PlayerInputComponent->BindAction("ActionBar10", IE_Pressed, this, &ARPGPlayerCharacter::OnActionBarPressed<9>);
+	PlayerInputComponent->BindAction("ConfirmTargetingPreview", IE_Pressed, this, &ARPGPlayerCharacter::OnConfirmTargetingPreview);
+	PlayerInputComponent->BindAction("CancelTargetingPreview", IE_Pressed, this, &ARPGPlayerCharacter::OnCancelTargetingPreview);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &ARPGPlayerCharacter::OnForwardMoved);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ARPGPlayerCharacter::OnRightMoved);
@@ -491,6 +504,36 @@ void ARPGPlayerCharacter::OnMapScreenToggled()
 	{
 		MapSubsystem->ToggleMapScreen();
 	}
+}
+
+void ARPGPlayerCharacter::OnActionBarPressed(int32 AbilityActionBarIndex)
+{
+	if (!AbilityComponent)
+	{
+		return;
+	}
+	
+	AbilityComponent->TryUsingAbility(AbilityActionBarIndex);
+}
+
+void ARPGPlayerCharacter::OnConfirmTargetingPreview()
+{
+	if (!AbilityComponent)
+	{
+		return;
+	}
+	
+	AbilityComponent->ConfirmTargetingPreview();
+}
+
+void ARPGPlayerCharacter::OnCancelTargetingPreview()
+{
+	if (!AbilityComponent)
+	{
+		return;
+	}
+	
+	AbilityComponent->CancelTargetingPreview();
 }
 
 void ARPGPlayerCharacter::LoadLastCharacterModel()

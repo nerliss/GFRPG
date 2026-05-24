@@ -14,4 +14,13 @@ class INVENTORYPROJECTV3_API URPGAbilitySummon : public URPGAbilityBase
 {
 	GENERATED_BODY()
 	
+public:
+	
+	virtual void InitAbility(URPGAbilityComponent* FromAbilityComponent, AActor* FromOwnerActor, URPGAbilityDefinitionData* FromAbilityDefinitionData) override;
+	virtual bool UseAbility(FRPGTargetData TargetData) override;
+	virtual void OnCastComplete(FRPGTargetData TargetData) override;
+	virtual URPGSummonAbilityDefinitionData* GetAbilityDefinition() const override { return SummonAbilityDefinitionData; }
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	URPGSummonAbilityDefinitionData* SummonAbilityDefinitionData;
 };

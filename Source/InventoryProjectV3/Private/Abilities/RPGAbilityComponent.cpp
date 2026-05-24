@@ -322,35 +322,134 @@ bool URPGAbilityComponent::HasActiveAbilities() const
 
 float URPGAbilityComponent::GetChannelDurationPercentForAbility(URPGAbilityBase* Ability) const
 {
-	return 0.f;
+	if (!Ability)
+	{
+		return 0.f;
+	}
+	
+	const URPGAbilityDefinitionData* AbilityDefinition = Ability->GetAbilityDefinition();
+	if (!AbilityDefinition)
+	{
+		return 0.f;
+	}
+	
+	return FMath::Clamp(FMath::Max(0.f, Ability->ChannelEndTime - GetWorld()->GetTimeSeconds()) / AbilityDefinition->ChannelParams.ChannelDuration, 0.f, 1.f); 
 }
 
 float URPGAbilityComponent::GetChannelRemainingTimeForAbility(URPGAbilityBase* Ability) const
 {
-	return 0.f;
+	if (!Ability)
+	{
+		return 0.f;
+	}
+	
+	const URPGAbilityDefinitionData* AbilityDefinition = Ability->GetAbilityDefinition();
+	if (!AbilityDefinition)
+	{
+		return 0.f;
+	}
+	
+	return FMath::Clamp(Ability->ChannelEndTime - GetWorld()->GetTimeSeconds(), 0.f, AbilityDefinition->ChannelParams.ChannelDuration);
 }
 
 void URPGAbilityComponent::StartCast(URPGAbilityBase* Ability, FRPGTargetData TargetData)
 {
+	if (!Ability)
+	{
+		return;
+	}
+	
+	const URPGAbilityDefinitionData* AbilityDefinition = Ability->GetAbilityDefinition();
+	if (!AbilityDefinition)
+	{
+		return;
+	}
+	
+	const FCastParams CastParams = AbilityDefinition->CastParams;
+	
+	ActiveCast = Ability;
+	
+	Ability->ActiveAbilityTargetData = TargetData;
+	Ability->bInterruptOnMove = CastParams.bInterruptOnMove;
+	Ability->bIsCasting = true;
+	Ability->CastStartTime = GetWorld()->GetTimeSeconds();
+	Ability->CastEndTime = GetWorld()->GetTimeSeconds() + CastParams.CastTime;
+	Ability->bLockTargetAtCastStart = CastParams.bLockTargetAtStart;
+	Ability->bPayCostOnStart = CastParams.bPayCostOnStart;
+	Ability->bStartCooldownOnStart = CastParams.bStartCooldownOnStart;
+	
+	Ability->OnCastStart(TargetData);
+	
+	ActiveAbilityUpdateTimer = SetTimerForCastAbility(Ability, TargetData);
+	
+	OnAbilityChannelStarted.Broadcast(Ability);
 }
 
 void URPGAbilityComponent::FinishCast(URPGAbilityBase* Ability, FRPGTargetData TargetData)
 {
+	if (!Ability)
+	{
+		return;
+	}
+	
+	Ability->OnCastComplete(TargetData);
+	
+	Ability->bIsCasting = false;
+	
+	ActiveCast = nullptr;
+	
+	OnAbilityChannelStopped.Broadcast(Ability, EAbilityInterruptReason::DurationEnd);
 }
 
 void URPGAbilityComponent::InterruptCast(URPGAbilityBase* Ability, EAbilityInterruptReason Reason,
 	FRPGTargetData TargetData)
 {
+	if (!Ability)
+	{
+		return;
+	}
+	
+	Ability->OnCastInterrupted(TargetData, Reason);
+	
+	Ability->bIsCasting = false;
+	
+	ActiveCast = nullptr;
+	
+	GetWorld()->GetTimerManager().ClearTimer(ActiveAbilityUpdateTimer);
+	
+	OnAbilityChannelStopped.Broadcast(Ability, Reason);
 }
 
 float URPGAbilityComponent::GetCastDurationPercentForAbility(URPGAbilityBase* Ability) const
 {
-	return 0.f;
+	if (!Ability)
+	{
+		return 0.f;
+	}
+	
+	const URPGAbilityDefinitionData* AbilityDefinition = Ability->GetAbilityDefinition();
+	if (!AbilityDefinition)
+	{
+		return 0.f;
+	}
+	
+	return FMath::Clamp(FMath::Max(0.f, Ability->CastEndTime - GetWorld()->GetTimeSeconds()) / AbilityDefinition->CastParams.CastTime, 0.f, 1.f);
 }
 
 float URPGAbilityComponent::GetCastRemainingTimeForAbility(URPGAbilityBase* Ability) const
 {
-	return 0.f;
+	if (!Ability)
+	{
+		return 0.f;
+	}
+	
+	const URPGAbilityDefinitionData* AbilityDefinition = Ability->GetAbilityDefinition();
+	if (!AbilityDefinition)
+	{
+		return 0.f;
+	}
+	
+	return FMath::Clamp(Ability->CastEndTime - GetWorld()->GetTimeSeconds(), 0.f, AbilityDefinition->CastParams.CastTime);
 }
 
 void URPGAbilityComponent::StartToggle(URPGAbilityBase* Ability, FRPGTargetData TargetData)

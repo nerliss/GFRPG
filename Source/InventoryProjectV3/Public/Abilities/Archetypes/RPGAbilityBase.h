@@ -98,6 +98,12 @@ public:
 	bool bLockTargetAtCastStart;
 	
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Ability")
+	bool bPayCostOnStart;
+	
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Ability")
+	bool bStartCooldownOnStart;
+	
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Ability")
 	bool bIsToggled;
 	
 };

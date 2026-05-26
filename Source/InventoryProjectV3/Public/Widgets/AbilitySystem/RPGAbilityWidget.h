@@ -53,10 +53,10 @@ public:
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
 	UTextBlock* HotkeyText;
 	
-	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
-	UWidgetAnimation* CooldownFinished;
+	UPROPERTY(Transient, meta=(BindWidgetAnim))
+	TObjectPtr<UWidgetAnimation> CooldownFinished;
 	
-	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
+	UPROPERTY(Transient, meta=(BindWidgetAnim))
 	UWidgetAnimation* AbilityUsed;
 	
 	UPROPERTY(BlueprintReadOnly)

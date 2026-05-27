@@ -65,7 +65,7 @@ public:
 	URPGAbilityComponent* AbilityComponent;
 	
 	UPROPERTY(BlueprintReadOnly)
-	TArray<URPGAbilityDefinitionData*> AbilityDefinitions;
+	TMap<URPGAbilityDefinitionData*, URPGAbilityBase*> AbilityDefinitions;
 	
 	UPROPERTY(BlueprintReadOnly)
 	TMap<URPGAbilityDefinitionData*, URPGAbilityWidget*> AbilityDefinitionsSlots;

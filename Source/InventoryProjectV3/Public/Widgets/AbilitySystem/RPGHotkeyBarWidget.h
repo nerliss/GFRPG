@@ -70,4 +70,7 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	TMap<URPGAbilityDefinitionData*, URPGAbilityWidget*> AbilityDefinitionsSlots;
 	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability")
+	TSubclassOf<URPGAbilityWidget> AbilityWidgetClass;
+	
 };

@@ -6,6 +6,11 @@
 #include "Abilities/Archetypes/RPGAbilityBase.h"
 #include "Components/GridPanel.h"
 #include "Components/Overlay.h"
+#include "Components/TextBlock.h"
+#include "GameFramework/InputSettings.h"
+#include "Interfaces/IPluginManager.h"
+#include "Utility/LogDefinitions.h"
+#include "Utility/Utility.h"
 #include "Widgets/AbilitySystem/RPGAbilityWidget.h"
 
 void URPGHotkeyBarWidget::NativeConstruct()
@@ -38,14 +43,123 @@ FReply URPGHotkeyBarWidget::NativeOnKeyUp(const FGeometry& InGeometry, const FKe
 
 void URPGHotkeyBarWidget::FillActionBar()
 {
+	// TODO: refactor
+	
 	if (!ActionBarGridPanel)
 	{
 		return;
 	}
 	
-	ActionBarGridPanel->ClearChildren();
-	// TODO: continue
+	if (!AbilityWidgetClass)
+	{
+		LOG_WITH_FUNCTION_NAME(LogRPGAbilitySystem, Error, TEXT("Failed to fill action bar since AbilityWidgetClass is null"));
+		return;
+	}
 	
+	ActionBarGridPanel->ClearChildren();
+	
+	const UInputSettings* InputSettings = UInputSettings::GetInputSettings();
+	if (!InputSettings)
+	{
+		return;
+	}
+	
+	TArray<URPGAbilityDefinitionData*> AbilitiesDefinitionDatas;
+	AbilityDefinitions.GetKeys(AbilitiesDefinitionDatas);
+	
+	for (int i = 0; i < AbilitiesDefinitionDatas.Num(); i++)
+	{
+		URPGAbilityDefinitionData*& AbilityDefinitionData = AbilitiesDefinitionDatas[i];
+		if (!AbilityDefinitionData)
+		{
+			continue;
+		}
+		
+		URPGAbilityWidget* AbilityWidget = CreateWidget<URPGAbilityWidget>(this, AbilityWidgetClass);
+		if (!AbilityWidget)
+		{
+			continue;
+		}
+		
+		URPGAbilityBase** LinkedAbility = AbilityDefinitions.Find(AbilityDefinitionData);
+		if (!LinkedAbility)
+		{
+			continue;
+		}
+		
+		AbilityWidget->AbilityDefinition = AbilityDefinitionData;
+		AbilityWidget->Ability = *LinkedAbility;
+		
+		if (!AbilityWidget->HotkeyText)
+		{
+			continue;
+		}
+		
+		FText HotkeyText = FText::GetEmpty();
+		
+		TArray<FInputActionKeyMapping> InputActions;
+		
+		FString ActionBarActionString = TEXT("ActionBar");
+		ActionBarActionString.Append(FString::FromInt(i + 1));
+		FName ActionBarActionName(*ActionBarActionString);
+		
+		InputSettings->GetActionMappingByName(ActionBarActionName, InputActions);
+		
+		if (InputActions.IsValidIndex(0))
+		{
+			HotkeyText = InputActions[0].Key.GetDisplayName(false);
+		}
+		
+		AbilityWidget->HotkeyText->SetText(HotkeyText);
+		
+		ActionBarGridPanel->AddChildToGrid(AbilityWidget, 0, i);
+		
+		AbilityDefinitionsSlots.Add(AbilityDefinitionData, AbilityWidget);
+		
+		if (!AbilityComponent)
+		{
+			continue;
+		}
+		
+		if (AbilityComponent->IsAbilityOnCooldown(*LinkedAbility))
+		{
+			AbilityWidget->StartCooldownVisual(AbilityComponent);
+		}
+	}
+	
+	// Fill the rest of slots with empty abilities
+	for (int i = ActionBarGridPanel->GetChildrenCount(); i < ActionBarGridPanel->ColumnFill.Num(); i++)
+	{
+		URPGAbilityWidget* AbilityWidget = CreateWidget<URPGAbilityWidget>(this, AbilityWidgetClass);
+		if (!AbilityWidget)
+		{
+			continue;
+		}
+		
+		if (!AbilityWidget->HotkeyText)
+		{
+			continue;
+		}
+		
+		FText HotkeyText = FText::GetEmpty();
+		
+		TArray<FInputActionKeyMapping> InputActions;
+		
+		FString ActionBarActionString = TEXT("ActionBar");
+		ActionBarActionString.Append(FString::FromInt(i + 1));
+		FName ActionBarActionName(*ActionBarActionString);
+		
+		InputSettings->GetActionMappingByName(ActionBarActionName, InputActions);
+		
+		if (InputActions.IsValidIndex(0))
+		{
+			HotkeyText = InputActions[0].Key.GetDisplayName(false);
+		}
+		
+		AbilityWidget->HotkeyText->SetText(HotkeyText);
+		
+		ActionBarGridPanel->AddChildToGrid(AbilityWidget, 0, i);
+	}
 }
 
 URPGAbilityWidget* URPGHotkeyBarWidget::GetAbilityWidget(URPGAbilityBase* Ability)

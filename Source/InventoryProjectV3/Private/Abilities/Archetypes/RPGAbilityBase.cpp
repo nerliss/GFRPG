@@ -43,6 +43,8 @@ bool URPGAbilityBase::CanUseAbility()
 		return false;
 	}
 	
+	LOG_WITH_FUNCTION_NAME(LogRPGAbilitySystem, Warning, TEXT("Base implementation used"));
+	
 	const bool bCasterMoving = !OwnerActor->GetVelocity().IsNearlyZero();
 	
 	switch (AbilityDefinition->ActivationMode)
@@ -85,6 +87,7 @@ bool URPGAbilityBase::UseAbility(FRPGTargetData TargetData)
 		return false;
 	}
 	
+	LOG_WITH_FUNCTION_NAME(LogRPGAbilitySystem, Warning, TEXT("Base implementation used"));
 	AbilityComponent->OnAbilityUsed.Broadcast(this);
 	return true;
 }

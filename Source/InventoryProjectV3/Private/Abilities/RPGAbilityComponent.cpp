@@ -608,8 +608,11 @@ void URPGAbilityComponent::ConfirmTargetingPreview()
 			
 			GetWorld()->GetTimerManager().ClearTimer(TargetingPreviewTimer);
 			
-			TargetingPreviewActor->Destroy();
-			TargetingPreviewActor = nullptr;
+			if (TargetingPreviewActor)
+			{
+				TargetingPreviewActor->Destroy();
+				TargetingPreviewActor = nullptr;
+			}
 			
 			TargetingPreviewActorMIDs.Empty();
 			

@@ -18,7 +18,7 @@ public:
 	
 	URPGAbilityBase();
 
-	virtual void InitAbility(URPGAbilityComponent* FromAbilityComponent, AActor* FromOwnerActor, URPGAbilityDefinitionData* FromAbilityDefinitionData);
+	virtual void InitAbility(URPGAbilityComponent* InAbilityComponent, AActor* InOwnerActor, URPGAbilityDefinitionData* InAbilityDefinitionData);
 	virtual bool CanUseAbility();
 	virtual bool UseAbility(FRPGTargetData TargetData); 
 	virtual URPGAbilityDefinitionData* GetAbilityDefinition() const { return AbilityDefinition; }

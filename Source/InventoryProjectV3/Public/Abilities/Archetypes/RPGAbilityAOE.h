@@ -14,4 +14,12 @@ class INVENTORYPROJECTV3_API URPGAbilityAOE : public URPGAbilityBase
 {
 	GENERATED_BODY()
 	
+public:
+	
+	virtual void InitAbility(URPGAbilityComponent* InAbilityComponent, AActor* InOwnerActor, URPGAbilityDefinitionData* InAbilityDefinitionData) override;
+	virtual bool UseAbility(FRPGTargetData TargetData) override;
+	virtual URPGAOEAbilityDefinitionData* GetAbilityDefinition() const override { return AOEAbilityDefinitionData; }
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	URPGAOEAbilityDefinitionData* AOEAbilityDefinitionData;
 };

@@ -80,3 +80,11 @@ URPGModifyStatAbilityDefinitionData::URPGModifyStatAbilityDefinitionData()
 	AmountToModify = 1.f;
 	PercentageToModify = 10.f;
 }
+
+URPGDisguiseAbilityDefinitionData::URPGDisguiseAbilityDefinitionData()
+{
+}
+
+URPGDisplaceAbilityDefinitionData::URPGDisplaceAbilityDefinitionData()
+{
+}

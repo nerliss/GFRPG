@@ -13,12 +13,12 @@ URPGAbilityBase::URPGAbilityBase()
 	AbilityDefinition = nullptr;
 }
 
-void URPGAbilityBase::InitAbility(URPGAbilityComponent* FromAbilityComponent, AActor* FromOwnerActor,
-	URPGAbilityDefinitionData* FromAbilityDefinitionData)
+void URPGAbilityBase::InitAbility(URPGAbilityComponent* InAbilityComponent, AActor* InOwnerActor,
+                                  URPGAbilityDefinitionData* InAbilityDefinitionData)
 {
-	AbilityComponent = FromAbilityComponent;
-	OwnerActor = FromOwnerActor;
-	AbilityDefinition = FromAbilityDefinitionData;
+	AbilityComponent = InAbilityComponent;
+	OwnerActor = InOwnerActor;
+	AbilityDefinition = InAbilityDefinitionData;
 }
 
 bool URPGAbilityBase::CanUseAbility()

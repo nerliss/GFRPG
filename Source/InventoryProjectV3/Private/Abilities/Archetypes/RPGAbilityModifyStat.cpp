@@ -6,12 +6,12 @@
 #include "Components/RPGHealth_Component.h"
 #include "Components/RPGXP_Component.h"
 
-void URPGAbilityModifyStat::InitAbility(URPGAbilityComponent* FromAbilityComponent, AActor* FromOwnerActor,
-                                        URPGAbilityDefinitionData* FromAbilityDefinitionData)
+void URPGAbilityModifyStat::InitAbility(URPGAbilityComponent* InAbilityComponent, AActor* InOwnerActor,
+                                        URPGAbilityDefinitionData* InAbilityDefinitionData)
 {
-	Super::InitAbility(FromAbilityComponent, FromOwnerActor, FromAbilityDefinitionData);
+	Super::InitAbility(InAbilityComponent, InOwnerActor, InAbilityDefinitionData);
 	
-	ModifyStatAbilityDefinitionData = Cast<URPGModifyStatAbilityDefinitionData>(FromAbilityDefinitionData);
+	ModifyStatAbilityDefinitionData = Cast<URPGModifyStatAbilityDefinitionData>(InAbilityDefinitionData);
 }
 
 bool URPGAbilityModifyStat::UseAbility(FRPGTargetData TargetData)

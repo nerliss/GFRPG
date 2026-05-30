@@ -689,7 +689,10 @@ AActor* URPGAbilityComponent::SpawnSummonActor(TSubclassOf<AActor> ClassToSpawn,
 		return nullptr;
 	}
 	
-	return GetWorld()->SpawnActor<AActor>(ClassToSpawn, SpawnTransform);
+	FActorSpawnParameters ActorSpawnParameters;
+	ActorSpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	
+	return GetWorld()->SpawnActor<AActor>(ClassToSpawn, SpawnTransform, ActorSpawnParameters);
 }
 
 void URPGAbilityComponent::TryUsingAbility(int32 AbilityArrayIndex)

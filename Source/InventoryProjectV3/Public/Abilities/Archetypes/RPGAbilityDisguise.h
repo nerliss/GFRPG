@@ -14,4 +14,12 @@ class INVENTORYPROJECTV3_API URPGAbilityDisguise : public URPGAbilityBase
 {
 	GENERATED_BODY()
 	
+public:
+	
+	virtual void InitAbility(URPGAbilityComponent* InAbilityComponent, AActor* InOwnerActor, URPGAbilityDefinitionData* InAbilityDefinitionData) override;
+	virtual bool UseAbility(FRPGTargetData TargetData) override;
+	virtual URPGDisguiseAbilityDefinitionData* GetAbilityDefinition() const override { return DisguiseAbilityDefinitionData; }
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	URPGDisguiseAbilityDefinitionData* DisguiseAbilityDefinitionData;
 };

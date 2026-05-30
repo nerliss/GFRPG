@@ -284,3 +284,29 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Modify Stat Data", meta = (EditCondition = "StatModificationType == EStatModificationType::Percentage"))
 	float PercentageToModify;
 };
+
+UCLASS()
+class INVENTORYPROJECTV3_API URPGDisguiseAbilityDefinitionData : public URPGAbilityDefinitionData
+{
+	GENERATED_BODY()
+	
+public:
+	
+	URPGDisguiseAbilityDefinitionData();
+	
+	
+	
+};
+
+UCLASS()
+class INVENTORYPROJECTV3_API URPGDisplaceAbilityDefinitionData : public URPGAbilityDefinitionData
+{
+	GENERATED_BODY()
+	
+public:
+	
+	URPGDisplaceAbilityDefinitionData();
+	
+	
+	
+};

@@ -16,11 +16,21 @@ class INVENTORYPROJECTV3_API URPGAbilitySummon : public URPGAbilityBase
 	
 public:
 	
-	virtual void InitAbility(URPGAbilityComponent* FromAbilityComponent, AActor* FromOwnerActor, URPGAbilityDefinitionData* FromAbilityDefinitionData) override;
+	virtual void InitAbility(URPGAbilityComponent* InAbilityComponent, AActor* InOwnerActor, URPGAbilityDefinitionData* InAbilityDefinitionData) override;
 	virtual bool UseAbility(FRPGTargetData TargetData) override;
 	virtual void OnCastComplete(FRPGTargetData TargetData) override;
+	virtual void OnCastInterrupted(FRPGTargetData TargetData, EAbilityInterruptReason Reason) override;
+	virtual void OnToggleStarted(FRPGTargetData TargetData) override;
+	virtual void OnToggleEnded(FRPGTargetData TargetData) override;
+	virtual void OnTargetingPreviewStarted(FRPGTargetData TargetData) override;
+	virtual void OnTargetingPreviewUpdated(FRPGTargetData TargetData) override;
+	virtual void OnTargetingPreviewCanceled(FRPGTargetData TargetData) override;
+	virtual void OnTargetingPreviewConfirmed(FRPGTargetData TargetData) override;
 	virtual URPGSummonAbilityDefinitionData* GetAbilityDefinition() const override { return SummonAbilityDefinitionData; }
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	URPGSummonAbilityDefinitionData* SummonAbilityDefinitionData;
+	
+	UPROPERTY(BlueprintReadOnly)
+	AActor* ToggleSpawnedActor;
 };

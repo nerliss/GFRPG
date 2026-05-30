@@ -13,9 +13,13 @@
 #include "Utility/LogDefinitions.h"
 #include "Utility/Utility.h"
 
+#if !UE_BUILD_SHIPPING
+static TAutoConsoleVariable CVarDrawAbilityDebugLines(TEXT("RPG.Debug.Ability.DrawDebugAbilityLines"), 0, TEXT("Enable to draw debug lines for ability system"));
+#endif
+
 URPGAbilityComponent::URPGAbilityComponent()
 {
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 
 	TemplateAbilityDefinitions.Empty();
 	SpawnedAbilityDefinitions.Empty();
@@ -40,11 +44,6 @@ void URPGAbilityComponent::BeginPlay()
 	{
 		RPGCharacter->OnCharacterMoved.AddDynamic(this, &URPGAbilityComponent::OnOwnerCharacterMoved);
 	}
-}
-
-void URPGAbilityComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
 void URPGAbilityComponent::TraceForTargetData(const float InTraceLength, URPGAbilityBase* Ability, FRPGTargetData& OutTargetData)
@@ -73,7 +72,13 @@ void URPGAbilityComponent::TraceForTargetData(const float InTraceLength, URPGAbi
 	Params.AddIgnoredActor(Owner);
 
 	const bool bHitResult = GetWorld()->LineTraceSingleByChannel(HitResult, StartLoc, EndLoc, ECC_Channel, Params);
-	DrawDebugLine(GetWorld(), StartLoc, EndLoc, FColor::Purple, false, 4.f, 0, 2.f);
+	
+#if !UE_BUILD_SHIPPING
+	if (CVarDrawAbilityDebugLines.GetValueOnGameThread() > 0)
+	{
+		DrawDebugLine(GetWorld(), StartLoc, EndLoc, FColor::Purple, false, 4.f, 0, 4.f);
+	}
+#endif
 	
 	OutTargetData.HitResult = HitResult;
 	
@@ -85,12 +90,18 @@ void URPGAbilityComponent::TraceForTargetData(const float InTraceLength, URPGAbi
 		const FVector ProjectToGroundEnd = EndLoc - FVector::UpVector * Ability->AbilityDefinition->GroundTraceDistance;
 
 		GetWorld()->LineTraceSingleByChannel(ProjectToGroundHitResult, ProjectToGroundStart, ProjectToGroundEnd, ECC_Channel, Params);
-		DrawDebugLine(GetWorld(), ProjectToGroundStart, ProjectToGroundEnd, FColor::Emerald, false, 4.f, 0, 2.f);
+		
+#if !UE_BUILD_SHIPPING
+		if (CVarDrawAbilityDebugLines.GetValueOnGameThread() > 0)
+		{
+			DrawDebugLine(GetWorld(), ProjectToGroundStart, ProjectToGroundEnd, FColor::Emerald, false, 4.f, 0, 4.f);
+		}
+#endif
 
 		OutTargetData.HitResult = ProjectToGroundHitResult;
 	}
 	
-	UE_LOG(LogTemp, Log, TEXT("TargetData.HitLocation = %s, TargetData.TraceEnd = %s, EndLoc = %s"), *OutTargetData.HitResult.Location.ToString(), *OutTargetData.HitResult.TraceEnd.ToString(), *EndLoc.ToString());
+	UE_LOG(LogRPGAbilitySystem, Verbose, TEXT("TargetData.HitLocation = %s, TargetData.TraceEnd = %s, EndLoc = %s"), *OutTargetData.HitResult.Location.ToString(), *OutTargetData.HitResult.TraceEnd.ToString(), *EndLoc.ToString());
 }
 
 FRPGTargetData URPGAbilityComponent::TraceForTargetData(const float InTraceLength, URPGAbilityBase* Ability)
@@ -695,7 +706,7 @@ AActor* URPGAbilityComponent::SpawnSummonActor(TSubclassOf<AActor> ClassToSpawn,
 	return GetWorld()->SpawnActor<AActor>(ClassToSpawn, SpawnTransform, ActorSpawnParameters);
 }
 
-void URPGAbilityComponent::TryUsingAbility(int32 AbilityArrayIndex)
+void URPGAbilityComponent::TryUsingAbility(const int32 AbilityArrayIndex)
 {
 	TArray<URPGAbilityBase*> SpawnedAbilities;
 	SpawnedAbilityDefinitions.GenerateValueArray(SpawnedAbilities);

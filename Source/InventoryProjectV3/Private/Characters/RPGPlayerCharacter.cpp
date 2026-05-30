@@ -29,10 +29,10 @@
 #include "Save/RPGSaveGameObject.h"
 
 #if !UE_BUILD_SHIPPING
-static TAutoConsoleVariable CVarSuperSprint(TEXT("DebugSuperSprint"), 0, TEXT("Enable to use super sprint speed instead of default one."));
-static TAutoConsoleVariable CVarSuperJump(TEXT("DebugSuperJump"), 0, TEXT("Enable to use super jump. Gives full free control of the pawn in air, double jump and force enables DebugIgnoreFallDamage."));
-static TAutoConsoleVariable CVarIgnoreFallDamage(TEXT("DebugIgnoreFallDamage"), 0, TEXT("Enable to ignore fall damage."));
-static TAutoConsoleVariable CVarDebugInteractLine(TEXT("DebugInteractLine"), 0, TEXT("Enable to debug interact line."));
+static TAutoConsoleVariable CVarSuperSprint(TEXT("RPG.Debug.Character.SuperSprint"), 0, TEXT("Enable to use super sprint speed instead of default one."));
+static TAutoConsoleVariable CVarSuperJump(TEXT("RPG.Debug.Character.SuperJump"), 0, TEXT("Enable to use super jump. Gives full free control of the pawn in air, double jump and force enables DebugIgnoreFallDamage."));
+static TAutoConsoleVariable CVarIgnoreFallDamage(TEXT("RPG.Debug.Character.IgnoreFallDamage"), 0, TEXT("Enable to ignore fall damage."));
+static TAutoConsoleVariable CVarDebugInteractLine(TEXT("RPG.Debug.Character.InteractLine"), 0, TEXT("Enable to debug interact line."));
 #endif
 
 ARPGPlayerCharacter::ARPGPlayerCharacter()

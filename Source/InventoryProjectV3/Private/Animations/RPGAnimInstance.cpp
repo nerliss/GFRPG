@@ -8,7 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 
 #if !UE_BUILD_SHIPPING
-static TAutoConsoleVariable CVarDebugDrawIKFeetTraces(TEXT("DebugDrawIKFeetTraces"), 0, TEXT("Enable to draw debug traces for IK Feet system."));
+static TAutoConsoleVariable CVarDebugDrawIKFeetTraces(TEXT("RPG.Debug.Animation.DrawIKFeetTraces"), 0, TEXT("Enable to draw debug traces for IK Feet system."));
 #endif
 
 URPGAnimInstance::URPGAnimInstance()

@@ -65,7 +65,6 @@ public:
 	URPGAbilityComponent();
 	
 	virtual void BeginPlay() override;
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintPure, Category = "Trace")
 	void TraceForTargetData(const float InTraceLength, URPGAbilityBase* Ability, FRPGTargetData& OutTargetData);
@@ -159,7 +158,7 @@ public:
 	AActor* SpawnSummonActor(TSubclassOf<AActor> ClassToSpawn, FTransform SpawnTransform);
 	
 	UFUNCTION(BlueprintCallable)
-	void TryUsingAbility(int32 AbilityArrayIndex);
+	void TryUsingAbility(const int32 AbilityArrayIndex);
 	
 	UFUNCTION(BlueprintCallable)
 	void TryInterruptingActiveAbilities();

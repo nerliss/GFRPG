@@ -38,6 +38,9 @@ public:
 protected:
 	
 	virtual void BeginPlay() override;
+#if WITH_EDITORONLY_DATA
+	virtual void OnConstruction(const FTransform& Transform) override;
+#endif
 	
 	UFUNCTION()
 	void OnSphereComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);

@@ -42,8 +42,17 @@ void ARPGAbilityPickup::BeginPlay()
 	CreateAbilityIconMeshDynamicMaterial();
 }
 
+#if WITH_EDITORONLY_DATA
+void ARPGAbilityPickup::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+	
+	CreateAbilityIconMeshDynamicMaterial();
+}
+#endif
+
 void ARPGAbilityPickup::OnSphereComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
-	bool bFromSweep, const FHitResult& SweepResult)
+                                                      bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (!AbilityDefinition)
 	{

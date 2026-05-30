@@ -13,7 +13,7 @@
 #include "Components/CanvasPanelSlot.h"
 
 #if !UE_BUILD_SHIPPING
-static TAutoConsoleVariable CVarDebugShowInventoryList(TEXT("DebugShowInventoryList"), 0, TEXT("Enable to print out all inventory slots to the screen"));
+static TAutoConsoleVariable CVarDebugShowInventoryList(TEXT("RPG.Debug.Inventory.ShowInventoryList"), 0, TEXT("Enable to print out all inventory slots to the screen"));
 #endif
 
 URPGInventory_Component::URPGInventory_Component()

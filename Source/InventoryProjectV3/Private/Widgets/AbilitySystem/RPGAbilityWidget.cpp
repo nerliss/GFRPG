@@ -58,7 +58,7 @@ void URPGAbilityWidget::UpdateCooldownVisual()
 	const int32 FractionalDigits = (CooldownRemaining <= 3.f) ? 1 : 0;
 	
 	FNumberFormattingOptions NumberFormattingOptions;
-	NumberFormattingOptions.MinimumFractionalDigits = 0;
+	NumberFormattingOptions.MinimumFractionalDigits = FractionalDigits;
 	NumberFormattingOptions.MaximumFractionalDigits = FractionalDigits;
 	
 	const FText Text = FText::AsNumber(CooldownRemaining, &NumberFormattingOptions);
@@ -80,7 +80,7 @@ void URPGAbilityWidget::StartCooldownVisual(URPGAbilityComponent* InAbilityCompo
 	
 	UpdateCooldownVisual();
 	
-	GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &URPGAbilityWidget::UpdateCooldownVisual, VisualsUpdateRate, true);
+	GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &URPGAbilityWidget::UpdateCooldownVisual, VisualsUpdateRate, true, VisualsUpdateRate);
 }
 
 void URPGAbilityWidget::StopCooldownVisual()

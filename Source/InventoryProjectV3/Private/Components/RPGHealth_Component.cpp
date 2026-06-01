@@ -73,12 +73,13 @@ void URPGHealth_Component::ModifyCurrentHealth(float HealthToAdd)
 {
 	if (HealthToAdd < 0)
 	{
-		// TODO: test this out - may be need to pass -HealthToAdd (since ApplyDamage won't take a negative number)
-		UGameplayStatics::ApplyDamage(GetOwner(), +HealthToAdd, GetOwner()->GetInstigatorController(), GetOwner(), UDamageTypeEnviromental::StaticClass());
+		UGameplayStatics::ApplyDamage(GetOwner(), -HealthToAdd, GetOwner()->GetInstigatorController(), GetOwner(), UDamageTypeEnviromental::StaticClass());
 		return;
 	}
 	
-	CurrentHealth = FMath::Clamp(CurrentHealth + HealthToAdd, 0.0f, MaxHealth);
+	const float ClampedNewHealth = FMath::Clamp(CurrentHealth + HealthToAdd, 0.0f, MaxHealth);
+	
+	SetCurrentHealth(ClampedNewHealth);
 	
 	// Trigger the delegate when health is gained too
 	const UDamageType* const DamageType = UDamageTypeEnviromental::StaticClass()->GetDefaultObject<UDamageType>();	

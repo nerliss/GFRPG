@@ -20,6 +20,9 @@ public:
 	virtual bool UseAbility(FRPGTargetData TargetData) override;
 	virtual void OnCastComplete(FRPGTargetData TargetData) override;
 	
+	// TODO: Think over this idea for the whole system since when OnCastComplete calls UseAbility and said ability has a cd longer than cast time the ability will not pass parent check due to being on cooldown already
+	bool bFromCast;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	URPGModifyStatAbilityDefinitionData* ModifyStatAbilityDefinitionData;
 };

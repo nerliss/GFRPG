@@ -65,8 +65,12 @@ void URPGCastBarWidget::UpdateVisuals()
 		return;
 	}
 	
+	FNumberFormattingOptions NumberFormattingOptions;
+	NumberFormattingOptions.MinimumFractionalDigits = 0;
+	NumberFormattingOptions.MaximumFractionalDigits = 1;
+	
 	const float RemainingTime = ChannelingAbility->GetAbilityDefinition()->ActivationMode == EAbilityActivationMode::Channel ? AbilityComponent->GetChannelRemainingTimeForAbility(ChannelingAbility) : AbilityComponent->GetCastRemainingTimeForAbility(ChannelingAbility);
-	const FText FormattedText = FText::Format(FText::FromString("{0}"), FText::AsNumber(RemainingTime));
+	const FText FormattedText = FText::Format(FText::FromString("{0}"), FText::AsNumber(RemainingTime, &NumberFormattingOptions));
 	
 	CastTimeRemainingTextBlock->SetText(FormattedText);
 	

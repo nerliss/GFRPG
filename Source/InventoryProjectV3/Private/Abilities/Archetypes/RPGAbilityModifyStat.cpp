@@ -16,10 +16,12 @@ void URPGAbilityModifyStat::InitAbility(URPGAbilityComponent* InAbilityComponent
 
 bool URPGAbilityModifyStat::UseAbility(FRPGTargetData TargetData)
 {
-	if (!Super::UseAbility(TargetData))
+	if (!Super::UseAbility(TargetData) && !bFromCast)
 	{
 		return false;
 	}
+	
+	bFromCast = false;
 	
 	if (!ModifyStatAbilityDefinitionData)
 	{
@@ -40,9 +42,11 @@ bool URPGAbilityModifyStat::UseAbility(FRPGTargetData TargetData)
 			{
 				const float AmountToModify = ModifyStatAbilityDefinitionData->AmountToModify;
 				const float PercentageToModify = HealthComp->GetMaxHealth() * (ModifyStatAbilityDefinitionData->PercentageToModify / 100.f);
-			
+				const float ModificationTypeValue = ModifyStatAbilityDefinitionData->StatModificationType == EStatModificationType::Flat ? AmountToModify : PercentageToModify;
+				const bool bAdd = ModifyStatAbilityDefinitionData->StatModificationOperation == EStatModificationOperation::Add;
+				
 				// ModifyCurrentHealth incorporates ApplyDamage function so we can use it to damage an actor
-				HealthComp->ModifyCurrentHealth(ModifyStatAbilityDefinitionData->StatModificationType == EStatModificationType::Flat ? AmountToModify : PercentageToModify);
+				HealthComp->ModifyCurrentHealth(bAdd ? ModificationTypeValue : -ModificationTypeValue);
 				return true;
 			}
 			return false;
@@ -78,5 +82,6 @@ bool URPGAbilityModifyStat::UseAbility(FRPGTargetData TargetData)
 
 void URPGAbilityModifyStat::OnCastComplete(FRPGTargetData TargetData)
 {
+	bFromCast = true;
 	UseAbility(TargetData);
 }

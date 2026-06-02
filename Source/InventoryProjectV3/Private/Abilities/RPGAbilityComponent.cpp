@@ -110,53 +110,9 @@ FRPGTargetData URPGAbilityComponent::TraceForTargetData(const float InTraceLengt
 	return TargetData;
 }
 
-void URPGAbilityComponent::SetTimerForAbilityCooldownExpiration(URPGAbilityBase* Ability)
-{
-	if (!Ability)
-	{
-		return;
-	}
-	
-	if (!Ability->GetAbilityDefinition())
-	{
-		return;
-	}
-	
-	const float AbilityCooldown = Ability->GetAbilityDefinition()->Cooldown;
-	
-	FTimerDelegate TimerDelegate;
-	TimerDelegate.BindUFunction(this, FName("OnCooldownTimerExpired"), Ability);
-	
-	FTimerHandle TimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, AbilityCooldown, false);
-}
-
 void URPGAbilityComponent::OnCooldownTimerExpired(URPGAbilityBase* Ability)
 {
 	OnAbilityCooldownEnded.Broadcast(Ability);
-}
-
-FTimerHandle URPGAbilityComponent::SetTimerForCastAbility(URPGAbilityBase* Ability, FRPGTargetData TargetData)
-{
-	if (!Ability)
-	{
-		return FTimerHandle();
-	}
-	
-	if (!Ability->GetAbilityDefinition())
-	{
-		return FTimerHandle();
-	}
-	
-	const float AbilityCastTime = Ability->GetAbilityDefinition()->CastParams.CastTime;
-	
-	FTimerDelegate TimerDelegate;
-	TimerDelegate.BindUFunction(this, FName("OnCastFinished"), Ability, TargetData);
-	
-	FTimerHandle TimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, AbilityCastTime, false);
-	
-	return TimerHandle;
 }
 
 float URPGAbilityComponent::GetCooldownRemainingForAbility(URPGAbilityBase* Ability) const
@@ -269,35 +225,35 @@ void URPGAbilityComponent::StartChannel(URPGAbilityBase* Ability, FRPGTargetData
 
 void URPGAbilityComponent::UpdateChannel()
 {
-	if (!ActiveCast)
+	if (!GetActiveAbility())
 	{
 		return;
 	}
 	
-	if (!ActiveCast->GetAbilityDefinition())
+	if (!GetActiveAbility()->GetAbilityDefinition())
 	{
-		StopChannel(ActiveCast, EAbilityInterruptReason::Interrupt);
+		StopChannel(GetActiveAbility(), EAbilityInterruptReason::Interrupt);
 		return;
 	}
 	
-	if (GetWorld()->GetTimeSeconds() >= ActiveCast->NextTickTime)
+	if (GetWorld()->GetTimeSeconds() >= GetActiveAbility()->NextTickTime)
 	{
-		if (ActiveCast->bUpdateTargetEachTick)
+		if (GetActiveAbility()->bUpdateTargetEachTick)
 		{
-			ActiveCast->ActiveAbilityTargetData = TraceForTargetData(ActiveCast->GetAbilityDefinition()->CastRange, ActiveCast);
+			GetActiveAbility()->ActiveAbilityTargetData = TraceForTargetData(GetActiveAbility()->GetAbilityDefinition()->CastRange, GetActiveAbility());
 		}
 			
-		ActiveCast->OnChannelTick(ActiveCast->ActiveAbilityTargetData);
-		ActiveCast->NextTickTime += ActiveCast->ChannelTickPeriod;
+		GetActiveAbility()->OnChannelTick(GetActiveAbility()->ActiveAbilityTargetData);
+		GetActiveAbility()->NextTickTime += GetActiveAbility()->ChannelTickPeriod;
 			
-		if (GetWorld()->GetTimeSeconds() >= ActiveCast->ChannelEndTime)
+		if (GetWorld()->GetTimeSeconds() >= GetActiveAbility()->ChannelEndTime)
 		{
-			StopChannel(ActiveCast, EAbilityInterruptReason::DurationEnd);
+			StopChannel(GetActiveAbility(), EAbilityInterruptReason::DurationEnd);
 		}
 	}
 	else
 	{
-		StopChannel(ActiveCast, EAbilityInterruptReason::DurationEnd);
+		StopChannel(GetActiveAbility(), EAbilityInterruptReason::DurationEnd);
 	}
 }
 
@@ -326,7 +282,12 @@ void URPGAbilityComponent::StopChannel(URPGAbilityBase* Ability, EAbilityInterru
 
 bool URPGAbilityComponent::HasActiveAbility() const
 {
-	return IsValid(ActiveCast);
+	return IsValid(GetActiveAbility());
+}
+
+URPGAbilityBase* URPGAbilityComponent::GetActiveAbility() const
+{
+	return ActiveCast;
 }
 
 float URPGAbilityComponent::GetChannelDurationPercentForAbility(URPGAbilityBase* Ability) const
@@ -392,9 +353,7 @@ void URPGAbilityComponent::StartCast(URPGAbilityBase* Ability, FRPGTargetData Ta
 	FTimerDelegate TimerDelegate;
 	TimerDelegate.BindUFunction(this, FName("FinishCast"), Ability,  Ability->bLockTargetAtCastStart ? TargetData : TraceForTargetData(AbilityDefinition->CastRange, Ability));
 	
-	//FTimerHandle TimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(ActiveAbilityUpdateTimer, TimerDelegate, CastParams.CastTime, false);
-	//ActiveAbilityUpdateTimer = SetTimerForCastAbility(Ability, TargetData);
 	
 	OnAbilityChannelStarted.Broadcast(Ability);
 }
@@ -799,15 +758,15 @@ void URPGAbilityComponent::TryInterruptingActiveAbilities()
 		return;
 	}
 	
-	if (!ActiveCast)
+	if (!GetActiveAbility())
 	{
 		return;
 	}
 	
-	if (ActiveCast->bInterruptOnMove)
+	if (GetActiveAbility()->bInterruptOnMove)
 	{
-		StopChannel(ActiveCast, EAbilityInterruptReason::Moved);
-		InterruptCast(ActiveCast, EAbilityInterruptReason::Moved, ActiveCast->ActiveAbilityTargetData);
+		StopChannel(GetActiveAbility(), EAbilityInterruptReason::Moved);
+		InterruptCast(GetActiveAbility(), EAbilityInterruptReason::Moved, GetActiveAbility()->ActiveAbilityTargetData);
 	}
 	
 	// TODO: Add more reasons as needed
@@ -828,9 +787,13 @@ void URPGAbilityComponent::StartCooldown(URPGAbilityBase* Ability)
 	Ability->CooldownEndTime = GetWorld()->GetTimeSeconds() + Ability->GetAbilityDefinition()->Cooldown;
 	
 	OnAbilityCooldownStarted.Broadcast(Ability);
+
+	const float AbilityCooldown = Ability->GetAbilityDefinition()->Cooldown;
+	FTimerDelegate TimerDelegate;
+	TimerDelegate.BindUFunction(this, FName("OnCooldownTimerExpired"), Ability);
 	
-	// TODO: In blueprints it is stated that this function should be removed upon moving the logic to C++. Investigate
-	SetTimerForAbilityCooldownExpiration(Ability);
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, AbilityCooldown, false);
 }
 
 bool URPGAbilityComponent::IsAbilityOnCooldown(URPGAbilityBase* Ability) const

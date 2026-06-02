@@ -70,27 +70,17 @@ public:
 	void TraceForTargetData(const float InTraceLength, URPGAbilityBase* Ability, FRPGTargetData& OutTargetData);
 	FRPGTargetData TraceForTargetData(const float InTraceLength, URPGAbilityBase* Ability);
 	
-	UFUNCTION(BlueprintCallable)
-	void SetTimerForAbilityCooldownExpiration(URPGAbilityBase* Ability);	
-	
 	UFUNCTION()
 	void OnCooldownTimerExpired(URPGAbilityBase* Ability);
 	
-	UFUNCTION(BlueprintCallable)
-	FTimerHandle SetTimerForCastAbility(URPGAbilityBase* Ability, FRPGTargetData TargetData);
-	
-	// TODO: Might need to remove this function since it was created for bypassing blueprints limitation
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnCastFinished(URPGAbilityBase* Ability, FRPGTargetData TargetData);
-	
 	// TODO: Make pure if these functions need to be exposed at all
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintPure)
 	float GetCooldownRemainingForAbility(URPGAbilityBase* Ability) const;
 	
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintPure)
 	float GetCooldownPercentForAbility(URPGAbilityBase* Ability) const;
 	
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintPure)
 	float GetCooldownDurationForAbility(URPGAbilityBase* Ability) const;
 	
 	UFUNCTION(BlueprintCallable)
@@ -108,13 +98,16 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StopChannel(URPGAbilityBase* Ability, EAbilityInterruptReason Reason);
 	
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintPure)
 	bool HasActiveAbility() const;
 	
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintPure)
+	URPGAbilityBase* GetActiveAbility() const;
+	
+	UFUNCTION(BlueprintPure)
 	float GetChannelDurationPercentForAbility(URPGAbilityBase* Ability) const;
 	
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintPure)
 	float GetChannelRemainingTimeForAbility(URPGAbilityBase* Ability) const;
 	
 	UFUNCTION(BlueprintCallable)
@@ -126,10 +119,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void InterruptCast(URPGAbilityBase* Ability, EAbilityInterruptReason Reason, FRPGTargetData TargetData);
 	
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintPure)
 	float GetCastDurationPercentForAbility(URPGAbilityBase* Ability) const;
 	
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintPure)
 	float GetCastRemainingTimeForAbility(URPGAbilityBase* Ability) const;
 	
 	UFUNCTION(BlueprintCallable)
@@ -166,7 +159,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StartCooldown(URPGAbilityBase* Ability);
 	
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintPure)
 	bool IsAbilityOnCooldown(URPGAbilityBase* Ability) const;
 	
 	UFUNCTION(BlueprintCallable)

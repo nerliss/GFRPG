@@ -43,7 +43,7 @@ bool URPGAbilityBase::CanUseAbility()
 		return false;
 	}
 	
-	if (AbilityComponent->HasActiveAbility() && ((AbilityComponent->ActiveCast != this)))
+	if (AbilityComponent->HasActiveAbility() && ((AbilityComponent->GetActiveAbility() != this)))
 	{
 		return false;
 	}

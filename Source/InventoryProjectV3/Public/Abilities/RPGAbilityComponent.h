@@ -103,13 +103,13 @@ public:
 	void StartChannel(URPGAbilityBase* Ability, FRPGTargetData TargetData);
 	
 	UFUNCTION(BlueprintCallable)
-	void UpdateChannels();
+	void UpdateChannel();
 	
 	UFUNCTION(BlueprintCallable)
 	void StopChannel(URPGAbilityBase* Ability, EAbilityInterruptReason Reason);
 	
 	UFUNCTION(BlueprintCallable)
-	bool HasActiveAbilities() const;
+	bool HasActiveAbility() const;
 	
 	UFUNCTION(BlueprintCallable)
 	float GetChannelDurationPercentForAbility(URPGAbilityBase* Ability) const;
@@ -214,10 +214,7 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
 	TMap<URPGAbilityDefinitionData*, URPGAbilityBase*> SpawnedAbilityDefinitions;
 	
-	// TODO: Not sure that we need to have multiple channels, since a cast can only be one, why several channels then?
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
-	TArray<URPGAbilityBase*> ActiveChannels;
-	
+	/* Currently castable or channeling ability */
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
 	URPGAbilityBase* ActiveCast;
 	

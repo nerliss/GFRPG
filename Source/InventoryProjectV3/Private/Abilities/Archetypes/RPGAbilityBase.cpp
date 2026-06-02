@@ -43,8 +43,7 @@ bool URPGAbilityBase::CanUseAbility()
 		return false;
 	}
 	
-	// TODO: We might want to unite active channel and cast abilities into one pointer since I don't think we'll ever be able to simultaneously cast and channel different abilities
-	if (AbilityComponent->HasActiveAbilities() && ((AbilityComponent->ActiveCast != this) || (!AbilityComponent->ActiveChannels.Contains(this))))
+	if (AbilityComponent->HasActiveAbility() && ((AbilityComponent->ActiveCast != this)))
 	{
 		return false;
 	}

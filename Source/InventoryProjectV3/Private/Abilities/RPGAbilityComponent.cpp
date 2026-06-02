@@ -24,7 +24,6 @@ URPGAbilityComponent::URPGAbilityComponent()
 	TemplateAbilityDefinitions.Empty();
 	SpawnedAbilityDefinitions.Empty();
 	ActiveAbilityUpdateTimer = FTimerHandle();
-	ActiveChannels.Empty();
 	ActiveCast = nullptr;
 	bIsInTargetingPreview = false;
 	PendingAbility = nullptr;
@@ -253,60 +252,52 @@ void URPGAbilityComponent::StartChannel(URPGAbilityBase* Ability, FRPGTargetData
 	Ability->bRequiresHold = ChannelParams.bRequiresButtonHold;
 	Ability->bUpdateTargetEachTick = ChannelParams.bUpdateTargetEachTick;
 	Ability->bInterruptOnMove = ChannelParams.bInterruptOnMove;
-	
-	ActiveChannels.Add(Ability);
+
+	ActiveCast = Ability;	
 	
 	Ability->OnChannelStart(TargetData);
 	
 	if (Ability->bTickOnStart)
 	{
-		UpdateChannels();
+		UpdateChannel();
 	}
 	
-	GetWorld()->GetTimerManager().SetTimer(ActiveAbilityUpdateTimer, this, &URPGAbilityComponent::UpdateChannels, Ability->ChannelTickPeriod, true);
+	GetWorld()->GetTimerManager().SetTimer(ActiveAbilityUpdateTimer, this, &URPGAbilityComponent::UpdateChannel, Ability->ChannelTickPeriod, true);
 	
 	OnAbilityChannelStarted.Broadcast(Ability);
 }
 
-void URPGAbilityComponent::UpdateChannels()
+void URPGAbilityComponent::UpdateChannel()
 {
-	if (ActiveChannels.Num() <= 0)
+	if (!ActiveCast)
 	{
-		LOG_WITH_FUNCTION_NAME(LogRPGAbilitySystem, Error, TEXT("ActiveChannels is empty, function will not be executed"));
 		return;
 	}
 	
-	// TODO: Test this out since I might have messed up the loop flow :|
-	for (int i = ActiveChannels.Num() - 1; i >= 0; i--)
+	if (!ActiveCast->GetAbilityDefinition())
 	{
-		URPGAbilityBase*& ActiveChannel = ActiveChannels[i];
-		if (!ActiveChannel || !ActiveChannel->GetAbilityDefinition())
+		StopChannel(ActiveCast, EAbilityInterruptReason::Interrupt);
+		return;
+	}
+	
+	if (GetWorld()->GetTimeSeconds() >= ActiveCast->NextTickTime)
+	{
+		if (ActiveCast->bUpdateTargetEachTick)
 		{
-			// TODO: We might want to add this ability's index removal from ActiveChannel in case if it's not valid somewhere down the line
-			// though this should not happen
-			StopChannel(ActiveChannel, EAbilityInterruptReason::Interrupt);
-			continue;
+			ActiveCast->ActiveAbilityTargetData = TraceForTargetData(ActiveCast->GetAbilityDefinition()->CastRange, ActiveCast);
 		}
-		
-		if (GetWorld()->GetTimeSeconds() >= ActiveChannel->NextTickTime)
-		{
-			if (ActiveChannel->bUpdateTargetEachTick)
-			{
-				ActiveChannel->ActiveAbilityTargetData = TraceForTargetData(ActiveChannel->GetAbilityDefinition()->CastRange, ActiveChannel);
-			}
 			
-			ActiveChannel->OnChannelTick(ActiveChannel->ActiveAbilityTargetData);
-			ActiveChannel->NextTickTime += ActiveChannel->ChannelTickPeriod;
+		ActiveCast->OnChannelTick(ActiveCast->ActiveAbilityTargetData);
+		ActiveCast->NextTickTime += ActiveCast->ChannelTickPeriod;
 			
-			if (GetWorld()->GetTimeSeconds() >= ActiveChannel->ChannelEndTime)
-			{
-				StopChannel(ActiveChannel, EAbilityInterruptReason::DurationEnd);
-			}
-		}
-		else
+		if (GetWorld()->GetTimeSeconds() >= ActiveCast->ChannelEndTime)
 		{
-			StopChannel(ActiveChannel, EAbilityInterruptReason::DurationEnd);
+			StopChannel(ActiveCast, EAbilityInterruptReason::DurationEnd);
 		}
+	}
+	else
+	{
+		StopChannel(ActiveCast, EAbilityInterruptReason::DurationEnd);
 	}
 }
 
@@ -324,7 +315,7 @@ void URPGAbilityComponent::StopChannel(URPGAbilityBase* Ability, EAbilityInterru
 	
 	Ability->bIsChanneling = false;
 	
-	ActiveChannels.Remove(Ability);
+	ActiveCast = nullptr;
 	
 	Ability->OnChannelEnd(Ability->ActiveAbilityTargetData, Reason);
 	
@@ -333,9 +324,9 @@ void URPGAbilityComponent::StopChannel(URPGAbilityBase* Ability, EAbilityInterru
 	OnAbilityChannelStopped.Broadcast(Ability, Reason);
 }
 
-bool URPGAbilityComponent::HasActiveAbilities() const
+bool URPGAbilityComponent::HasActiveAbility() const
 {
-	return ActiveChannels.Num() > 0 || ActiveCast;
+	return IsValid(ActiveCast);
 }
 
 float URPGAbilityComponent::GetChannelDurationPercentForAbility(URPGAbilityBase* Ability) const
@@ -430,6 +421,11 @@ void URPGAbilityComponent::InterruptCast(URPGAbilityBase* Ability, EAbilityInter
 	if (!Ability)
 	{
 		return;
+	}
+	
+	if (!Ability->bIsCasting)
+	{
+		return;	
 	}
 	
 	Ability->OnCastInterrupted(TargetData, Reason);
@@ -798,29 +794,23 @@ void URPGAbilityComponent::TryUsingAbility(const int32 AbilityArrayIndex)
 
 void URPGAbilityComponent::TryInterruptingActiveAbilities()
 {
-	if (!HasActiveAbilities())
+	if (!HasActiveAbility())
 	{
 		return;
 	}
 	
-	for (URPGAbilityBase* ActiveChannel : ActiveChannels)
+	if (!ActiveCast)
 	{
-		if (!ActiveChannel)
-		{
-			continue;
-		}
-		
-		// TODO: Add possible reasons here
-		if (ActiveChannel->bInterruptOnMove)
-		{
-			StopChannel(ActiveChannel, EAbilityInterruptReason::Moved);
-		}
+		return;
 	}
 	
-	if (ActiveCast && ActiveCast->bInterruptOnMove)
+	if (ActiveCast->bInterruptOnMove)
 	{
+		StopChannel(ActiveCast, EAbilityInterruptReason::Moved);
 		InterruptCast(ActiveCast, EAbilityInterruptReason::Moved, ActiveCast->ActiveAbilityTargetData);
 	}
+	
+	// TODO: Add more reasons as needed
 }
 
 void URPGAbilityComponent::StartCooldown(URPGAbilityBase* Ability)

@@ -30,7 +30,7 @@ void URPGCastBarWidget::UpdateWidgetVisibility()
 		return;
 	}
 	
-	SetVisibility(AbilityComponent->HasActiveAbilities() ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
+	SetVisibility(AbilityComponent->HasActiveAbility() ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
 }
 
 void URPGCastBarWidget::UpdateVisuals()

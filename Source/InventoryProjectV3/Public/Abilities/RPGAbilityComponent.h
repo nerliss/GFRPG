@@ -103,6 +103,9 @@ public:
 	
 	UFUNCTION(BlueprintPure)
 	URPGAbilityBase* GetActiveAbility() const;
+		
+	UFUNCTION(BlueprintPure)
+	URPGAbilityBase* GetPendingAbility() const;
 	
 	UFUNCTION(BlueprintPure)
 	float GetChannelDurationPercentForAbility(URPGAbilityBase* Ability) const;

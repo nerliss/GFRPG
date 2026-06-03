@@ -48,6 +48,12 @@ bool URPGAbilityBase::CanUseAbility()
 		return false;
 	}
 	
+	// TODO: might want to change behaviour later - like to cancel pending ability before using another
+	if (AbilityComponent->GetPendingAbility() && AbilityComponent->GetPendingAbility() != this)
+	{
+		return false;
+	}
+	
 	LOG_WITH_FUNCTION_NAME(LogRPGAbilitySystem, Warning, TEXT("Base implementation used"));
 	
 	const bool bCasterMoving = !OwnerActor->GetVelocity().IsNearlyZero();

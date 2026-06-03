@@ -290,6 +290,11 @@ URPGAbilityBase* URPGAbilityComponent::GetActiveAbility() const
 	return ActiveCast;
 }
 
+URPGAbilityBase* URPGAbilityComponent::GetPendingAbility() const
+{
+	return PendingAbility;
+}
+
 float URPGAbilityComponent::GetChannelDurationPercentForAbility(URPGAbilityBase* Ability) const
 {
 	if (!Ability)

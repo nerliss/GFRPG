@@ -88,3 +88,7 @@ URPGDisguiseAbilityDefinitionData::URPGDisguiseAbilityDefinitionData()
 URPGDisplaceAbilityDefinitionData::URPGDisplaceAbilityDefinitionData()
 {
 }
+
+URPGGiveItemAbilityDefinitionData::URPGGiveItemAbilityDefinitionData()
+{
+}

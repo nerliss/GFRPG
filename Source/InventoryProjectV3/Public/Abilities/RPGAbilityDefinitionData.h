@@ -310,3 +310,17 @@ public:
 	
 	
 };
+
+UCLASS()
+class INVENTORYPROJECTV3_API URPGGiveItemAbilityDefinitionData : public URPGAbilityDefinitionData
+{
+	GENERATED_BODY()
+	
+public:
+	
+	URPGGiveItemAbilityDefinitionData();
+	
+	
+	
+};
+

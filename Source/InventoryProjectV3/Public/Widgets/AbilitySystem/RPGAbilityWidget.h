@@ -59,13 +59,15 @@ public:
 	UPROPERTY(Transient, meta=(BindWidgetAnim))
 	UWidgetAnimation* AbilityUsed;
 	
-	UPROPERTY(BlueprintReadOnly)
+	// TODO: Change back to Read only after spell book is done
+	UPROPERTY(BlueprintReadWrite)
 	URPGAbilityDefinitionData* AbilityDefinition;
 	
 	UPROPERTY(BlueprintReadOnly)
 	URPGAbilityComponent* AbilityComponent;
 
-	UPROPERTY(BlueprintReadOnly)
+	// TODO: Change back to Read only after spell book is done
+	UPROPERTY(BlueprintReadWrite)
 	URPGAbilityBase* Ability;
 	
 	UPROPERTY(BlueprintReadOnly)

@@ -9,6 +9,8 @@
 #include "Characters/RPGPlayerCharacter.h"
 #include "Components/InterpToMovementComponent.h"
 #include "Components/SphereComponent.h"
+#include "Utility/LogDefinitions.h"
+#include "Utility/Utility.h"
 
 ARPGAbilityPickup::ARPGAbilityPickup()
 {
@@ -28,6 +30,7 @@ ARPGAbilityPickup::ARPGAbilityPickup()
 	
 	AbilityIconMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("AbilityIconMeshComponent"));
 	AbilityIconMeshComponent->AttachToComponent(SphereComponent, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, false));
+	AbilityIconMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	
 	AbilityDefinition = nullptr;
 	AbilityIconMeshMaterial = nullptr;
@@ -76,7 +79,11 @@ void ARPGAbilityPickup::OnSphereComponentBeginOverlap(UPrimitiveComponent* Overl
 		return;
 	}
 	
-	AbilityComp->AddAbility(AbilityDefinition);
+	if (!AbilityComp->AddAbility(AbilityDefinition))
+	{
+		LOG_WITH_FUNCTION_NAME(LogRPGAbilitySystem, Error, TEXT("Failed to add Ability %s to Character %s"), *AbilityDefinition->GetName(), *OtherActor->GetName());
+		return;
+	}
 	
 	Destroy();
 }

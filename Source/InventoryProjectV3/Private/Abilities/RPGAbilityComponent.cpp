@@ -30,6 +30,7 @@ URPGAbilityComponent::URPGAbilityComponent()
 	TargetingPreviewTimer = FTimerHandle();
 	TargetingPreviewUpdateRate = 0.1f;
 	TargetingPreviewActorClass = nullptr;
+	AbilityLimit = 10;
 }
 
 void URPGAbilityComponent::BeginPlay()
@@ -811,11 +812,28 @@ bool URPGAbilityComponent::IsAbilityOnCooldown(URPGAbilityBase* Ability) const
 	return !FMath::IsNearlyEqual(GetCooldownRemainingForAbility(Ability), 0.f); 
 }
 
-void URPGAbilityComponent::AddAbility(URPGAbilityDefinitionData* NewAbilityDefinition)
+bool URPGAbilityComponent::HasAbility(URPGAbilityDefinitionData* AbilityDefinitionData) const
+{
+	return TemplateAbilityDefinitions.Contains(AbilityDefinitionData);
+}
+
+bool URPGAbilityComponent::AddAbility(URPGAbilityDefinitionData* NewAbilityDefinition)
 {
 	if (!NewAbilityDefinition)
 	{
-		return;
+		return false;
+	}
+	
+	if (TemplateAbilityDefinitions.Num() >= AbilityLimit)
+	{
+		LOG_WITH_FUNCTION_NAME(LogRPGAbilitySystem, Warning, TEXT("Ability limit for Character %s reached"), *GetNameSafe(GetOwner()));
+		return false;
+	}
+	
+	if (HasAbility(NewAbilityDefinition))
+	{
+		LOG_WITH_FUNCTION_NAME(LogRPGAbilitySystem, Error, TEXT("Character %s already knows ability %s"), *GetNameSafe(GetOwner()), *NewAbilityDefinition->GetName());
+		return false;
 	}
 	
 	TemplateAbilityDefinitions.Add(NewAbilityDefinition);
@@ -823,6 +841,8 @@ void URPGAbilityComponent::AddAbility(URPGAbilityDefinitionData* NewAbilityDefin
 	SpawnAbilityObject(NewAbilityDefinition);
 	
 	OnAbilityAdded.Broadcast(NewAbilityDefinition);
+	
+	return true;
 }
 
 void URPGAbilityComponent::InitAbilities()

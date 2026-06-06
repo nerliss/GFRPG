@@ -165,8 +165,11 @@ public:
 	UFUNCTION(BlueprintPure)
 	bool IsAbilityOnCooldown(URPGAbilityBase* Ability) const;
 	
+	UFUNCTION(BlueprintPure)
+	bool HasAbility(URPGAbilityDefinitionData* AbilityDefinitionData) const;
+	
 	UFUNCTION(BlueprintCallable)
-	void AddAbility(URPGAbilityDefinitionData* NewAbilityDefinition);
+	bool AddAbility(URPGAbilityDefinitionData* NewAbilityDefinition);
 	
 	UFUNCTION(BlueprintCallable)
 	void InitAbilities();
@@ -201,6 +204,8 @@ public:
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnAbilityTargetingPreviewCanceled OnAbilityTargetingPreviewCanceled;
 	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int32 AbilityLimit;
 	// TODO: Change property params later on to be more read only
 	/* Abilities to spawn from. Literally a set of abilities that will be spawned upon starting a game for specific component*/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)

@@ -7,5 +7,5 @@ void URPGAbilityTooltip::NativeConstruct()
 {
 	Super::NativeConstruct();
 	
-	
+	// TODO: move delegates bind logic here
 }

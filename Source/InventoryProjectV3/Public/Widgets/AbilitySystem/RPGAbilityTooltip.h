@@ -6,6 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "RPGAbilityTooltip.generated.h"
 
+class URPGAbilityBase;
+class URPGAbilityDefinitionData;
 class UTextBlock;
 class UImage;
 class URPGAbilityComponent;
@@ -21,6 +23,24 @@ class INVENTORYPROJECTV3_API URPGAbilityTooltip : public UUserWidget
 public:
 	
 	virtual void NativeConstruct() override;
+	
+	UFUNCTION(BlueprintCallable)
+	void SetupTooltip(URPGAbilityDefinitionData* AbilityDefinition);
+	
+	UFUNCTION()
+	void OnAbilityUsed(URPGAbilityBase* Ability);
+	
+	UFUNCTION()
+	void OnAbilityTargetingPreviewStarted(URPGAbilityBase* Ability);
+	
+	UFUNCTION()
+	void OnAbilityTargetingPreviewCanceled(URPGAbilityBase* Ability);
+	
+	UFUNCTION()
+	void OnAbilityTargetingPreviewConfirmed(URPGAbilityBase* Ability);
+	
+	UFUNCTION()
+	void OnAbilityTooltipFadeOut();
 	
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
 	UImage* AbilityIconImage;
@@ -45,5 +65,8 @@ public:
 	
 	UPROPERTY(BlueprintReadOnly)
 	FTimerHandle VisibilityTimerHandle;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Tooltip")
+	float AbilityTooltipVisibilityTime = 3.f;
 	
 };

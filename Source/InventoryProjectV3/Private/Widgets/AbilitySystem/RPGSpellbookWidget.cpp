@@ -43,3 +43,11 @@ void URPGSpellbookWidget::LoadAllAbilitiesFromRegistry()
 		}
 	}
 }
+
+void URPGSpellbookWidget::PopulatePage()
+{
+}
+
+void URPGSpellbookWidget::UpdateButtons()
+{
+}

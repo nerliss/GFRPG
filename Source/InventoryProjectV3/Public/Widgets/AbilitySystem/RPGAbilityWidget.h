@@ -15,6 +15,10 @@ class UBorder;
 class URPGAbilityDefinitionData;
 class URPGAbilityComponent;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMouseHoverStart, URPGAbilityDefinitionData*, DefinitionData);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMouseHoverEnd, URPGAbilityDefinitionData*, DefinitionData);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRightMouseButtonClicked, URPGAbilityDefinitionData*, DefinitionData);
+
 /**
  * 
  */
@@ -26,6 +30,9 @@ class INVENTORYPROJECTV3_API URPGAbilityWidget : public UUserWidget
 public:
 	
 	virtual void NativeConstruct() override;
+	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
+	virtual FReply NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	
 	void UpdateCooldownVisual();
 	void StartCooldownVisual(URPGAbilityComponent* InAbilityComponent);
@@ -84,6 +91,10 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability")
 	float VisualsUpdateRate = 0.1f;
+	
+	FOnMouseHoverStart OnMouseHoverStart;
+	FOnMouseHoverEnd OnMouseHoverEnd;
+	FOnRightMouseButtonClicked OnRightMouseButtonClicked;
 	
 private:
 	

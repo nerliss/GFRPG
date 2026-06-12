@@ -31,6 +31,21 @@ void URPGAbilityWidget::NativeConstruct()
 	}
 }
 
+void URPGAbilityWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
+}
+
+void URPGAbilityWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseLeave(InMouseEvent);
+}
+
+FReply URPGAbilityWidget::NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	return Super::NativeOnMouseButtonUp(InGeometry, InMouseEvent);
+}
+
 void URPGAbilityWidget::UpdateCooldownVisual()
 {
 	if (!CooldownText)

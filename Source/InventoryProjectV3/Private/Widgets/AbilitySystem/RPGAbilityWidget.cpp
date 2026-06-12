@@ -34,16 +34,27 @@ void URPGAbilityWidget::NativeConstruct()
 void URPGAbilityWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
+	
+	OnMouseHoverStart.Broadcast(AbilityDefinition);
 }
 
 void URPGAbilityWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseLeave(InMouseEvent);
+	
+	OnMouseHoverEnd.Broadcast(AbilityDefinition);
 }
 
 FReply URPGAbilityWidget::NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
-	return Super::NativeOnMouseButtonUp(InGeometry, InMouseEvent);
+	Super::NativeOnMouseButtonUp(InGeometry, InMouseEvent);
+	
+	if (InMouseEvent.GetEffectingButton() == EKeys::RightMouseButton)
+	{
+		OnRightMouseButtonClicked.Broadcast(AbilityDefinition);
+	}
+	
+	return FReply::Handled();
 }
 
 void URPGAbilityWidget::UpdateCooldownVisual()

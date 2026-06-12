@@ -10,6 +10,8 @@
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "Components/UniformGridPanel.h"
+#include "Utility/LogDefinitions.h"
+#include "Utility/Utility.h"
 #include "Widgets/AbilitySystem/RPGAbilityTooltip.h"
 #include "Widgets/AbilitySystem/RPGAbilityWidget.h"
 
@@ -44,14 +46,29 @@ void URPGSpellbookWidget::NativeConstruct()
 
 FReply URPGSpellbookWidget::NativeOnMouseWheel(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
-	return Super::NativeOnMouseWheel(InGeometry, InMouseEvent);
+	Super::NativeOnMouseWheel(InGeometry, InMouseEvent);
 	
+	if (InMouseEvent.GetWheelDelta() > 0.f)
+	{
+		if (PreviousPageButton->GetIsEnabled())
+		{
+			OnPreviousPageButtonClicked();
+		}
+	}
+	else
+	{
+		if (NextPageButton->GetIsEnabled())
+		{
+			OnNextPageButtonClicked();
+		}
+	}
 	
+	return FReply::Handled();
 }
 
 void URPGSpellbookWidget::LoadAllAbilitiesFromRegistry()
 {
-	IAssetRegistry& AssetRegistry =	FModuleManager::LoadModuleChecked<FAssetRegistryModule>(TEXT("AssetRegistry")).Get();
+	const IAssetRegistry& AssetRegistry = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(TEXT("AssetRegistry")).Get();
 	
 	FARFilter Filter;
 	Filter.PackagePaths.Add(TEXT("/Game/InventoryProject/Core/AbilitySystem/Data/Abilities/"));
@@ -62,14 +79,13 @@ void URPGSpellbookWidget::LoadAllAbilitiesFromRegistry()
 	TArray<FAssetData> FoundAssets;
 	AssetRegistry.GetAssets(Filter, FoundAssets);
 
-	UE_LOG(LogTemp, Warning, TEXT("Found %d assets at path"), FoundAssets.Num());
+	LOG_WITH_FUNCTION_NAME(LogRPGAbilitySystem, Log, TEXT("Found %d assets at path"), FoundAssets.Num());
 	
 	AllAbilitiesInGame.Empty();
 
 	for (const FAssetData& AssetData : FoundAssets)
 	{
 		URPGAbilityDefinitionData* Definition = Cast<URPGAbilityDefinitionData>(AssetData.GetAsset());
-
 		if (Definition)
 		{
 			AllAbilitiesInGame.Add(Definition);
@@ -89,12 +105,19 @@ void URPGSpellbookWidget::PopulatePage()
 		return;
 	}
 	
+	if (!AbilityTooltipWidget)
+	{
+		return;
+	}
+	
+	AbilityTooltipWidget->SetVisibility(ESlateVisibility::Collapsed);
+	
 	SpellBookUniformGrid->ClearChildren();
 	
-	int32 FirstIndex = CurrentPage * AbilitiesPerPage;
-	int32 LastIndex = FMath::Min(FirstIndex + AbilitiesPerPage, TotalAbilities);
+	const int32 FirstIndex = CurrentPage * AbilitiesPerPage;
+	const int32 LastIndex = FMath::Min(FirstIndex + AbilitiesPerPage, TotalAbilities);
 	
-	for (int32 i = FirstIndex; i < LastIndex - 1; i++)
+	for (int32 i = FirstIndex; i < LastIndex; i++)
 	{
 		URPGAbilityWidget* AbilityWidget = Cast<URPGAbilityWidget>(CreateWidget(GetWorld(), AbilityWidgetClass));
 		if (!AbilityWidget)

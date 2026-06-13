@@ -8,6 +8,7 @@
 #include "RPGAbilityComponent.generated.h"
 
 
+class URPGEffectsComponent;
 class ARPGTargetingPreviewActor;
 class URPGAbilitySummon;
 class URPGAbilityBase;
@@ -245,6 +246,9 @@ public:
 	
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
 	TArray<UMaterialInstanceDynamic*> TargetingPreviewActorMIDs; 
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Effects")
+	URPGEffectsComponent* EffectsComponent;
 	
 private:
 	

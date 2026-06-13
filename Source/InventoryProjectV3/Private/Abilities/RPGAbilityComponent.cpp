@@ -5,6 +5,7 @@
 
 #include "Abilities/Archetypes/RPGAbilityBase.h"
 #include "Abilities/RPGAbilityDefinitionData.h"
+#include "Abilities/RPGEffectsComponent.h"
 #include "Abilities/RPGTargetingPreviewActor.h"
 #include "Abilities/Archetypes/RPGAbilitySummon.h"
 #include "Camera/CameraComponent.h"
@@ -43,6 +44,12 @@ void URPGAbilityComponent::BeginPlay()
 	if (RPGCharacter)
 	{
 		RPGCharacter->OnCharacterMoved.AddDynamic(this, &URPGAbilityComponent::OnOwnerCharacterMoved);
+	}
+	
+	EffectsComponent = GetOwner()->FindComponentByClass<URPGEffectsComponent>();
+	if (!EffectsComponent)
+	{
+		LOG_WITH_FUNCTION_NAME(LogRPGAbilitySystem, Error, TEXT("%s has Ability Component but no Effects Component - effects will not work!"), *GetNameSafe(GetOwner()));
 	}
 }
 

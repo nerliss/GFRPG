@@ -4,6 +4,7 @@
 #include "Characters/RPGCharacter.h"
 
 #include "Abilities/RPGAbilityComponent.h"
+#include "Abilities/RPGEffectsComponent.h"
 #include "Components/RPGPointOfInterestComponent.h"
 #include "Components/RPGQuestLogComponent.h"
 #include "Components/RPGStatsComponent.h"
@@ -22,6 +23,8 @@ ARPGCharacter::ARPGCharacter()
 	PointOfInterestComponent->Icon = FSlateBrush();
 
 	AbilityComponent = CreateDefaultSubobject<URPGAbilityComponent>(TEXT("AbilityComponent"));
+	
+	EffectsComponent = CreateDefaultSubobject<URPGEffectsComponent>(TEXT("EffectsComponent"));
 }
 
 void ARPGCharacter::BeginPlay()

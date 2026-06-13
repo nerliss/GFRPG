@@ -7,6 +7,7 @@
 #include "Interfaces/RPGInteract_Interface.h"
 #include "RPGCharacter.generated.h"
 
+class URPGEffectsComponent;
 class URPGAbilityComponent;
 class URPGPointOfInterestComponent;
 class URPGQuestLogComponent;
@@ -35,6 +36,7 @@ public:
 	URPGQuestLogComponent* GetQuestLogComponent() const { return QuestLogComponent; }
 	URPGStatsComponent* GetStatsComponent() const { return StatsComponent; }
 	URPGAbilityComponent* GetAbilityComponent() const { return AbilityComponent; }
+	URPGEffectsComponent* GetEffectComponent() const { return EffectsComponent; }
 	URPGPointOfInterestComponent* GetPointOfInterestComponent() const { return PointOfInterestComponent; }
 	
 	FText GetCharacterName() const { return CharacterName; }
@@ -61,10 +63,13 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "RPG Character")
 	URPGStatsComponent* StatsComponent;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "RPG Character")
 	URPGPointOfInterestComponent* PointOfInterestComponent;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "RPG Character")
 	URPGAbilityComponent* AbilityComponent;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "RPG Character")
+	URPGEffectsComponent* EffectsComponent;
 	
 };

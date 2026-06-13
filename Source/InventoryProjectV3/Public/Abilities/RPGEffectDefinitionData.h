@@ -43,7 +43,7 @@ public:
 	UFUNCTION(BlueprintPure)
 	FPrimaryAssetId GetEffectId() const { return GetPrimaryAssetId(); }
 	
-	UPROPERTY(VisibleDefaultsOnly, Transient, BlueprintReadOnly, Category = "Ability System")
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Ability System")
 	FPrimaryAssetId CachedId;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability System")

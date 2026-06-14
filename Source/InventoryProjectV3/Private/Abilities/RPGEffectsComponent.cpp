@@ -134,4 +134,5 @@ void URPGEffectsComponent::HandleStacking(FRPGActiveEffect& ExistingEffect,
 
 void URPGEffectsComponent::OnEffectDurationExpired(URPGEffectDefinitionData* EffectDefinition)
 {
+	RemoveEffect(EffectDefinition);
 }

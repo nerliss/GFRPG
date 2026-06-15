@@ -4,6 +4,7 @@
 #include "Abilities/RPGEffectsComponent.h"
 
 #include "Abilities/RPGEffectDefinitionData.h"
+#include "Utility/LogDefinitions.h"
 
 URPGEffectsComponent::URPGEffectsComponent()
 {
@@ -80,12 +81,48 @@ void URPGEffectsComponent::RemoveEffect(URPGEffectDefinitionData* EffectDefiniti
 
 bool URPGEffectsComponent::HasEffect(URPGEffectDefinitionData* EffectDefinition) const
 {
-	return false;
+	if (!EffectDefinition)
+	{
+		return false;
+	}
+	
+	return ActiveEffects.ContainsByPredicate(
+		[EffectDefinition](const FRPGActiveEffect& Effect)
+		{
+			return Effect.Definition == EffectDefinition;
+		});
 }
 
 float URPGEffectsComponent::GetEffectRemainingDuration(URPGEffectDefinitionData* EffectDefinition) const
 {
-	return 0.f;
+	if (!EffectDefinition)
+	{
+		return 0.f;
+	}
+	
+	const FRPGActiveEffect* FoundEffect = ActiveEffects.FindByPredicate(
+		[EffectDefinition](const FRPGActiveEffect& Effect)
+		{
+			return Effect.Definition == EffectDefinition;
+		});
+	
+	return FoundEffect ? FoundEffect->RemainingDuration : 0.f;
+}
+
+int32 URPGEffectsComponent::GetEffectStacks(URPGEffectDefinitionData* EffectDefinition) const
+{
+	if (!EffectDefinition)
+	{
+		return 0;
+	}
+	
+	const FRPGActiveEffect* FoundEffect = ActiveEffects.FindByPredicate(
+		[EffectDefinition](const FRPGActiveEffect& Effect)
+		{
+			return Effect.Definition == EffectDefinition;
+		});
+	
+	return FoundEffect ? FoundEffect->CurrentStacks : 0;
 }
 
 void URPGEffectsComponent::BeginPlay()
@@ -101,6 +138,13 @@ void URPGEffectsComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 
 void URPGEffectsComponent::ExecuteEffect(URPGEffectDefinitionData* EffectDefinition, AActor* Instigator)
 {
+	if (!EffectDefinition)
+	{
+		return;
+	}
+	
+	// TODO: Add some logic related to stats or something
+	UE_LOG(LogRPGAbilitySystem, Log, TEXT("Executing effect: %s on %s"), *EffectDefinition->Name.ToString(), *GetNameSafe(GetOwner()));
 }
 
 void URPGEffectsComponent::HandleStacking(FRPGActiveEffect& ExistingEffect,

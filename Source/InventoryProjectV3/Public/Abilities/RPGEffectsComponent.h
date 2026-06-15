@@ -63,6 +63,9 @@ public:
 	
 	UFUNCTION(BlueprintPure, Category = "Effects")
 	float GetEffectRemainingDuration(URPGEffectDefinitionData* EffectDefinition) const;
+	
+	UFUNCTION(BlueprintPure, Category = "Effects")
+	int32 GetEffectStacks(URPGEffectDefinitionData* EffectDefinition) const;
 
 	UPROPERTY(BlueprintAssignable)
 	FOnEffectApplied OnEffectApplied;

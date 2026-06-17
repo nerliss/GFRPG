@@ -43,7 +43,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEffectApplied, URPGEffectDefiniti
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEffectRemoved, URPGEffectDefinitionData*, Effect);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnEffectStackUpdated, URPGEffectDefinitionData*, Effect, int32, NewStacks);
 
-UCLASS(Blueprintable, BlueprintType, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(Blueprintable, BlueprintType, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class INVENTORYPROJECTV3_API URPGEffectsComponent : public UActorComponent
 {
 	GENERATED_BODY()

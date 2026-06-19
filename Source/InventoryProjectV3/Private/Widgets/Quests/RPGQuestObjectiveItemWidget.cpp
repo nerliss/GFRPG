@@ -14,6 +14,7 @@ void URPGQuestObjectiveItemWidget::NativeConstruct()
 	Super::NativeConstruct();
 
 	// TODO: Replace with string table entity for future localization
+	// TODO: Rework the system overall to be data-driven instead of actor-based
 	const FText StatusText = Objective.bCompleted ? FText::FromString("Completed: ") : FText::FromString("- ");
 	ObjectiveStatusText->SetText(StatusText);
 	ObjectiveStatusText->SetColorAndOpacity(Objective.bCompleted ? CompleteColor : ActiveColor);

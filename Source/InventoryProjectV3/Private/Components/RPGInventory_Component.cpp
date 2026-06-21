@@ -58,12 +58,10 @@ bool URPGInventory_Component::AddToInventory(FInventorySlot ContentToAdd)
 		// Check if there is an already existing stack
 		if (HasPartialStack(ContentToAdd, StackSlotIndex))
 		{
-			// Add to it
 			return AddToStack(ContentToAdd, StackSlotIndex);
 		}
 		else
 		{
-			// Create a new stack
 			return CreateStack(ContentToAdd);
 		}
 	}

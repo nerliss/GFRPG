@@ -60,10 +60,8 @@ bool URPGInventory_Component::AddToInventory(FInventorySlot ContentToAdd)
 		{
 			return AddToStack(ContentToAdd, StackSlotIndex);
 		}
-		else
-		{
-			return CreateStack(ContentToAdd);
-		}
+		
+		return CreateStack(ContentToAdd);
 	}
 	
 	// Create a new stack if the item is not stackable
@@ -84,7 +82,7 @@ bool URPGInventory_Component::CreateStack(FInventorySlot ContentToAdd)
 			bHasEmptySlot = true;
 			EmptySlotIndex = i;
 
-			UE_LOG(LogRPGInventory, Log, TEXT("[RPGInventory_Component::CreateStack] Found empty stack at %i position"), EmptySlotIndex);
+			LOG_WITH_FUNCTION_NAME(LogRPGInventory, Log, TEXT("Found empty stack at %i position"), EmptySlotIndex);
 			break;
 		}
 	}
@@ -93,12 +91,12 @@ bool URPGInventory_Component::CreateStack(FInventorySlot ContentToAdd)
 	{
 		Inventory[EmptySlotIndex] = ContentToAdd;
 		
-		UE_LOG(LogRPGInventory, Log, TEXT("[RPGInventory_Component::CreateStack] Stack created at %i position. Content added: item %s, quantity %i"),
+		LOG_WITH_FUNCTION_NAME(LogRPGInventory, Log, TEXT("Stack created at %i position. Content added: item %s, quantity %i"),
 		EmptySlotIndex, *ContentToAdd.Item.Name.ToString(), ContentToAdd.Quantity);
 		return bHasEmptySlot;
 	}
 	
-	UE_LOG(LogRPGInventory, Error, TEXT("[RPGInventory_Component::CreateStack] Inventory is full!"));
+	LOG_WITH_FUNCTION_NAME(LogRPGInventory, Error, TEXT("Inventory is full!"));
 	return bHasEmptySlot;
 }
 
@@ -111,7 +109,7 @@ bool URPGInventory_Component::AddToStack(FInventorySlot ContentToAdd, int32 Slot
 
 	if (bNeedToCreateAdditionalStack)
 	{
-		UE_LOG(LogRPGInventory, Log, TEXT("[RPGInventory_Component::AddToStack] Additional stack created for %s"), *ContentToAdd.Item.Name.ToString());
+		LOG_WITH_FUNCTION_NAME(LogRPGInventory, Log, TEXT("Additional stack created for %s"), *ContentToAdd.Item.Name.ToString());
 
 		ExistingStack.Item = ContentToAdd.Item;
 		ExistingStack.Quantity = ContentToAdd.Item.MaxStackSize;
@@ -127,7 +125,7 @@ bool URPGInventory_Component::AddToStack(FInventorySlot ContentToAdd, int32 Slot
 	
 	ExistingStack.Quantity += ContentToAdd.Quantity;
 
-	UE_LOG(LogRPGInventory, Log, TEXT("[RPGInventory_Component::AddToStack] Item %s added without creating an additional stack"), *ContentToAdd.Item.Name.ToString());
+	LOG_WITH_FUNCTION_NAME(LogRPGInventory, Log, TEXT("Item %s added without creating an additional stack"), *ContentToAdd.Item.Name.ToString());
 	return true;
 }
 
@@ -148,7 +146,7 @@ bool URPGInventory_Component::HasPartialStack(FInventorySlot Slot, int32& OutSlo
 			ExistingStackSlotIndex = i;
 			bExistingStackFound = true;
 
-			UE_LOG(LogRPGInventory, Log, TEXT("[RPGInventory_Component::HasPartialStack] Partial stack exists at position %i for slot %s and contains %i items"), 
+			LOG_WITH_FUNCTION_NAME(LogRPGInventory, Log, TEXT("Partial stack exists at position %i for slot %s and contains %i items"), 
 			ExistingStackSlotIndex, *Slot.Item.Name.ToString(), InventorySlot.Quantity);
 			break;
 		}
@@ -223,7 +221,7 @@ void URPGInventory_Component::DebugPrintInventory()
 
 void URPGInventory_Component::ExpandInventory(const int32 NewSlotsNumber)
 {
-	UE_LOG(LogRPGInventory, Log, TEXT("[RPGInventory_Component::ExpandInventory] Inventory was expanded from %d to %d"), SlotsNumber, NewSlotsNumber);
+	LOG_WITH_FUNCTION_NAME(LogRPGInventory, Log, TEXT("Inventory was expanded from %d to %d"), SlotsNumber, NewSlotsNumber);
 	SlotsNumber = NewSlotsNumber;
 }
 
@@ -257,14 +255,14 @@ void URPGInventory_Component::ToggleInventory()
 {
 	if (!InventoryWindowWidgetClass)
 	{
-		UE_LOG(LogRPGInventory, Error, TEXT("[URPGInventory_Component::ToggleInventory] Inventory window widget class is not set!"));
+		LOG_WITH_FUNCTION_NAME(LogRPGInventory, Error, TEXT("Inventory window widget class is not set!"));
 		return;
 	}
 
 	auto* PC = Cast<ARPGPlayer_Controller>(UGameplayStatics::GetPlayerController(this, 0));
 	if (!PC)
 	{
-		UE_LOG(LogRPGInventory, Error, TEXT("[URPGInventory_Component::ToggleInventory] Player controller is null! Probably because the owner of this component is not a player..."));
+		LOG_WITH_FUNCTION_NAME(LogRPGInventory, Error, TEXT("Player controller is null! Probably because the owner of this component is not a player..."));
 		return;
 	}
 
@@ -276,7 +274,7 @@ void URPGInventory_Component::ToggleInventory()
 		PC->SetInputMode(FInputModeGameOnly());
 		PC->bShowMouseCursor = false;
 
-		UE_LOG(LogRPGInventory, Log, TEXT("[URPGInventory_Component::ToggleInventory] Inventory window destroyed."));
+		LOG_WITH_FUNCTION_NAME(LogRPGInventory, Log, TEXT("Inventory window destroyed."));
 		return;
 	}
 
@@ -286,7 +284,7 @@ void URPGInventory_Component::ToggleInventory()
 	InventoryWindowWidget = Cast<URPGInventory_Window_Widget>(CreateWidget(GetWorld(), InventoryWindowWidgetClass));
 	if (!InventoryWindowWidget)
 	{
-		UE_LOG(LogRPGInventory, Error, TEXT("[URPGInventory_Component::ToggleInventory] Inventory window was not created!"));
+		LOG_WITH_FUNCTION_NAME(LogRPGInventory, Error, TEXT("Inventory window was not created!"));
 		return;
 	}
 
@@ -307,5 +305,5 @@ void URPGInventory_Component::ToggleInventory()
 	PC->SetInputMode(FInputModeUIOnly());
 	PC->bShowMouseCursor = true;
 
-	UE_LOG(LogRPGInventory, Log, TEXT("[URPGInventory_Component::ToggleInventory] Inventory window created."));
+	LOG_WITH_FUNCTION_NAME(LogRPGInventory, Log, TEXT("Inventory window created."));
 }

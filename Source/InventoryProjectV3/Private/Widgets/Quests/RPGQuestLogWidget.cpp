@@ -112,5 +112,5 @@ void URPGQuestLogWidget::RefreshQuestLogUI()
 
 void URPGQuestLogWidget::PlayConstructionFX()
 {
-	// TODO: Post Ak audio event here
+	// TODO: Post audio event here
 }

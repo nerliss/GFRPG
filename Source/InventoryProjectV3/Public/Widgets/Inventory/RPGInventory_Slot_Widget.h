@@ -53,13 +53,12 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	URPGInventory_Tooltip_Widget* TooltipReference;
 
-	/* MyTODO: Optimize code without using these two variables */
+	/* TODO: Optimize code without using these two variables */
 	UPROPERTY(BlueprintReadOnly)
 	ARPGPlayerCharacter* PlayerCharacterOwner;
 
 	UPROPERTY(BlueprintReadOnly)
 	ARPGPlayer_Controller* PlayerControllerOwner;
-	/***********************************************************/
 
 	UFUNCTION(BlueprintCallable)
 	void UpdateThumbnail();

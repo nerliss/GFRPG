@@ -13,9 +13,7 @@
 
 bool URPGXPBar_Widget::Initialize()
 {
-	bool Success = Super::Initialize();
-
-	if (!Success)
+	if (!Super::Initialize())
 	{
 		return false;
 	}
@@ -67,41 +65,40 @@ void URPGXPBar_Widget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	// Set reference to player
 	PlayerRef = Cast<ARPGPlayerCharacter>(GetOwningPlayerPawn());
 }
 
-const ARPGPlayerCharacter* URPGXPBar_Widget::GetPlayerReference()
+ARPGPlayerCharacter* URPGXPBar_Widget::GetPlayerReference() const
 {
-	return PlayerRef ? PlayerRef : nullptr;
+	return PlayerRef;
 }
 
-const float URPGXPBar_Widget::GetCurrentXP()
+float URPGXPBar_Widget::GetCurrentXP() const
 {
 	return GetPlayerReference() ? PlayerRef->XPComp->GetCurrentXP() : -1.f;
 }
 
-const float URPGXPBar_Widget::GetMaxXP()
+float URPGXPBar_Widget::GetMaxXP() const
 {
 	return GetPlayerReference() ? PlayerRef->XPComp->GetCurrentMaxXP() : -1.f;
 }
 
-const int32 URPGXPBar_Widget::GetCurrentLevel()
+int32 URPGXPBar_Widget::GetCurrentLevel() const
 {
 	return GetPlayerReference() ? PlayerRef->XPComp->GetCurrentLevel() : -1;
 }
 
-const float URPGXPBar_Widget::GetCurrentPercentageBuffer()
+float URPGXPBar_Widget::GetCurrentPercentageBuffer() const
 {
 	return GetPlayerReference() ? PlayerRef->XPComp->GetCurrentPercentageBuffer() : -1.f;
 }
 
-const float URPGXPBar_Widget::GetCurrentPercentageXP()
+float URPGXPBar_Widget::GetCurrentPercentageXP() const
 {
 	return GetPlayerReference() ? PlayerRef->XPComp->GetCurrentXPPercentage() : -1.f;
 }
 
-const void URPGXPBar_Widget::GetExperience(float& OutCurrentExperience, float& OutMaxExperience)
+void URPGXPBar_Widget::GetExperience(float& OutCurrentExperience, float& OutMaxExperience) const
 {
 	OutCurrentExperience = GetCurrentXP();
 	OutMaxExperience = GetMaxXP();

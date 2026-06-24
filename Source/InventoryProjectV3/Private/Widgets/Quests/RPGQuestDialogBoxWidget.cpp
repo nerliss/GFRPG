@@ -137,8 +137,6 @@ void URPGQuestDialogBoxWidget::OnTurnInClicked()
 	PlayerCharacter->XPComp->AddXP(Quest->GetXPReward());
 	// TODO: Add money reward
 	QuestLog->DeleteQuest(Quest);
-
-	// TODO: Post sound
 	
 	RemoveQuestItemsFromInventory();
 
@@ -174,7 +172,6 @@ void URPGQuestDialogBoxWidget::OnAcceptClicked()
 	{
 		PlayerCharacter->GetQuestLogComponent()->AddQuest(Quest);
 		PlayerCharacter->GetQuestLogComponent()->SetActiveQuest(Quest);
-		// TODO: Play accept quest sound
 		RemoveWidget();
 	}
 }
@@ -193,10 +190,8 @@ void URPGQuestDialogBoxWidget::RemoveWidget()
 
 void URPGQuestDialogBoxWidget::PlayConstructFX()
 {
-	// TODO: Post quest log open sound
 }
 
 void URPGQuestDialogBoxWidget::PlayDestructFX()
 {
-	// TODO: Post quest log close sound
 }

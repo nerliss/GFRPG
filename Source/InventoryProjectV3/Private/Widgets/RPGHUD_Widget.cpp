@@ -6,37 +6,22 @@
 #include "Components/CanvasPanelSlot.h"
 #include "Widgets/RPGInteractionPrompt_Widget.h"
 #include "Utility/LogDefinitions.h"
-
-bool URPGHUD_Widget::Initialize()
-{
-	// TODO: Not sure we need this function
-	bool Success = Super::Initialize();
-
-	if (!Success)
-	{
-		return false;
-	}
-
-	// TODO: Create references to multiple user-created widgets that still need to be implemented via C++
-
-	return true;
-}
+#include "Utility/Utility.h"
 
 void URPGHUD_Widget::DisplayInteractionMessage(bool bShowMessage, FText TargetName)
 {
 	if (!InteractionPrompt_WidgetClass)
 	{
-		UE_LOG(LogRPGUIHUD, Error, TEXT("[URPGHUD_Widget::DisplayInteractionMessage] InteractionPrompt_WidgetClass is nullptr!"));
+		LOG_WITH_FUNCTION_NAME(LogRPGUIHUD, Error, TEXT("InteractionPrompt_WidgetClass is nullptr!"));
 		return;
 	}
 
 	if (!HUDCanvas)
 	{
-		UE_LOG(LogRPGUIHUD, Error, TEXT("[URPGHUD_Widget::DisplayInteractionMessage] HUDCanvas doesn't exist!"));
+		LOG_WITH_FUNCTION_NAME(LogRPGUIHUD, Error, TEXT("HUDCanvas doesn't exist!"));
 		return;
 	}
 
-	// Destroy message if it exists
 	if (!bShowMessage)
 	{
 		if (InteractionPrompt_Widget)

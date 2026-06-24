@@ -99,7 +99,6 @@ void URPGInventory_Slot_Widget::UpdateThumbnail()
 {
 	if (SlotContent.Quantity <= 0) // TODO: Check this
 	{
-		// Slot is empty
 		return;
 	}
 
@@ -115,7 +114,6 @@ FText URPGInventory_Slot_Widget::GetItemQuantity() const
 {
 	if (!IsValid(SlotContent.Item.Class))
 	{
-		// Invalid item class
 		return FText::FromString(TEXT(""));
 	}
 

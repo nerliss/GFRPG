@@ -17,8 +17,6 @@ class INVENTORYPROJECTV3_API URPGXPBar_Widget : public UUserWidget
 {
 	GENERATED_BODY()
 	
-private:
-
 	bool Initialize() override;
 
 public:
@@ -45,25 +43,25 @@ public:
 
 private:
 
-	const ARPGPlayerCharacter* GetPlayerReference();
+	ARPGPlayerCharacter* GetPlayerReference() const;
 
 	UPROPERTY()
 	ARPGPlayerCharacter* PlayerRef;
 
-	const float GetCurrentXP();
-	const float GetMaxXP();
+	float GetCurrentXP() const;
+	float GetMaxXP() const;
 
 protected:
 	
-	UFUNCTION(BlueprintCallable, BlueprintPure)
-	const int32 GetCurrentLevel();
+	UFUNCTION(BlueprintPure)
+	int32 GetCurrentLevel() const;
 
-	UFUNCTION(BlueprintCallable, BlueprintPure)
-	const float GetCurrentPercentageBuffer();
+	UFUNCTION(BlueprintPure)
+	float GetCurrentPercentageBuffer() const;
 
-	UFUNCTION(BlueprintCallable, BlueprintPure)
-	const float GetCurrentPercentageXP();
+	UFUNCTION(BlueprintPure)
+	float GetCurrentPercentageXP() const;
 
-	UFUNCTION(BlueprintCallable, BlueprintPure)
-	const void GetExperience(float& OutCurrentExperience, float& OutMaxExperience);
+	UFUNCTION(BlueprintPure)
+	void GetExperience(float& OutCurrentExperience, float& OutMaxExperience) const;
 };

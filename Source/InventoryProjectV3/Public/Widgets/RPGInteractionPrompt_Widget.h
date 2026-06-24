@@ -17,9 +17,7 @@ class INVENTORYPROJECTV3_API URPGInteractionPrompt_Widget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-
-	virtual void NativeConstruct() override;
-
+	
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	USizeBox* MainSizeBox = nullptr;
 
@@ -49,11 +47,9 @@ private:
 	// Is used instead of NativePreConstruct()
 	bool Initialize() override;
 
-	// Returns target name
 	UFUNCTION()
 	FText GetTargetName();
 
-	// Returns message text
 	UFUNCTION()
 	FText GetMessageText();
 

@@ -11,9 +11,7 @@
 
 bool URPGHPBar_Widget::Initialize()
 {
-	bool Success = Super::Initialize();
-
-	if (!Success)
+	if (!Super::Initialize())
 	{
 		return false;
 	}
@@ -42,13 +40,12 @@ void URPGHPBar_Widget::NativeConstruct()
 {
 	Super::NativeConstruct();
 	
-	// Set player reference
 	PlayerRef = Cast<ARPGPlayerCharacter>(GetOwningPlayerPawn());
 }
 
 const ARPGPlayerCharacter* URPGHPBar_Widget::GetPlayerReference()
 {
-	return PlayerRef ? PlayerRef : nullptr;
+	return PlayerRef;
 }
 
 const float URPGHPBar_Widget::GetCurrentHP()

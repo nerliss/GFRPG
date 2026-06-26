@@ -22,10 +22,6 @@ public:
 	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	/************************************************************************/
-	/*                           Photo mode pawn                            */
-	/************************************************************************/
-
 	void MoveForward(float Value);
 	void MoveRight(float Value);
 

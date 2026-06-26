@@ -37,7 +37,7 @@ void APreviewCharacter::PostInitializeComponents()
 
 void APreviewCharacter::ResetCameraDistance()
 {
-	const auto CurrentCharacterData = FindCurrentCharacterData();
+	const FCharacterSelectionData CurrentCharacterData = FindCurrentCharacterData();
 
 	SceneCaptureComponent->AddRelativeLocation(CurrentCharacterData.PreviewCameraDistanceDelta);
 }
@@ -56,7 +56,7 @@ FCharacterSelectionData APreviewCharacter::FindCurrentCharacterData() const
 		return FCharacterSelectionData();
 	}
 
-	const auto* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+	const ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 	if (!PlayerCharacter)
 	{ 
 		return FCharacterSelectionData();
@@ -64,7 +64,7 @@ FCharacterSelectionData APreviewCharacter::FindCurrentCharacterData() const
 
 	const TArray<FCharacterSelectionData> LocalSelectionData = AssociatedCharacterCustomizationData->GetCharacterSelectionData();
 
-	for (auto& SelectionData : LocalSelectionData)
+	for (const FCharacterSelectionData& SelectionData : LocalSelectionData)
 	{
 		if (SelectionData.SkeletalMesh == PlayerCharacter->GetMesh()->GetSkeletalMeshAsset())
 		{
@@ -84,7 +84,7 @@ void APreviewCharacter::LoadTextures()
 {
 	TArray<UMaterialInterface*> MeshMaterials = PreviewMesh->GetMaterials();
 
-	for (const auto& Material : MeshMaterials)
+	for (UMaterialInterface*& Material : MeshMaterials)
 	{
 		if (!Material)
 		{
@@ -97,7 +97,7 @@ void APreviewCharacter::LoadTextures()
 
 void APreviewCharacter::OnAssociatedCharacterDataUpdated()
 {
-	const auto CurrentCharacterData = FindCurrentCharacterData();
+	const FCharacterSelectionData CurrentCharacterData = FindCurrentCharacterData();
 	PreviewMesh->SetSkeletalMesh(CurrentCharacterData.SkeletalMesh);
 	PreviewMesh->SetAnimInstanceClass(CurrentCharacterData.AssociatedAnimBP);
 	

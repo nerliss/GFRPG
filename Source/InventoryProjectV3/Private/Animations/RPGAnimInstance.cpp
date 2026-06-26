@@ -71,7 +71,7 @@ void URPGAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 void URPGAnimInstance::CalculateIKFootTrace(const FName SocketName, const float TraceDistance, FVector& OutTraceHitLocation, float& OutFootTraceOffset)
 {
-	auto* CharacterMesh = Character->GetMesh();
+	const USkeletalMeshComponent* CharacterMesh = Character->GetMesh();
 	if (!CharacterMesh)
 	{
 		return;
@@ -124,7 +124,7 @@ void URPGAnimInstance::CalculateIKFeetAlpha()
 		return;
 	}
 
-	// MyTODO: Add interpolation later (in case it is required)
+	// TODO: Add interpolation later (in case it is required)
 	IKFeetAlpha = ShouldUpdateIKFeet();
 }
 

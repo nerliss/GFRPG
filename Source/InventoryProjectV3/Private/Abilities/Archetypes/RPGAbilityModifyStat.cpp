@@ -3,8 +3,8 @@
 
 #include "Abilities/Archetypes/RPGAbilityModifyStat.h"
 
-#include "Components/RPGHealth_Component.h"
-#include "Components/RPGXP_Component.h"
+#include "Components/RPGHealthComponent.h"
+#include "Components/RPGXPComponent.h"
 
 void URPGAbilityModifyStat::InitAbility(URPGAbilityComponent* InAbilityComponent, AActor* InOwnerActor,
                                         URPGAbilityDefinitionData* InAbilityDefinitionData)
@@ -37,7 +37,7 @@ bool URPGAbilityModifyStat::UseAbility(FRPGTargetData TargetData)
 	{
 	case EAbilityStatToModifyType::Health:
 		{
-			URPGHealth_Component* HealthComp = Cast<URPGHealth_Component>(OwnerActor->GetComponentByClass(URPGHealth_Component::StaticClass()));
+			URPGHealthComponent* HealthComp = Cast<URPGHealthComponent>(OwnerActor->GetComponentByClass(URPGHealthComponent::StaticClass()));
 			if (HealthComp)
 			{
 				const float AmountToModify = ModifyStatAbilityDefinitionData->AmountToModify;
@@ -54,7 +54,7 @@ bool URPGAbilityModifyStat::UseAbility(FRPGTargetData TargetData)
 		
 	case EAbilityStatToModifyType::XP:
 		{
-			URPGXP_Component* XPComp = Cast<URPGXP_Component>(OwnerActor->GetComponentByClass(URPGXP_Component::StaticClass()));
+			URPGXPComponent* XPComp = Cast<URPGXPComponent>(OwnerActor->GetComponentByClass(URPGXPComponent::StaticClass()));
 			if (XPComp)
 			{
 				const float AmountToModify = ModifyStatAbilityDefinitionData->AmountToModify;

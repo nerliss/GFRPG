@@ -12,7 +12,7 @@
 #include "Components/UniformGridPanel.h"
 #include "Utility/LogDefinitions.h"
 #include "Utility/Utility.h"
-#include "Widgets/AbilitySystem/RPGAbilityTooltip.h"
+#include "Widgets/AbilitySystem/RPGAbilityTooltipWidget.h"
 #include "Widgets/AbilitySystem/RPGAbilityWidget.h"
 
 void URPGSpellbookWidget::NativeConstruct()

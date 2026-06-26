@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Interfaces/RPGInteract_Interface.h"
+#include "Interfaces/RPGInteractInterface.h"
 #include "RPG3DWorldMarker.generated.h"
 
 class URPGPointOfInterestComponent;
@@ -14,7 +14,7 @@ class USphereComponent;
 class UStaticMeshComponent;
 
 UCLASS()
-class INVENTORYPROJECTV3_API ARPG3DWorldMarker : public AActor, public IRPGInteract_Interface
+class INVENTORYPROJECTV3_API ARPG3DWorldMarker : public AActor, public IRPGInteractInterface
 {
 	GENERATED_BODY()
 	

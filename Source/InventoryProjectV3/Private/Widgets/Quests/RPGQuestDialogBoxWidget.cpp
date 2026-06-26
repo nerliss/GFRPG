@@ -4,14 +4,14 @@
 #include "Widgets/Quests/RPGQuestDialogBoxWidget.h"
 
 #include "Characters/RPGPlayerCharacter.h"
-#include "Components/RPGInventory_Component.h"
+#include "Components/RPGInventoryComponent.h"
 #include "Components/RPGQuestLogComponent.h"
-#include "Components/RPGXP_Component.h"
+#include "Components/RPGXPComponent.h"
 #include "Components/ScrollBox.h"
-#include "Items/RPGItem_Base.h"
-#include "PlayerController/RPGPlayer_Controller.h"
+#include "Items/RPGItemBase.h"
+#include "PlayerController/RPGPlayerController.h"
 #include "Quests/RPGQuest.h"
-#include "Widgets/RPGHUD_Widget.h"
+#include "Widgets/RPGHUDWidget.h"
 #include "Widgets/Quests/RPGQuestObjectiveItemWidget.h"
 
 void URPGQuestDialogBoxWidget::NativeConstruct()
@@ -19,7 +19,7 @@ void URPGQuestDialogBoxWidget::NativeConstruct()
 	Super::NativeConstruct();
 
 	// TODO: Collapse into a function
-	ARPGPlayer_Controller* RPGPC = Cast<ARPGPlayer_Controller>(GetOwningPlayer());
+	ARPGPlayerController* RPGPC = Cast<ARPGPlayerController>(GetOwningPlayer());
 	if (RPGPC)
 	{
 		RPGPC->SetUIInputMode();
@@ -56,20 +56,20 @@ bool URPGQuestDialogBoxWidget::CheckPlayerInventory() const
 		return false;
 	}
 
-	const ARPGPlayer_Controller* RPGPC = Cast<ARPGPlayer_Controller>(GetOwningPlayer());
+	const ARPGPlayerController* RPGPC = Cast<ARPGPlayerController>(GetOwningPlayer());
 	if (!RPGPC)
 	{
 		return false;
 	}
 	
-	const URPGHUD_Widget* HUDWidget = Cast<URPGHUD_Widget>(RPGPC->GetHUDWidget());
+	const URPGHUDWidget* HUDWidget = Cast<URPGHUDWidget>(RPGPC->GetHUDWidget());
 	if (!HUDWidget)
 	{
 		return false;
 	}
 	
 	PlayerCharacter->GetQuestLogComponent()->CheckPlayerInventory(Quest);
-	// TODO: URPGHUD_Widget::UpdateObjectivesList
+	// TODO: URPGHUDWidget::UpdateObjectivesList
 
 	// TODO: Figure out how to update a button visibility providing that the button is only available to one of BPs, so we can't exactly bind it 
 	return PlayerCharacter->GetQuestLogComponent()->MarkQuestComplete(Quest->GetClass());
@@ -92,7 +92,7 @@ void URPGQuestDialogBoxWidget::RemoveQuestItemsFromInventory()
 	{
 		if (Objective.Type == OT_Collect)
 		{
-			const ARPGItem_Base* Item = Cast<ARPGItem_Base>(Objective.Target.Get());
+			const ARPGItemBase* Item = Cast<ARPGItemBase>(Objective.Target.Get());
 			if (Item)
 			{
 				PlayerCharacter->GetInventoryComponent()->RemoveItem(Item->GetClass(), Objective.Amount);
@@ -108,13 +108,13 @@ void URPGQuestDialogBoxWidget::OnTurnInClicked()
 		return;
 	}
 
-	const ARPGPlayer_Controller* RPGPC = Cast<ARPGPlayer_Controller>(GetOwningPlayer());
+	const ARPGPlayerController* RPGPC = Cast<ARPGPlayerController>(GetOwningPlayer());
 	if (!RPGPC)
 	{
 		return;
 	}
 	
-	const URPGHUD_Widget* HUDWidget = Cast<URPGHUD_Widget>(RPGPC->GetHUDWidget());
+	const URPGHUDWidget* HUDWidget = Cast<URPGHUDWidget>(RPGPC->GetHUDWidget());
 	if (!HUDWidget)
 	{
 		return;
@@ -178,7 +178,7 @@ void URPGQuestDialogBoxWidget::OnAcceptClicked()
 
 void URPGQuestDialogBoxWidget::RemoveWidget()
 {
-	ARPGPlayer_Controller* RPGPC = Cast<ARPGPlayer_Controller>(GetOwningPlayer());
+	ARPGPlayerController* RPGPC = Cast<ARPGPlayerController>(GetOwningPlayer());
 	if (!RPGPC)
 	{
 		return;

@@ -1,0 +1,22 @@
+// Oleksandr Tkachov 2021-2026
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameFramework/CheatManager.h"
+#include "RPGCheatManager.generated.h"
+
+/**
+ * RPG Cheat Manager
+ */
+UCLASS()
+class INVENTORYPROJECTV3_API URPGCheatManager : public UCheatManager
+{
+	GENERATED_BODY()
+
+public:
+
+	UFUNCTION(Exec)
+	void RPGDebug_ExpandInventory(const int32 NewSlotsNumber);
+
+};

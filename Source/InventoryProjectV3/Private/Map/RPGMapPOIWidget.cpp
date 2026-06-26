@@ -10,7 +10,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Map/RPGMapSubsystem.h"
 #include "Map/RPGMiniMapWidget.h"
-#include "PlayerController/RPGPlayer_Controller.h"
+#include "PlayerController/RPGPlayerController.h"
 #include "Utility/LogDefinitions.h"
 #include "Utility/Utility.h"
 
@@ -70,7 +70,7 @@ void URPGMapPOIWidget::UpdateIconVisibility()
 		return;
 	}
 	
-	const ARPGPlayer_Controller* PlayerController = Cast<ARPGPlayer_Controller>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	const ARPGPlayerController* PlayerController = Cast<ARPGPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	if (!PlayerController)
 	{
 		return;
@@ -175,7 +175,7 @@ void URPGMapPOIWidget::SetPOIIcon()
 
 void URPGMapPOIWidget::UpdateTooltipText()
 {
-	const IRPGInteract_Interface* InteractActorCasted = Cast<IRPGInteract_Interface>(Owner);
+	const IRPGInteractInterface* InteractActorCasted = Cast<IRPGInteractInterface>(Owner);
 	if (!InteractActorCasted)
 	{
 		return;

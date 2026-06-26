@@ -4,14 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "Interfaces/RPGInteract_Interface.h"
+#include "Interfaces/RPGInteractInterface.h"
 #include "RPGMountBase.generated.h"
 
 class USpringArmComponent;
 class UCameraComponent;
 
 UCLASS()
-class INVENTORYPROJECTV3_API ARPGMountBase : public ACharacter, public IRPGInteract_Interface
+class INVENTORYPROJECTV3_API ARPGMountBase : public ACharacter, public IRPGInteractInterface
 {
 	GENERATED_BODY()
 

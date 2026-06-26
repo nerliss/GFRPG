@@ -7,7 +7,7 @@
 #include "Engine/EngineTypes.h"
 #include "RPGInventoryConfig.generated.h"
 
-class ARPGItem_Base;
+class ARPGItemBase;
 
 UENUM(BlueprintType)
 enum class EEquipmentSlot : uint8
@@ -65,7 +65,7 @@ struct FInventoryItem
 
 	/* Item's actor class, that actually has a model and where the use function is defined. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory item")
-	TSubclassOf<ARPGItem_Base> Class;
+	TSubclassOf<ARPGItemBase> Class;
 
 	FInventoryItem()
 	{
@@ -106,7 +106,7 @@ struct FContainerItem
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory slot")
-	TSubclassOf<ARPGItem_Base> Item;
+	TSubclassOf<ARPGItemBase> Item;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory slot")
 	int32 Quantity;

@@ -7,7 +7,7 @@
 #include "RPGSpellbookWidget.generated.h"
 
 class URPGAbilityWidget;
-class URPGAbilityTooltip;
+class URPGAbilityTooltipWidget;
 class UTextBlock;
 class UButton;
 class UUniformGridPanel;
@@ -69,7 +69,7 @@ public:
 	UTextBlock* PageNumberText;
 	
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
-	URPGAbilityTooltip* AbilityTooltipWidget;
+	URPGAbilityTooltipWidget* AbilityTooltipWidget;
 	
 	UPROPERTY(BlueprintReadOnly)
 	TArray<URPGAbilityDefinitionData*> AllAbilitiesInGame;

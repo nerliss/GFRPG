@@ -4,10 +4,10 @@
 #include "Quests/RPGQuest.h"
 
 #include "Characters/RPGPlayerCharacter.h"
-#include "Components/RPGInventory_Component.h"
+#include "Components/RPGInventoryComponent.h"
 #include "Components/RPGQuestLogComponent.h"
-#include "Components/RPGXP_Component.h"
-#include "Items/RPGItem_Base.h"
+#include "Components/RPGXPComponent.h"
+#include "Items/RPGItemBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Quests/RPGQuestMarkerLocation.h"
 #include "Utility/LogDefinitions.h"
@@ -90,7 +90,7 @@ void ARPGQuest::CheckLocationObjective(ARPGQuestMarkerLocation* LocationTarget)
 	UpdateUI(bUpdateUI);
 }
 
-void ARPGQuest::CheckItemObjective(ARPGItem_Base* ItemTarget)
+void ARPGQuest::CheckItemObjective(ARPGItemBase* ItemTarget)
 {
 	bool bUpdateUI = false;
 
@@ -174,7 +174,7 @@ void ARPGQuest::MakeNearestObjectiveAvailable(int32 ObjectiveIndex)
 
 		UE_LOG(LogRPGQuests, Verbose, TEXT("[ARPGQuest::MakeNearestObjectiveAvailable] Objective %s is now active"), *GetNameSafe(Objectives[NearestIncompleteObjectiveIndex].Target.Get()));
 
-		const ARPGItem_Base* ObjectiveItem = Cast<ARPGItem_Base>(Objectives[NearestIncompleteObjectiveIndex].Target.Get());
+		const ARPGItemBase* ObjectiveItem = Cast<ARPGItemBase>(Objectives[NearestIncompleteObjectiveIndex].Target.Get());
 		if (ObjectiveItem)
 		{
 			const ARPGPlayerCharacter* PlayerCharacter = Cast<ARPGPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));

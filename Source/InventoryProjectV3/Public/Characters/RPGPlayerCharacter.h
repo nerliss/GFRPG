@@ -8,15 +8,15 @@
 
 struct FRPGTargetData;
 class URPGMapScreenWidget;
-class URPGXP_Component;
-class URPGHealth_Component;
-class URPGReputation_Component;
-class URPGInventory_Component;
+class URPGXPComponent;
+class URPGHealthComponent;
+class URPGReputationComponent;
+class URPGInventoryComponent;
 class UCameraComponent;
 class USpringArmComponent;
 class AActor;
 class UAnimMontage;
-class URPGHUD_Widget;
+class URPGHUDWidget;
 class UCharacterSoundCollection;
 class UAnimInstance;
 class USkeletalMesh;
@@ -138,8 +138,8 @@ public:
 
 	void SetCharacterGender(const ECharacterGender NewGender) { CharacterGender = NewGender; }
 
-	void SetMainHUDWidget(URPGHUD_Widget* NewWidget) { MainHUD_WidgetRef = NewWidget; }
-	URPGHUD_Widget* GetMainHUDWidget() const { return MainHUD_WidgetRef; }
+	void SetMainHUDWidget(URPGHUDWidget* NewWidget) { MainHUD_WidgetRef = NewWidget; }
+	URPGHUDWidget* GetMainHUDWidget() const { return MainHUD_WidgetRef; }
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* SpringArmComp;
@@ -149,32 +149,32 @@ public:
 
 	/* Experience component stores everything about Experience, Skill Points, Skills and Talents (in future) */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	URPGXP_Component* XPComp;
+	URPGXPComponent* XPComp;
 
 	/* Health component responds for actors hit points, damage behavior etc. 
 	 * TODO: Turn this component into Stat component that will be storing different player stats such as HP, MP, Strength, Agility etc.
 	 * TODO: Move to protected and replace direct references with getter
 	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	URPGHealth_Component* HPComp;
+	URPGHealthComponent* HPComp;
 
 	UFUNCTION(BlueprintCallable, Category = "Components")
-	URPGHealth_Component* GetHealthComponent() const { return HPComp; }
+	URPGHealthComponent* GetHealthComponent() const { return HPComp; }
 	
 	/* Reputation component stores all the data about factions and their possible rewards
 	 * TODO: Expand this - currently does nothing and has nothing
 	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	URPGReputation_Component* ReputationComp;
+	URPGReputationComponent* ReputationComp;
 
 	/* Inventory component stores data about items
 	 * TODO: Move to protected and replace direct references with getter
 	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	URPGInventory_Component* InventoryComp;
+	URPGInventoryComponent* InventoryComp;
 
 	UFUNCTION(BlueprintCallable, Category = "Components")
-	URPGInventory_Component* GetInventoryComponent() const { return InventoryComp; }
+	URPGInventoryComponent* GetInventoryComponent() const { return InventoryComp; }
 	
 	/* Is currently in stealth mode? */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
@@ -300,7 +300,7 @@ private:
 
 	/* Reference to HUD Widget. Set in RPGPlayer_Controller. */
 	UPROPERTY()
-	URPGHUD_Widget* MainHUD_WidgetRef;
+	URPGHUDWidget* MainHUD_WidgetRef;
 
 #if WITH_EDITORONLY_DATA
 	/* Editor-only function that loads last saved character into character blueprint itself to be displayed in the editor itself, not only in the game */

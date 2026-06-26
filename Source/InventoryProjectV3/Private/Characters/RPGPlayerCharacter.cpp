@@ -8,20 +8,20 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
-#include "Components/RPGXP_Component.h"
-#include "Components/RPGHealth_Component.h"
-#include "Components/RPGReputation_Component.h"
-#include "Components/RPGInventory_Component.h"
+#include "Components/RPGXPComponent.h"
+#include "Components/RPGHealthComponent.h"
+#include "Components/RPGReputationComponent.h"
+#include "Components/RPGInventoryComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
 #include "Abilities/RPGAbilityComponent.h"
 #include "Components/RPGPointOfInterestComponent.h"
 #include "Components/RPGQuestLogComponent.h"
 #include "Components/RPGStatsComponent.h"
-#include "Widgets/RPGHUD_Widget.h"
+#include "Widgets/RPGHUDWidget.h"
 #include "Utility/Utility.h"
 #include "Utility/LogDefinitions.h"
-#include "Interfaces/RPGInteract_Interface.h"
+#include "Interfaces/RPGInteractInterface.h"
 #include "DamageTypes/DamageTypeEnviromental.h"
 #include "DataAssets/CharacterSoundCollection.h"
 #include "GameInstance/RPGGameInstanceBase.h"
@@ -57,15 +57,15 @@ ARPGPlayerCharacter::ARPGPlayerCharacter()
 	CameraComp->SetupAttachment(SpringArmComp);
 	CameraComp->bUsePawnControlRotation = false;
 
-	XPComp = CreateDefaultSubobject<URPGXP_Component>(TEXT("XPComp"));
+	XPComp = CreateDefaultSubobject<URPGXPComponent>(TEXT("XPComp"));
 
-	HPComp = CreateDefaultSubobject<URPGHealth_Component>(TEXT("HPComp"));
+	HPComp = CreateDefaultSubobject<URPGHealthComponent>(TEXT("HPComp"));
 	GetHealthComponent()->SetMaxHealth(100.f + GetStatsComponent()->Stamina); // TODO: Review this usage
 	GetHealthComponent()->SetCurrentHealth(HPComp->GetMaxHealth());
 
-	ReputationComp = CreateDefaultSubobject<URPGReputation_Component>(TEXT("ReputationComp"));
+	ReputationComp = CreateDefaultSubobject<URPGReputationComponent>(TEXT("ReputationComp"));
 
-	InventoryComp = CreateDefaultSubobject<URPGInventory_Component>(TEXT("InventoryComp"));
+	InventoryComp = CreateDefaultSubobject<URPGInventoryComponent>(TEXT("InventoryComp"));
 
 	// Player's icon should rotate
 	PointOfInterestComponent->bRotateWithActor = true;
@@ -443,17 +443,17 @@ AActor* ARPGPlayerCharacter::TraceForInteractableObjects(const float InTraceLeng
 #endif
 
 	AActor* HitActor = HitResult.GetActor();
-	IRPGInteract_Interface* InteractActorCasted = Cast<IRPGInteract_Interface>(HitActor);
+	IRPGInteractInterface* InteractActorCasted = Cast<IRPGInteractInterface>(HitActor);
 	if (!InteractActorCasted)
 	{
 		GetMainHUDWidget()->DisplayInteractionMessage(false, FText::FromString(""));
 		return InteractActor = nullptr;;
 	}
 
-	/*if (HitActor->GetClass()->ImplementsInterface(URPGInteract_Interface::StaticClass()))
+	/*if (HitActor->GetClass()->ImplementsInterface(URPGInteractInterface::StaticClass()))
 	{*/
 		// TODO: MyTODO: Figure out a way to use one function that can be overriden both in C++ and BP
-		//GetMainHUDWidget()->DisplayInteractionMessage(true, IRPGInteract_Interface::Execute_GetName(HitActor)); // Why do I even need this??
+		//GetMainHUDWidget()->DisplayInteractionMessage(true, IRPGInteractInterface::Execute_GetName(HitActor)); // Why do I even need this??
 	GetMainHUDWidget()->DisplayInteractionMessage(true, InteractActorCasted->GetNameNative());
 
 #if !UE_BUILD_SHIPPING
@@ -477,7 +477,7 @@ void ARPGPlayerCharacter::OnInteractPressed()
 		return;
 	}
 
-	IRPGInteract_Interface* InteractActorCasted = Cast<IRPGInteract_Interface>(InteractActor);
+	IRPGInteractInterface* InteractActorCasted = Cast<IRPGInteractInterface>(InteractActor);
 	if (!InteractActorCasted)
 	{
 		return;

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/RPGReputation_Component.h"
+#include "Components/RPGReputationComponent.h"
 #include "Engine/DataAsset.h"
 #include "RPGDialogueData.generated.h"
 

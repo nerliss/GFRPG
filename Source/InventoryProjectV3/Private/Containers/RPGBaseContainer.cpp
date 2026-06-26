@@ -4,9 +4,9 @@
 #include "Containers/RPGBaseContainer.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
-#include "Components/RPGInventory_Component.h"
+#include "Components/RPGInventoryComponent.h"
 #include "Characters/RPGPlayerCharacter.h"
-#include "Items/RPGItem_Base.h"
+#include "Items/RPGItemBase.h"
 #include "Utility/LogDefinitions.h"
 
 ARPGBaseContainer::ARPGBaseContainer()
@@ -28,7 +28,7 @@ ARPGBaseContainer::ARPGBaseContainer()
 	TraceSphere->SetCollisionResponseToChannel(ECC_Camera, ECR_Block);
 	TraceSphere->SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECR_Block);
 
-	ContainerInventoryComp = CreateDefaultSubobject<URPGInventory_Component>(TEXT("ContainerInventoryComp"));
+	ContainerInventoryComp = CreateDefaultSubobject<URPGInventoryComponent>(TEXT("ContainerInventoryComp"));
 	ContainerInventoryComp->Name = FText::FromString("Base Chest");
 	ContainerInventoryComp->SlotsNumber = 4;
 }
@@ -100,7 +100,7 @@ void ARPGBaseContainer::FillContainerInventory()
 	for (int i = 0; i < ItemToAdd.Num(); i++)
 	{
 		const FContainerItem ContainerItem = ItemToAdd[i];
-		const ARPGItem_Base* ItemCDO = ContainerItem.Item.GetDefaultObject();
+		const ARPGItemBase* ItemCDO = ContainerItem.Item.GetDefaultObject();
 		if (!ItemCDO)
 		{
 			UE_LOG(LogRPGInventory, Error, TEXT("[ARPGBaseContainer::FillContainerInventory] ItemCDO wasn't created."));

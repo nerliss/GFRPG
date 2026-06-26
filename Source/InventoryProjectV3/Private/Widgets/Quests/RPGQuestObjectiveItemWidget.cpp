@@ -4,10 +4,10 @@
 #include "Widgets/Quests/RPGQuestObjectiveItemWidget.h"
 
 #include "Characters/RPGPlayerCharacter.h"
-#include "Components/RPGInventory_Component.h"
+#include "Components/RPGInventoryComponent.h"
 #include "Components/RPGQuestLogComponent.h"
 #include "Components/TextBlock.h"
-#include "Items/RPGItem_Base.h"
+#include "Items/RPGItemBase.h"
 
 void URPGQuestObjectiveItemWidget::NativeConstruct()
 {
@@ -44,7 +44,7 @@ void URPGQuestObjectiveItemWidget::UpdateTrackerData()
 		break;
 	case OT_Collect:
 		{
-			const ARPGItem_Base* ObjectiveItem = Cast<ARPGItem_Base>(Objective.Target.Get());
+			const ARPGItemBase* ObjectiveItem = Cast<ARPGItemBase>(Objective.Target.Get());
 			int32 ObjectiveItemsInInventory, EmptyInt;
 		
 			if (RPGCharacter->GetInventoryComponent()->QueryInventory(ObjectiveItem->GetClass(), Objective.Amount, EmptyInt, ObjectiveItemsInInventory))

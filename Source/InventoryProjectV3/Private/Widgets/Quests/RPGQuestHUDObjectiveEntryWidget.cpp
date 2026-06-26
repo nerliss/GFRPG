@@ -4,10 +4,10 @@
 #include "Widgets/Quests/RPGQuestHUDObjectiveEntryWidget.h"
 
 #include "Characters/RPGPlayerCharacter.h"
-#include "Components/RPGInventory_Component.h"
+#include "Components/RPGInventoryComponent.h"
 #include "Components/RPGQuestLogComponent.h"
 #include "Components/TextBlock.h"
-#include "Items/RPGItem_Base.h"
+#include "Items/RPGItemBase.h"
 
 void URPGQuestHUDObjectiveEntryWidget::UpdateTrackerData()
 {
@@ -29,7 +29,7 @@ void URPGQuestHUDObjectiveEntryWidget::UpdateTrackerData()
 		}
 	case OT_Collect:
 		{
-			const ARPGItem_Base* ObjectiveItem = Cast<ARPGItem_Base>(Objective.Target.Get());
+			const ARPGItemBase* ObjectiveItem = Cast<ARPGItemBase>(Objective.Target.Get());
 			if (ObjectiveItem)
 			{
 				int32 TempA, QueriedAmount;

@@ -8,7 +8,7 @@
 #include "Map/RPG3DWorldMarker.h"
 #include "Utility/LogDefinitions.h"
 #include "Map/RPGMapScreenWidget.h"
-#include "PlayerController/RPGPlayer_Controller.h"
+#include "PlayerController/RPGPlayerController.h"
 #include "Utility/Utility.h"
 
 void URPGMapSubsystem::Initialize(FSubsystemCollectionBase& Collection)
@@ -162,7 +162,7 @@ void URPGMapSubsystem::InitializeMapScreen()
 
 void URPGMapSubsystem::ToggleMapScreen()
 {
-	ARPGPlayer_Controller* RPGPlayerController = Cast<ARPGPlayer_Controller>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	ARPGPlayerController* RPGPlayerController = Cast<ARPGPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	ensure(RPGPlayerController);
 
 	if (MapScreenWidget)

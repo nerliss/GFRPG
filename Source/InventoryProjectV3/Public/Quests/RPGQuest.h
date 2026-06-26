@@ -7,9 +7,9 @@
 #include "RPGQuest.generated.h"
 
 class URPGQuestLogEntryWidget;
-class ARPGPlayer_Controller;
+class ARPGPlayerController;
 class ARPGQuestMarkerLocation;
-class ARPGItem_Base;
+class ARPGItemBase;
 class ARPGCharacter;
 class UStaticMeshComponent;
 
@@ -59,7 +59,7 @@ struct FObjectiveData
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetInteracted, AActor*, InteractionTarget);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLocationReached, ARPGQuestMarkerLocation*, LocationTarget);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemCollected, ARPGItem_Base*, ItemTarget);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemCollected, ARPGItemBase*, ItemTarget);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyKilled, ARPGCharacter*, KillTarget);
 
 UCLASS()
@@ -133,7 +133,7 @@ protected:
 	void CheckLocationObjective(ARPGQuestMarkerLocation* LocationTarget);
 
 	UFUNCTION()
-	void CheckItemObjective(ARPGItem_Base* ItemTarget);
+	void CheckItemObjective(ARPGItemBase* ItemTarget);
 
 	UFUNCTION()
 	void CheckKillObjective(ARPGCharacter* KillTarget);

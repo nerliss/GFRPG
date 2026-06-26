@@ -5,15 +5,15 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Items/RPGInventoryConfig.h"
-#include "Interfaces/RPGInteract_Interface.h"
+#include "Interfaces/RPGInteractInterface.h"
 #include "RPGBaseContainer.generated.h"
 
 class UStaticMeshComponent;
 class USphereComponent;
-class URPGInventory_Component;
+class URPGInventoryComponent;
 
 UCLASS()
-class INVENTORYPROJECTV3_API ARPGBaseContainer : public AActor, public IRPGInteract_Interface
+class INVENTORYPROJECTV3_API ARPGBaseContainer : public AActor, public IRPGInteractInterface
 {
 	GENERATED_BODY()
 	
@@ -28,7 +28,7 @@ protected:
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 #endif
 
-	/* IRPGInteract_Interface */
+	/* IRPGInteractInterface */
 	virtual void InteractNative(AActor* Interactor) override;
 	virtual FText GetNameNative() const override;
 
@@ -45,7 +45,7 @@ public:
 
 	/* Inventory component stores data about items */
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Inventory")
-	URPGInventory_Component* ContainerInventoryComp;
+	URPGInventoryComponent* ContainerInventoryComp;
 
 	/* Items to fill this container's inventory with. Use this to set what items should be in this container. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")

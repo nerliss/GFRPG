@@ -4,16 +4,16 @@
 #include "Components/RPGQuestLogComponent.h"
 
 #include "Characters/RPGPlayerCharacter.h"
-#include "Components/RPGInventory_Component.h"
+#include "Components/RPGInventoryComponent.h"
 #include "Components/ScrollBox.h"
 #include "Components/VerticalBox.h"
-#include "Items/RPGItem_Base.h"
+#include "Items/RPGItemBase.h"
 #include "Kismet/GameplayStatics.h"
-#include "PlayerController/RPGPlayer_Controller.h"
+#include "PlayerController/RPGPlayerController.h"
 #include "Quests/RPGQuest.h"
 #include "Utility/LogDefinitions.h"
 #include "Utility/Utility.h"
-#include "Widgets/RPGHUD_Widget.h"
+#include "Widgets/RPGHUDWidget.h"
 #include "Widgets/Quests/RPGQuestHUDObjectivesWidget.h"
 #include "Widgets/Quests/RPGQuestLogEntryWidget.h"
 #include "Widgets/Quests/RPGQuestLogWidget.h"
@@ -38,7 +38,7 @@ void URPGQuestLogComponent::SetActiveQuest(ARPGQuest* Quest, bool bPlaySound /* 
 {
 	CurrentActiveQuest = Quest;
 	
-	ARPGPlayer_Controller* RPGPlayerController = Cast<ARPGPlayer_Controller>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	ARPGPlayerController* RPGPlayerController = Cast<ARPGPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	if (RPGPlayerController)
 	{
 		RPGPlayerController->GetHUDWidget()->QuestHUDObjectivesWidget->UpdateObjectiveList();
@@ -107,7 +107,7 @@ void URPGQuestLogComponent::CheckPlayerInventory(ARPGQuest* Quest)
 		const FObjectiveData Objective = Quest->GetObjectives()[i];
 		if (Objective.Type == OT_Collect)
 		{
-			const ARPGItem_Base* ObjectiveItem = Cast<ARPGItem_Base>(Objective.Target.Get());
+			const ARPGItemBase* ObjectiveItem = Cast<ARPGItemBase>(Objective.Target.Get());
 			if (ObjectiveItem)
 			{
 				ObjectiveElement.Add(Objective);
@@ -140,7 +140,7 @@ void URPGQuestLogComponent::CheckPlayerInventory(ARPGQuest* Quest)
 
 void URPGQuestLogComponent::ToggleQuestLog()
 {
-	ARPGPlayer_Controller* RPGPlayerController = Cast<ARPGPlayer_Controller>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	ARPGPlayerController* RPGPlayerController = Cast<ARPGPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	ensure(RPGPlayerController);
 	check(QuestLogWidgetClass);
 	

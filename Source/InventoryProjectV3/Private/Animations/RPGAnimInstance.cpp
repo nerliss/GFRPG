@@ -4,7 +4,7 @@
 #include "Animations/RPGAnimInstance.h"
 #include "Characters/RPGPlayerCharacter.h"
 #include "Components/CapsuleComponent.h"
-#include "Components/RPGHealth_Component.h"
+#include "Components/RPGHealthComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 #if !UE_BUILD_SHIPPING

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Interfaces/RPGInteract_Interface.h"
+#include "Interfaces/RPGInteractInterface.h"
 #include "RPGDoorBase.generated.h"
 
 class USceneComponent;
@@ -13,7 +13,7 @@ class USphereComponent;
 class ARPGLockpickingMinigameActor;
 
 UCLASS()
-class INVENTORYPROJECTV3_API ARPGDoorBase : public AActor, public IRPGInteract_Interface
+class INVENTORYPROJECTV3_API ARPGDoorBase : public AActor, public IRPGInteractInterface
 {
 	GENERATED_BODY()
 	
@@ -26,7 +26,7 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
-	/* IRPGInteract_Interface */
+	/* IRPGInteractInterface */
 	virtual void InteractNative(AActor* Interactor) override;
 	virtual FText GetNameNative() const override;
 

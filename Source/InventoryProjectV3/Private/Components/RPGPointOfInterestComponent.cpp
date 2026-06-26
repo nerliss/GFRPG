@@ -5,8 +5,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Map/RPGMapScreenWidget.h"
 #include "Map/RPGMapSubsystem.h"
-#include "PlayerController/RPGPlayer_Controller.h"
-#include "Widgets/RPGHUD_Widget.h"
+#include "PlayerController/RPGPlayerController.h"
+#include "Widgets/RPGHUDWidget.h"
 #include "Map/RPGMiniMapWidget.h"
 #include "Utility/LogDefinitions.h"
 #include "Utility/Utility.h"
@@ -59,14 +59,14 @@ void URPGPointOfInterestComponent::SpawnPOIOnMap()
 		return;
 	}
 	
-	const ARPGPlayer_Controller* PlayerController = Cast<ARPGPlayer_Controller>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	const ARPGPlayerController* PlayerController = Cast<ARPGPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	if (!PlayerController)
 	{
 		LOG_WITH_FUNCTION_NAME(LogRPGMap, Error, TEXT("Player controller is null!"));
 		return;
 	}
 
-	const URPGHUD_Widget* HUD = PlayerController->GetHUDWidget();
+	const URPGHUDWidget* HUD = PlayerController->GetHUDWidget();
 	if (!HUD)
 	{
 		LOG_WITH_FUNCTION_NAME(LogRPGMap, Error, TEXT("HUD widget is null!"));

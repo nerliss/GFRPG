@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "Interfaces/RPGInteract_Interface.h"
+#include "Interfaces/RPGInteractInterface.h"
 #include "RPGCharacter.generated.h"
 
 class URPGEffectsComponent;
@@ -25,7 +25,7 @@ enum class ECharacterGender : uint8
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCharacterMoved);
 
 UCLASS()
-class INVENTORYPROJECTV3_API ARPGCharacter : public ACharacter, public IRPGInteract_Interface
+class INVENTORYPROJECTV3_API ARPGCharacter : public ACharacter, public IRPGInteractInterface
 {
 	GENERATED_BODY()
 
@@ -50,7 +50,7 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	/* IRPGInteract_Interface */
+	/* IRPGInteractInterface */
 	virtual void InteractNative(AActor* Interactor) override;
 	virtual FText GetNameNative() const override;
 

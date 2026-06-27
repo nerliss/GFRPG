@@ -37,7 +37,7 @@ void URPGHealthComponent::PostEditChangeProperty(struct FPropertyChangedEvent& P
 }
 #endif
 
-void URPGHealthComponent::TakeDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser)
+void URPGHealthComponent::TakeDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
 {
 	if (Damage <= 0 || bDiedAlready)
 	{

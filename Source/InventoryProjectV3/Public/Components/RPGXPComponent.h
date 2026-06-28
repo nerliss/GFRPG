@@ -6,7 +6,6 @@
 #include "Components/ActorComponent.h"
 #include "RPGXPComponent.generated.h"
 
-// Custom event for Level up
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnLevelGained);
 
 class USoundBase;
@@ -46,7 +45,6 @@ public:
 	int32 GetCurrentLevel() const { return Level_Current; }
 	int32 GetSkillPoints() const { return SkillPoints; }
 
-	/** Create an instance of OnLevelGained event */
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnLevelGained OnLevelGained;
 

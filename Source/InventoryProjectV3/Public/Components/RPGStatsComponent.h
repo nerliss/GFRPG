@@ -34,7 +34,6 @@ public:
 	float Speed;
 
 	// TODO: Add more stats, implement their usage
-	// TODO: Merge XPComponent (?) and HealthComponent here 
 	
 protected:
 	

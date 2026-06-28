@@ -31,21 +31,17 @@ void URPGXPComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// Interpolate from current xp value to new xp value (buffer) thus making an smooth animation
 	XP_Current = UKismetMathLibrary::FCeil(UKismetMathLibrary::FInterpTo(XP_Current, XP_Buffer, DeltaTime, 3.f));
 
-	// Calculate percentage for progress bars 
 	Calculate_Percentage_XP();
 	Calculate_Percentage_Buffer();
 
-	// Level up
 	if (XP_Current >= XP_Current_Max)
 	{
 		LevelUp();
 	}
 }
 
-// For progress bar
 void URPGXPComponent::Calculate_Percentage_XP()
 {
 	CurrentPercentage_XP = XP_Current / XP_Current_Max;
@@ -71,7 +67,6 @@ void URPGXPComponent::AddXP(float AddedXP)
 	XP_Buffer = AddedXP + XP_Buffer;
 }
 
-// If level cap is reached - zero bars, if not - preform a level up
 void URPGXPComponent::LevelUp()
 {
 	if (Level_Current >= Level_Cap)
@@ -83,33 +78,24 @@ void URPGXPComponent::LevelUp()
 	{
 		Level_Current++;
 
-		// How much experience points we've exceeded XP_Current_Max by
 		float XP_Remaining = XP_Buffer - XP_Current_Max; 
 
-		// Calculate MaxXP for next level
 		Calculate_MaxXP();
 
-		// Zero bars
 		XP_Current = 0.f;
 		XP_Buffer = 0.f;
 
-		// Add 1 skill point
 		SkillPoints++;
 
-		// Add remaining xp to next level
 		AddXP(XP_Remaining);
 
-		// Call blueprint implementable event (called in player's bp to update XP rewards for quest for now)
 		OnLevelGained.Broadcast();
 
-		/* Cosmetics */
-		// Play SFX
 		if (LevelUpSound)
 		{
 			UGameplayStatics::SpawnSound2D(this, LevelUpSound, 0.7f);
 		}
 
-		// Play VFX
 		if (LevelUpParticle)
 		{
 			UGameplayStatics::SpawnEmitterAttached(LevelUpParticle, GetOwner()->GetRootComponent());

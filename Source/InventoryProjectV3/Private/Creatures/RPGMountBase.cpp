@@ -138,7 +138,7 @@ void ARPGMountBase::OnDismount()
 
 	GetCharacterMovement()->StopMovementImmediately();
 	
-	auto* PC = Cast<APlayerController>(GetController());
+	APlayerController* PC = Cast<APlayerController>(GetController());
 	if (!PC)
 	{
 		return;
@@ -147,8 +147,8 @@ void ARPGMountBase::OnDismount()
 	TArray<AActor*> AttachedActors;
 	GetAttachedActors(AttachedActors);
 
-	// MyTODO: Will probably need to be changed to a loop if there are more than one attached actors (or better yet - to a direct reference to a rider (and may be passengers))
-	auto* InteractorCharacter = Cast<ARPGPlayerCharacter>(AttachedActors[0]);
+	// TODO: Will probably need to be changed to a loop if there are more than one attached actors (or better yet - to a direct reference to a rider (and may be passengers))
+	ARPGPlayerCharacter* InteractorCharacter = Cast<ARPGPlayerCharacter>(AttachedActors[0]);
 	if (!InteractorCharacter)
 	{
 		UE_LOG(LogTemp, Error, TEXT("InteractorCharacter is invalid"));
@@ -167,7 +167,6 @@ void ARPGMountBase::OnDismount()
 	InteractorCharacter->GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	InteractorCharacter->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	InteractorCharacter->SetActorLocation(GetActorLocation() + GetActorRightVector() * 100.f);
-	InteractorCharacter->SetPOV(EPlayerPOV::ThirdPerson);
 
 	// Doesn't work as intended
 	PC->SetViewTargetWithBlend(InteractorCharacter, 1.f, EViewTargetBlendFunction::VTBlend_Cubic);
@@ -175,13 +174,13 @@ void ARPGMountBase::OnDismount()
 
 void ARPGMountBase::OnMount(AActor* Interactor)
 {
-	auto* InteractorCharacter = Cast<ARPGPlayerCharacter>(Interactor);
+	ARPGPlayerCharacter* InteractorCharacter = Cast<ARPGPlayerCharacter>(Interactor);
 	if (!InteractorCharacter)
 	{
 		return;
 	}
 
-	auto* PC = Cast<APlayerController>(Interactor->GetInstigatorController());
+	APlayerController* PC = Cast<APlayerController>(Interactor->GetInstigatorController());
 	if (!PC)
 	{
 		return;
@@ -198,7 +197,6 @@ void ARPGMountBase::OnMount(AActor* Interactor)
 	InteractorCharacter->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	InteractorCharacter->bMounted = true;
 	InteractorCharacter->GetCharacterMovement()->StopMovementImmediately();
-	InteractorCharacter->SetPOV(EPlayerPOV::ThirdPerson);
 
 	// Doesn't work as intended
 	PC->SetViewTargetWithBlend(this, 1.f, EViewTargetBlendFunction::VTBlend_Cubic);

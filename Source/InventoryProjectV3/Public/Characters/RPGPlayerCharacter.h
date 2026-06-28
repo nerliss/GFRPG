@@ -300,19 +300,17 @@ private:
 
 	/* Reference to HUD Widget. Set in RPGPlayer_Controller. */
 	UPROPERTY()
-	URPGHUDWidget* MainHUD_WidgetRef;
+	TObjectPtr<URPGHUDWidget> MainHUD_WidgetRef;
 
 #if WITH_EDITORONLY_DATA
 	/* Editor-only function that loads last saved character into character blueprint itself to be displayed in the editor itself, not only in the game */
 	void LoadLastCharacterModelInternal();
+	
+	/* Name for an external file to write/read character data from (for editor only) */
+	inline static FString LastSavedCharacterFileName = TEXT("TestCharacterSelectionData.bin");
 #endif
 
 	/* Camera boom length limits. X = Min, Y = Max*/
 	FVector2D TargetBoomLengthLimits;
-
-#if WITH_EDITORONLY_DATA
-	/* Name for an external file to write/read character data from (for editor only) */
-	inline static FString LastSavedCharacterFileName = TEXT("TestCharacterSelectionData.bin");
-#endif
 
 };

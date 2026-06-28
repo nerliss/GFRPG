@@ -47,7 +47,7 @@ ARPGPlayerCharacter::ARPGPlayerCharacter()
 	GetCharacterMovement()->AirControl = 0.2f; 
 
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
-	SpringArmComp->SetupAttachment(GetCapsuleComponent(), "head");
+	SpringArmComp->SetupAttachment(GetCapsuleComponent());
 	SpringArmComp->TargetArmLength = 500.f;
 	SpringArmComp->bUsePawnControlRotation = true;
 	SpringArmComp->SocketOffset = FVector(0.f, 80.f, 0.f); // Give camera more Skyrim-like style
@@ -307,11 +307,8 @@ void ARPGPlayerCharacter::Death()
 
 	DisableInput(Cast<APlayerController>(GetController()));
 
-	// Call blueprint event
 	OnDied();
-
-	/* Cosmetics */
-	// AnimMontage
+	
 	if (DeathMontage)
 	{
 		PlayAnimMontage(DeathMontage);
@@ -364,30 +361,40 @@ void ARPGPlayerCharacter::OnPOVSwitched()
 	switch (PlayerPOV)
 	{
 	case EPlayerPOV::FirstPerson:
-	
-		SpringArmComp->TargetArmLength = TargetBoomLengthLimits.Y;
-		SpringArmComp->SocketOffset = FVector(0.f, 80.f, 0.f);
+		{
+			if (SpringArmComp)
+			{
+				SpringArmComp->TargetArmLength = TargetBoomLengthLimits.Y;
+				SpringArmComp->SocketOffset = FVector(0.f, 80.f, 0.f);
+				SpringArmComp->AttachToComponent(GetCapsuleComponent(), FAttachmentTransformRules::SnapToTargetIncludingScale);
+			}
 
-		GetMesh()->SetVisibility(true);
+			bUseControllerRotationYaw = false;
+			
+			TraceLength = 700.f;
 
-		TraceLength = 700.f;
+			PlayerPOV = EPlayerPOV::ThirdPerson;
 
-		PlayerPOV = EPlayerPOV::ThirdPerson;
+			break;
+		}
 		
-		break;
-
 	case EPlayerPOV::ThirdPerson:
+		{
+			if (SpringArmComp)
+			{
+				SpringArmComp->TargetArmLength = TargetBoomLengthLimits.X;
+				SpringArmComp->SocketOffset = FVector::Zero();
+				SpringArmComp->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, "EyesSocket");
+			}
+			
+			bUseControllerRotationYaw = true;
 
-		SpringArmComp->TargetArmLength = TargetBoomLengthLimits.X;
-		SpringArmComp->SocketOffset = FVector::Zero();
+			PlayerPOV = EPlayerPOV::FirstPerson;
 
-		GetMesh()->SetVisibility(false);
+			TraceLength = 350.f;
 
-		PlayerPOV = EPlayerPOV::FirstPerson;
-
-		TraceLength = 350.f;
-
-		break;
+			break;
+		}
 		
 	default:
 		break;
@@ -508,32 +515,32 @@ void ARPGPlayerCharacter::OnMapScreenToggled()
 
 void ARPGPlayerCharacter::OnActionBarPressed(int32 AbilityActionBarIndex)
 {
-	if (!AbilityComponent)
+	if (!GetAbilityComponent())
 	{
 		return;
 	}
 	
-	AbilityComponent->TryUsingAbility(AbilityActionBarIndex);
+	GetAbilityComponent()->TryUsingAbility(AbilityActionBarIndex);
 }
 
 void ARPGPlayerCharacter::OnConfirmTargetingPreview()
 {
-	if (!AbilityComponent)
+	if (!GetAbilityComponent())
 	{
 		return;
 	}
 	
-	AbilityComponent->ConfirmTargetingPreview();
+	GetAbilityComponent()->ConfirmTargetingPreview();
 }
 
 void ARPGPlayerCharacter::OnCancelTargetingPreview()
 {
-	if (!AbilityComponent)
+	if (!GetAbilityComponent())
 	{
 		return;
 	}
 	
-	AbilityComponent->CancelTargetingPreview();
+	GetAbilityComponent()->CancelTargetingPreview();
 }
 
 void ARPGPlayerCharacter::LoadLastCharacterModel()

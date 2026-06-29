@@ -134,6 +134,29 @@ void URPGEffectsComponent::BeginPlay()
 void URPGEffectsComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	
+	for (FRPGActiveEffect& ActiveEffect : ActiveEffects)
+	{
+		if (!ActiveEffect.Definition.Get())
+		{
+			continue;
+		}
+		
+		if (ActiveEffect.Definition->DurationPolicy == EEffectsDurationPolicy::Duration)
+		{
+			ActiveEffect.RemainingDuration = GetWorld()->GetTimerManager().GetTimerRemaining(ActiveEffect.DurationHandle);
+		}
+		
+		if (ActiveEffect.Definition->Period > 0.f)
+		{
+			ActiveEffect.PeriodAccumulator += DeltaTime;
+			if (ActiveEffect.PeriodAccumulator >= ActiveEffect.Definition->Period)
+			{
+				ActiveEffect.PeriodAccumulator = 0.f;
+				ExecuteEffect(ActiveEffect.Definition, nullptr); // TODO: probably needs to pass a component owner
+			}
+		}
+	}
 }
 
 void URPGEffectsComponent::ExecuteEffect(URPGEffectDefinitionData* EffectDefinition, AActor* Instigator)
@@ -159,15 +182,44 @@ void URPGEffectsComponent::HandleStacking(FRPGActiveEffect& ExistingEffect,
 	{
 	case EEffectsStackPolicy::RefreshDuration:
 		{
+			GetWorld()->GetTimerManager().ClearTimer(ExistingEffect.DurationHandle);
+			ExistingEffect.RemainingDuration = EffectDefinition->Duration;
 			
+			FTimerDelegate Delegate;
+			Delegate.BindUObject(this, &URPGEffectsComponent::OnEffectDurationExpired, EffectDefinition);
+			
+			GetWorld()->GetTimerManager().SetTimer(ExistingEffect.DurationHandle, Delegate, EffectDefinition->Duration, false);
+			
+			break;
 		}
 	case EEffectsStackPolicy::Stack:
 		{
+			if (ExistingEffect.CurrentStacks < EffectDefinition->MaxStacks)
+			{
+				ExistingEffect.CurrentStacks++;
+				OnEffectStackUpdated.Broadcast(EffectDefinition, ExistingEffect.CurrentStacks);
+			}
 			
+			break;
 		}
 	case EEffectsStackPolicy::StackAndRefreshDuration:
 		{
+			if (ExistingEffect.CurrentStacks < EffectDefinition->MaxStacks)
+			{
+				ExistingEffect.CurrentStacks++;
+			}
 			
+			GetWorld()->GetTimerManager().ClearTimer(ExistingEffect.DurationHandle);
+			ExistingEffect.RemainingDuration = EffectDefinition->Duration;
+			
+			FTimerDelegate Delegate;
+			Delegate.BindUObject(this, &URPGEffectsComponent::OnEffectDurationExpired, EffectDefinition);
+			
+			GetWorld()->GetTimerManager().SetTimer(ExistingEffect.DurationHandle, Delegate, EffectDefinition->Duration, false);
+			
+			OnEffectStackUpdated.Broadcast(EffectDefinition, ExistingEffect.CurrentStacks);
+			
+			break;
 		}
 	case EEffectsStackPolicy::MAX:
 	case EEffectsStackPolicy::NoStack:

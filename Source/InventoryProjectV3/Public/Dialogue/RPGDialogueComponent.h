@@ -27,14 +27,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Dialogue")
 	void StartDialogue(ARPGPlayerCharacter* Player);
 
-	// Called by the UI when the player clicks a response button
 	UFUNCTION(BlueprintCallable, Category = "Dialogue")
 	void SelectResponse(int32 ResponseIndex);
 
 	UFUNCTION(BlueprintCallable, Category = "Dialogue")
 	void EndDialogue();
 
-	// Returns only responses that should be visible given current game state
 	UFUNCTION(BlueprintCallable, Category = "Dialogue")
 	TArray<FDialogueResponse> GetVisibleResponses() const;
 
@@ -44,7 +42,6 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Dialogue")
 	FDialogueNode GetCurrentNode() const;
 
-	// UI binds to these
 	UPROPERTY(BlueprintAssignable, Category = "Dialogue")
 	FOnDialogueNodeChanged OnNodeChanged;
 

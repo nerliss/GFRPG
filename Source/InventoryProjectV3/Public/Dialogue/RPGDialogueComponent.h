@@ -11,6 +11,7 @@ class ARPGPlayerCharacter;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDialogueNodeChanged, const FDialogueNode&, Node);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDialogueEnded);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDialogueStarted);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class INVENTORYPROJECTV3_API URPGDialogueComponent : public UActorComponent
@@ -47,6 +48,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Dialogue")
 	FOnDialogueEnded OnDialogueEnded;
+	
+	UPROPERTY(BlueprintAssignable, Category = "Dialogue")
+	FOnDialogueEnded OnDialogueStarted;
 
 protected:
 

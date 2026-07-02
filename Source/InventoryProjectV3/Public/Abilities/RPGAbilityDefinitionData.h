@@ -242,7 +242,8 @@ public:
 	
 	URPGAOEAbilityDefinitionData();
 	
-	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AOE")
+	float AOERange;
 	
 };
 

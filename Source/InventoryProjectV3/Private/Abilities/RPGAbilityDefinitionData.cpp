@@ -65,6 +65,7 @@ void URPGSummonAbilityDefinitionData::PreSave(FObjectPreSaveContext ObjectSaveCo
 URPGAOEAbilityDefinitionData::URPGAOEAbilityDefinitionData()
 {
 	TargetingFlow = EAbilityTargetingFlow::PreviewConfirm;
+	AOERange = 500.f;
 }
 
 URPGProjectileAbilityDefinitionData::URPGProjectileAbilityDefinitionData()

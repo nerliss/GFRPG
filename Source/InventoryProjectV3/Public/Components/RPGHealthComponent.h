@@ -22,9 +22,6 @@ public:
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent) override;
 #endif
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health")
-	bool bDiedAlready;
-
 	UFUNCTION(BlueprintCallable, Category = "Health")
 	void SetCurrentHealth(float NewHealth);
 
@@ -43,19 +40,23 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Health")
 	void ModifyMaxHealth(float HealthToAdd);
 
+	UPROPERTY(BlueprintReadWrite, Category = "Health")
+	bool bDiedAlready;
+	
 	UPROPERTY(BlueprintCallable, Category = "Health")
 	FOnHealthChangedSignature OnHealthChanged;
 	
 protected:
 
+	virtual void OnRegister() override;
+
+	UFUNCTION()
+	void TakeDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser);
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Health")
 	float MaxHealth;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Health")
 	float CurrentHealth;
 	
-	virtual void OnRegister() override;
-
-	UFUNCTION()
-	void TakeDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser);
 };

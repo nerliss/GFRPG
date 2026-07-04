@@ -16,13 +16,13 @@ class INVENTORYPROJECTV3_API ARPGHUDMain : public AHUD
 
 public:
 
+	UFUNCTION(BlueprintCallable, Category = "Crosshair")
+	void DrawCrosshair(float ScreenWidth, float ScreenHeight);
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crosshair")
 	bool bShowCrosshair = true;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Crosshair")
 	UTexture* CrosshairTexture;
-
-	UFUNCTION(BlueprintCallable, Category = "Crosshair")
-	void DrawCrosshair(float ScreenWidth, float ScreenHeight);
 	
 };

@@ -38,23 +38,8 @@ ARPGDoorBase::ARPGDoorBase()
 	LockpickingMinigameClass = nullptr;
 }
 
-void ARPGDoorBase::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-void ARPGDoorBase::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
 void ARPGDoorBase::InteractNative(AActor* Interactor)
 {
-	// 1. Check if locked
-	// 2. Start lockpicking minigame
-	// 3. Open the door otherwise
 	if (bClosed)
 	{
 		const FTransform SpawnTransform = FTransform(FVector(0.f, 0.f, -2000.f));
@@ -87,7 +72,6 @@ FText ARPGDoorBase::GetNameNative() const
 
 void ARPGDoorBase::OpenDoor()
 {
-	// Open the door
 	DEBUGMESSAGE(3.f, FColor::Green, "Door open");
 	bClosed = false;
 
@@ -98,7 +82,6 @@ void ARPGDoorBase::OpenDoor()
 
 void ARPGDoorBase::CloseDoor()
 {
-	// Close the door
 	DEBUGMESSAGE(3.f, FColor::Red, "Door closed");
 	bClosed = true;
 

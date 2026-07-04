@@ -25,15 +25,23 @@ class INVENTORYPROJECTV3_API UCharacterSelectionScreenWidget : public UUserWidge
 	
 	UCharacterSelectionScreenWidget(const FObjectInitializer& ObjectInitializer);
 
+protected:
+
 	virtual void NativeConstruct() override;
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual FReply NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
 	virtual FReply NativeOnMouseMove(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
+	
+	void SpawnPreviewCharacter();
 
-protected:
+	UFUNCTION()
+	void OnOptionButtonHovered(UCharacterSelectionScreenOptionWidget* Option);
 
+	UFUNCTION()
+	void CloseWindow();
+	
 	/* Characters list that hosts all available characters options */
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UScrollBox* CharactersList;
@@ -64,11 +72,4 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input")
 	bool bRightMouseButtonDown;
 
-	void SpawnPreviewCharacter();
-
-	UFUNCTION()
-	void OnOptionButtonHovered(UCharacterSelectionScreenOptionWidget* Option);
-
-	UFUNCTION()
-	void CloseWindow();
 };

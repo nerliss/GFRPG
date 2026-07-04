@@ -16,7 +16,6 @@ class INVENTORYPROJECTV3_API IRPGInteractInterface
 {
 	GENERATED_BODY()
 
-	
 public:
 
 	/* Interact with an actor DEPRECATED. */

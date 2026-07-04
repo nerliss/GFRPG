@@ -28,9 +28,6 @@ protected:
 	virtual void InteractNative(AActor* Interactor) override;
 	virtual FText GetNameNative() const override;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Mount")
-	FText Name {FText::FromString(TEXT("Mount"))};
-
 	void OnForwardMoved(const float Value);
 	void OnRightMoved(const float Value);
 	void TurnAtRate(const float Rate);
@@ -38,6 +35,9 @@ protected:
 	void OnDismount();
 	void OnMount(AActor* Interactor);
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Mount")
+	FText Name {FText::FromString(TEXT("Mount"))};
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* SpringArmComp;
 

@@ -15,22 +15,12 @@ UCLASS()
 class INVENTORYPROJECTV3_API URPGGameInstanceBase : public UGameInstance
 {
 	GENERATED_BODY()
-
+	
+public:
+	
 	URPGGameInstanceBase();
 	
 	virtual void Init() override;
-
-protected:
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SaveData")
-	FString SaveSlotName;
-
-	UPROPERTY(BlueprintReadWrite, Category = "SaveData")
-	URPGSaveGameObject* SaveGameObject;
-
-	void InitializeSaveGameObject();
-
-public:
 
 	FString GetSaveSlotName() const;
 
@@ -42,4 +32,16 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void LoadPlayer();
 
+protected:
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SaveData")
+	FString SaveSlotName;
+
+	UPROPERTY(BlueprintReadWrite, Category = "SaveData")
+	URPGSaveGameObject* SaveGameObject;
+	
+private:
+	
+	void InitializeSaveGameObject();
+	
 };

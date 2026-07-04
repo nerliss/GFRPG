@@ -24,7 +24,6 @@ public:
 	/* Sets input mode game only and hides cursor */
 	void SetDefaultInputMode();
 
-	/* Sets input mode UI only and shows cursor */
 	void SetUIInputMode();
 	
 protected:
@@ -35,7 +34,6 @@ protected:
 	void SpawnPhotoModePawn();
 	void DespawnPhotoModePawn();
 
-	/* Spawns and possesses photo mode pawn if not in photo mode already, despawns and unpossesses otherwise */
 	UFUNCTION(BlueprintCallable, Category = "PhotoMode")
 	void TogglePhotoMode();
 	
@@ -47,7 +45,6 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "HUD Widget")
 	URPGHUDWidget* MainHUDWidget;
 
-	/* Photo mode pawn to spawn */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "PhotoMode")
 	TSubclassOf<APhotoModePawn> PhotoModePawnClass;
 	

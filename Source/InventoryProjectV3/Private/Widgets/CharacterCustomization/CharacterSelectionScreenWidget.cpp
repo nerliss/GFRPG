@@ -91,6 +91,8 @@ FReply UCharacterSelectionScreenWidget::NativeOnMouseMove(const FGeometry& InGeo
 {
 	Super::NativeOnMouseMove(InGeometry, InMouseEvent);
 
+	// Add rotation to preview model
+	// TODO: Collapse to function
 	if (bRightMouseButtonDown)
 	{
 		if (CharacterPreviewActor)
@@ -98,7 +100,6 @@ FReply UCharacterSelectionScreenWidget::NativeOnMouseMove(const FGeometry& InGeo
 			const float InvertedMouseX = InMouseEvent.GetCursorDelta().X * -1.f;
 			const FRotator RotationDelta = FRotator(0.f, InvertedMouseX, 0.f);
 			
-			// Add rotation to preview model
 			CharacterPreviewActor->AddPreviewModelRotation(RotationDelta);
 		}
 	}
@@ -147,7 +148,8 @@ void UCharacterSelectionScreenWidget::SpawnPreviewCharacter()
 
 void UCharacterSelectionScreenWidget::OnOptionButtonHovered(UCharacterSelectionScreenOptionWidget* Option)
 {
-	auto OptionSelectionData = Option->AssociatedCharacterSelectionData;
+	// TODO: Test reference usage
+	const FCharacterSelectionData& OptionSelectionData = Option->AssociatedCharacterSelectionData;
 
 	CharacterPreviewActor->GetPreviewMesh()->SetSkeletalMeshAsset(OptionSelectionData.SkeletalMesh);
 	CharacterPreviewActor->GetPreviewMesh()->SetAnimInstanceClass(OptionSelectionData.AssociatedAnimBP);
@@ -162,7 +164,7 @@ void UCharacterSelectionScreenWidget::OnOptionButtonHovered(UCharacterSelectionS
 
 void UCharacterSelectionScreenWidget::CloseWindow()
 {
-	FInputModeGameOnly InputMode;
+	const FInputModeGameOnly InputMode;
 
 	GetOwningPlayer()->SetInputMode(InputMode);
 	GetOwningPlayer()->bShowMouseCursor = false;

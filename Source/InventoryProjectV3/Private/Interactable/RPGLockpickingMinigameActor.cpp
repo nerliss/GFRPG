@@ -44,10 +44,3 @@ void ARPGLockpickingMinigameActor::BeginPlay()
 		LockpickingMinigameWidget->AddToViewport();
 	}
 }
-
-void ARPGLockpickingMinigameActor::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-

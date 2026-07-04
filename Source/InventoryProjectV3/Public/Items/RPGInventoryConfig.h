@@ -41,7 +41,7 @@ struct FInventoryItem
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory item")
 	bool bQuestItem;
 
-	/* MyTODO: Add quest reference / class this item is related to */
+	/* TODO: Add quest reference / class this item is related to */
 
 	/* Can the item be stack multiple times in one inventory slot? */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory item")
@@ -59,7 +59,7 @@ struct FInventoryItem
 	UTexture2D* Thumbnail;	
 
 	/** !!!UNUSED!!! */
-	// MyTODO: Remove this
+	// TODO: Remove this
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory item")
 	float Durability;
 
@@ -129,7 +129,7 @@ struct FEquipableItem
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory slot")
 	EEquipmentSlot EquipmentSlot;
 
-	/* MyTODO: Add some stats and durability here */
+	/* TODO: Add some stats and durability here */
 
 	FEquipableItem()
 	{

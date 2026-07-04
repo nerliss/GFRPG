@@ -17,15 +17,12 @@ class INVENTORYPROJECTV3_API ARPGDoorBase : public AActor, public IRPGInteractIn
 {
 	GENERATED_BODY()
 	
-public:	
-	// Sets default values for this actor's properties
+public:
+	
 	ARPGDoorBase();
 
 protected:
-
-	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaTime) override;
-
+	
 	/* IRPGInteractInterface */
 	virtual void InteractNative(AActor* Interactor) override;
 	virtual FText GetNameNative() const override;
@@ -56,6 +53,5 @@ private:
 
 	void OpenDoor();
 	void CloseDoor();
-
 	
 };

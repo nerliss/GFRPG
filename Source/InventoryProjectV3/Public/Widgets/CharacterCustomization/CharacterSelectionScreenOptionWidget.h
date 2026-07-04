@@ -9,6 +9,8 @@
 
 class UButton;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnButtonHoveredDelegate, UCharacterSelectionScreenOptionWidget*, SelfReference);
+
 /**
  * Character selection screen option that is created in CharacterSelectionScreenWidget
  */
@@ -17,21 +19,7 @@ class INVENTORYPROJECTV3_API UCharacterSelectionScreenOptionWidget : public UUse
 {
 	GENERATED_BODY()
 	
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnButtonHoveredDelegate, UCharacterSelectionScreenOptionWidget*, SelfReference);
-
-	virtual void NativeConstruct() override;
-
-protected:
-
-	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
-	UButton* OptionButton;
-
 public:
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "CharacterCustomization")
-	FCharacterSelectionData AssociatedCharacterSelectionData;
-
-	FOnButtonHoveredDelegate OnButtonHoveredDelegate;
 
 	/* Bound to OnHovered event and broadcasts OnButtonHoveredDelegate delegate */
 	UFUNCTION()
@@ -42,4 +30,18 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "CharacterCustomization")
 	FText GetButtonText() const;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "CharacterCustomization")
+	FCharacterSelectionData AssociatedCharacterSelectionData;
+
+	FOnButtonHoveredDelegate OnButtonHoveredDelegate;
+
+protected:
+	
+	virtual void NativeConstruct() override;
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+	UButton* OptionButton;
+
+
 };

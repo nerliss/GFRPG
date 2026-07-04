@@ -17,14 +17,14 @@ class INVENTORYPROJECTV3_API UCharacterCustomizationData : public UDataAsset
 	
 	UCharacterCustomizationData();
 
+public:
+
+	TArray<FCharacterSelectionData> GetCharacterSelectionData() const;
+	
 protected:
 
 	/* Characters list */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character Selection")
 	TArray<FCharacterSelectionData> CharacterSelectionData;
-
-public:
-
-	TArray<FCharacterSelectionData> GetCharacterSelectionData() const;
 
 };

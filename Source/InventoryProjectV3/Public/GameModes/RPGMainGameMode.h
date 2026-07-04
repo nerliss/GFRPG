@@ -22,6 +22,7 @@ protected:
 	
 	virtual void BeginPlay() override;
 
+	// TODO: Review this - most likely deprecated
 	UPROPERTY(EditDefaultsOnly, Category = "Map")
 	TSoftObjectPtr<UTexture2D> MapTexture;
 

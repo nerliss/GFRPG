@@ -26,7 +26,7 @@ void UCharacterSelectionScreenOptionWidget::OnOptionButtonHovered()
 
 void UCharacterSelectionScreenOptionWidget::OnOptionsButtonClicked()
 {
-	auto* PlayerCharacter = Cast<ARPGPlayerCharacter>(GetOwningPlayer()->GetPawn());
+	ARPGPlayerCharacter* PlayerCharacter = Cast<ARPGPlayerCharacter>(GetOwningPlayer()->GetPawn());
 	if (!PlayerCharacter)
 	{
 		return;
@@ -37,10 +37,9 @@ void UCharacterSelectionScreenOptionWidget::OnOptionsButtonClicked()
 
 	PlayerCharacter->SetCharacterGender(AssociatedCharacterSelectionData.Gender);
 
-	auto* RPGGameInstance = Cast<URPGGameInstanceBase>(GetWorld()->GetGameInstance());
+	URPGGameInstanceBase* RPGGameInstance = Cast<URPGGameInstanceBase>(GetWorld()->GetGameInstance());
 	if (!RPGGameInstance)
 	{	
-		UE_LOG(LogTemp, Error, TEXT("Game instance is invalid"));
 		return;
 	}
 

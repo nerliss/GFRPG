@@ -42,6 +42,5 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UButton* OptionButton;
-
-
+	
 };

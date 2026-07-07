@@ -14,7 +14,10 @@ class INVENTORYPROJECTV3_API URPGStatsComponent : public UActorComponent
 public:
 	
 	URPGStatsComponent();
-
+	
+	virtual void BeginPlay() override;
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
 	int32 Strength;
 
@@ -34,10 +37,5 @@ public:
 	float Speed;
 
 	// TODO: Add more stats, implement their usage
-	
-protected:
-	
-	virtual void BeginPlay() override;
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	
 };

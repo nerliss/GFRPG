@@ -20,6 +20,9 @@ public:
 
 	URPGInventoryComponent();
 
+	virtual void BeginPlay() override;
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	
 	/* TODO: Review these function, encapsulate if required */
 	/* Creates inventory window if none is present - destroys otherwise */
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
@@ -76,9 +79,6 @@ public:
 	URPGInventoryWindowWidget* InventoryWindowWidget;
 
 protected:
-
-	virtual void BeginPlay() override;
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	/* Resizes inventory and fills the slots with data from Inventory array */
 	UFUNCTION(BlueprintCallable, Category = "Inventory")

@@ -23,7 +23,7 @@ public:
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	
-	/* TODO: Review these function, encapsulate if required */
+	/* TODO: Review these function */
 	/* Creates inventory window if none is present - destroys otherwise */
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void ToggleInventory();

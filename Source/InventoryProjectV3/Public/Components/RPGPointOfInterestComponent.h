@@ -23,6 +23,7 @@ public:
 
 	URPGPointOfInterestComponent();
 
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	
 	void SpawnPOIOnMap();
@@ -47,10 +48,6 @@ public:
 	/* Should icon always be visible on a map? Currently, affects only Minimap since Map Screen's icons are always visible by default */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Point of interest")
 	bool bAlwaysShow;
-	
-protected:
-
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
 

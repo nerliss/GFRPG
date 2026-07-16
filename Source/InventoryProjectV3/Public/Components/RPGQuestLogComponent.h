@@ -19,6 +19,8 @@ class INVENTORYPROJECTV3_API URPGQuestLogComponent : public UActorComponent
 public:
 
 	URPGQuestLogComponent();
+	
+	virtual void BeginPlay() override;
 
 	TArray<ARPGQuest*> GetActiveQuests() const { return ActiveQuests; }
 	
@@ -43,9 +45,7 @@ public:
 	void ToggleQuestLog();
 	
 protected:
-
-	virtual void BeginPlay() override;
-
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
 	TArray<ARPGQuest*> ActiveQuests;
 

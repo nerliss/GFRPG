@@ -20,8 +20,6 @@ class INVENTORYPROJECTV3_API ARPGBaseContainer : public AActor, public IRPGInter
 public:	
 
 	ARPGBaseContainer();
-
-protected:
 	
 	virtual void BeginPlay() override;
 #if WITH_EDITORONLY_DATA
@@ -31,9 +29,7 @@ protected:
 	/* IRPGInteractInterface */
 	virtual void InteractNative(AActor* Interactor) override;
 	virtual FText GetNameNative() const override;
-
-public:
-
+	
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Components")
 	USceneComponent* RootSceneComponent;
 

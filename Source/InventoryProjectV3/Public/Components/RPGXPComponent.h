@@ -19,7 +19,10 @@ class INVENTORYPROJECTV3_API URPGXPComponent : public UActorComponent
 public:
 	
 	URPGXPComponent();
-
+	
+	virtual void BeginPlay() override;
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	
 	/** Used for XP Progress Bar in UI because PBs take values only between 0 and 1 */
 	void Calculate_Percentage_XP();
 
@@ -49,9 +52,6 @@ public:
 	FOnLevelGained OnLevelGained;
 
 protected:
-	
-	virtual void BeginPlay() override;
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "XP|Sounds")
 	USoundBase* LevelUpSound;

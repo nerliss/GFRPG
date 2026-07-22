@@ -41,6 +41,8 @@ public:
 	
 	URPGReputationComponent();
 	
+	virtual void BeginPlay() override;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FReputations> Reputations;
 	
@@ -49,8 +51,5 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Reputation")
 	void AddReputation(TEnumAsByte<EFactions> Name, float Amount);
-
-protected:
-
-	virtual void BeginPlay() override;
+	
 };

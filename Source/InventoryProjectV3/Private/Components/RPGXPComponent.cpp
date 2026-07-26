@@ -9,7 +9,7 @@ URPGXPComponent::URPGXPComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
-	Level_Cap = 30;
+	CapLevel = 30;
 	SkillPoints = 0;
 }
 
@@ -17,12 +17,12 @@ void URPGXPComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Level_Current = 1;
+	CurrentLevel = 1;
 
-	XP_Current = 0.f;
-	XP_Current_Max = 100.f;
+	CurrentXP = 0.f;
+	CurrentMaxXP = 100.f;
 
-	Calculate_MaxXP();
+	CalculateMaxXP();
 
 	//OnLevelGained.AddDynamic(this, &URPGXPComponent::CalculateXPReward);
 }
@@ -31,59 +31,59 @@ void URPGXPComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	XP_Current = UKismetMathLibrary::FCeil(UKismetMathLibrary::FInterpTo(XP_Current, XP_Buffer, DeltaTime, 3.f));
+	CurrentXP = UKismetMathLibrary::FCeil(UKismetMathLibrary::FInterpTo(CurrentXP, BufferXP, DeltaTime, 3.f));
 
-	Calculate_Percentage_XP();
-	Calculate_Percentage_Buffer();
+	CalculateXPPercentage();
+	CalculateXPBufferPercentage();
 
-	if (XP_Current >= XP_Current_Max)
+	if (CurrentXP >= CurrentMaxXP)
 	{
 		LevelUp();
 	}
 }
 
-void URPGXPComponent::Calculate_Percentage_XP()
+void URPGXPComponent::CalculateXPPercentage()
 {
-	CurrentPercentage_XP = XP_Current / XP_Current_Max;
+	XPCurrentPercentage = CurrentXP / CurrentMaxXP;
 }
 
-void URPGXPComponent::Calculate_Percentage_Buffer()
+void URPGXPComponent::CalculateXPBufferPercentage()
 {
-	CurrentPercentage_Buffer = XP_Buffer / XP_Current_Max;
+	BufferXPCurrentPercentage = BufferXP / CurrentMaxXP;
 }
 
-void URPGXPComponent::Calculate_MaxXP()
+void URPGXPComponent::CalculateMaxXP()
 {
 	// Temp equation
 	// I kinda like the way it works, because quests and other activities will always grant a fraction
 	// of Current_Max XP, thus making this calculation at some point useless (it will always take you almost the same
 	// time to gain a level no matter of the level - whether you are lvl 1 or lvl 20)
 	// Perhaps in future I will replace this with datatable
-	XP_Current_Max = UKismetMathLibrary::FCeil(XP_Current_Max * 1.7f);
+	CurrentMaxXP = UKismetMathLibrary::FCeil(CurrentMaxXP * 1.7f);
 }
 
 void URPGXPComponent::AddXP(float AddedXP)
 {
-	XP_Buffer = AddedXP + XP_Buffer;
+	BufferXP = AddedXP + BufferXP;
 }
 
 void URPGXPComponent::LevelUp()
 {
-	if (Level_Current >= Level_Cap)
+	if (CurrentLevel >= CapLevel)
 	{
-		XP_Current = 0.f;
-		XP_Buffer = 0.f;
+		CurrentXP = 0.f;
+		BufferXP = 0.f;
 	}
 	else
 	{
-		Level_Current++;
+		CurrentLevel++;
 
-		float XP_Remaining = XP_Buffer - XP_Current_Max; 
+		float XP_Remaining = BufferXP - CurrentMaxXP; 
 
-		Calculate_MaxXP();
+		CalculateMaxXP();
 
-		XP_Current = 0.f;
-		XP_Buffer = 0.f;
+		CurrentXP = 0.f;
+		BufferXP = 0.f;
 
 		SkillPoints++;
 
@@ -107,10 +107,10 @@ float URPGXPComponent::CalculateXPReward(bool bQuestReward, float Multiplier)
 {
 	if (bQuestReward)
 	{
-		return XP_Current_Max * 0.15 * Multiplier; // Quests award 15% of required XP
+		return CurrentMaxXP * 0.15 * Multiplier; // Quests award 15% of required XP
 	}
 	else
 	{
-		return XP_Current_Max * 0.033 * Multiplier; // Kills (and maybe something else) award 3.3% of required XP
+		return CurrentMaxXP * 0.033 * Multiplier; // Kills (and maybe something else) award 3.3% of required XP
 	}
 }

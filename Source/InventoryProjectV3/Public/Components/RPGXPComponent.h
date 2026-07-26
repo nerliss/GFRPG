@@ -24,12 +24,12 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	
 	/** Used for XP Progress Bar in UI because PBs take values only between 0 and 1 */
-	void Calculate_Percentage_XP();
+	void CalculateXPPercentage();
 
 	/** Used for Buffer Progress Bar in UI because PBs take values only between 0 and 1 */
-	void Calculate_Percentage_Buffer();
+	void CalculateXPBufferPercentage();
 
-	void Calculate_MaxXP();
+	void CalculateMaxXP();
 
 	UFUNCTION(BlueprintCallable, Category = "XP|Functions")
 	void AddXP(float AddedXP);
@@ -40,12 +40,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "XP|Functions")
 	float CalculateXPReward(bool bQuestReward, float Multiplier = 1.f);
 
-	float GetCurrentXP() const { return XP_Current; }
-	float GetCurrentMaxXP() const { return XP_Current_Max; } 
-	float GetCurrentXPPercentage() const { return CurrentPercentage_XP; }
-	float GetCurrentPercentageBuffer() const { return CurrentPercentage_Buffer; }
+	float GetCurrentXP() const { return CurrentXP; }
+	float GetCurrentMaxXP() const { return CurrentMaxXP; } 
+	float GetCurrentXPPercentage() const { return XPCurrentPercentage; }
+	float GetCurrentPercentageBuffer() const { return BufferXPCurrentPercentage; }
 	
-	int32 GetCurrentLevel() const { return Level_Current; }
+	int32 GetCurrentLevel() const { return CurrentLevel; }
 	int32 GetSkillPoints() const { return SkillPoints; }
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
@@ -60,27 +60,27 @@ protected:
 	UParticleSystem* LevelUpParticle;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "XP|Level")
-	int32 Level_Current;
+	int32 CurrentLevel;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "XP|Level")
-	int32 Level_Cap;
+	int32 CapLevel;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "XP|SP")
 	int32 SkillPoints;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "XP|Experience")
-	float XP_Current;
+	float CurrentXP;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "XP|Experience")
-	float XP_Current_Max;
+	float CurrentMaxXP;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "XP|Experience")
-	float XP_Buffer;
+	float BufferXP;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "XP|Experience")
-	float CurrentPercentage_XP;
+	float XPCurrentPercentage;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "XP|Experience")
-	float CurrentPercentage_Buffer;
+	float BufferXPCurrentPercentage;
 	
 };

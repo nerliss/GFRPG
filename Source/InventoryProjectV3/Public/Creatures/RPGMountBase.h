@@ -19,14 +19,14 @@ public:
 
 	ARPGMountBase();
 
-protected:
-
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	virtual void InteractNative(AActor* Interactor) override;
 	virtual FText GetNameNative() const override;
+
+protected:
 
 	void OnForwardMoved(const float Value);
 	void OnRightMoved(const float Value);

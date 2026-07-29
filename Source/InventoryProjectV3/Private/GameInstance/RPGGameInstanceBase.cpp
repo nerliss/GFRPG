@@ -5,6 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Save/RPGSaveGameObject.h"
 #include "Utility/LogDefinitions.h"
+#include "Utility/Utility.h"
 
 URPGGameInstanceBase::URPGGameInstanceBase()
 {
@@ -26,7 +27,7 @@ void URPGGameInstanceBase::InitializeSaveGameObject()
 	Cast<URPGSaveGameObject>(UGameplayStatics::LoadGameFromSlot(SaveSlotName, 0)) : 
 	Cast<URPGSaveGameObject>(UGameplayStatics::CreateSaveGameObject(URPGSaveGameObject::StaticClass()));
 	
-	UE_LOG(LogRPGSaving, Verbose, TEXT("[URPGGameInstanceBase::InitializeSaveGameObject] SaveGameObject initialized"));
+	LOG_WITH_FUNCTION_NAME(LogRPGSaving, Verbose, TEXT("SaveGameObject initialized"));
 }
 
 FString URPGGameInstanceBase::GetSaveSlotName() const
@@ -46,7 +47,7 @@ void URPGGameInstanceBase::SavePlayer()
 		return;
 	}
 
-	const auto* PlayerCharacter = Cast<ARPGPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	const ARPGPlayerCharacter* PlayerCharacter = Cast<ARPGPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	if (!PlayerCharacter)
 	{
 		return;
@@ -55,7 +56,7 @@ void URPGGameInstanceBase::SavePlayer()
 	SaveGameObject->PlayerTransform = PlayerCharacter->GetActorTransform();
 
 	UGameplayStatics::SaveGameToSlot(SaveGameObject, SaveSlotName, 0);
-	UE_LOG(LogRPGSaving, Log, TEXT("[URPGGameInstanceBase::SavePlayer] Saving player to slot %s"), *SaveSlotName);
+	LOG_WITH_FUNCTION_NAME(LogRPGSaving, Log, TEXT("Saving player to slot %s"), *SaveSlotName);
 }
 
 void URPGGameInstanceBase::LoadPlayer()
@@ -65,7 +66,7 @@ void URPGGameInstanceBase::LoadPlayer()
 		return;
 	}
 
-	auto* PlayerCharacter = Cast<ARPGPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	ARPGPlayerCharacter* PlayerCharacter = Cast<ARPGPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	if (!PlayerCharacter)
 	{
 		return;
@@ -74,5 +75,5 @@ void URPGGameInstanceBase::LoadPlayer()
 	// TODO: Figure this out
 	PlayerCharacter->SetActorTransform(SaveGameObject->PlayerTransform);
 	UGameplayStatics::LoadGameFromSlot(SaveSlotName, 0); 
-	UE_LOG(LogRPGSaving, Log, TEXT("[URPGGameInstanceBase::LoadPlayer] Loading player to slot %s"), *SaveSlotName);
+	LOG_WITH_FUNCTION_NAME(LogRPGSaving, Log, TEXT("Loading player to slot %s"), *SaveSlotName);
 }

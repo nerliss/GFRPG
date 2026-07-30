@@ -22,6 +22,8 @@ public:
 	
 	URPGDialogueComponent();
 	
+	virtual void BeginPlay() override;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Dialogue")
 	URPGDialogueData* DialogueData;
 
@@ -51,11 +53,7 @@ public:
 	
 	UPROPERTY(BlueprintAssignable, Category = "Dialogue")
 	FOnDialogueEnded OnDialogueStarted;
-
-protected:
-
-	virtual void BeginPlay() override;
-
+	
 private:
 
 	void GoToNode(int32 NodeIndex);

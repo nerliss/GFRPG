@@ -38,7 +38,6 @@ protected:
 	void TogglePhotoMode();
 	
 	// TODO: Move to a config or something
-	/* HUD class */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "HUD Widget")
 	TSubclassOf<UUserWidget> MainHUDWidgetClass;
 

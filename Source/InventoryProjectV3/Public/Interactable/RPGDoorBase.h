@@ -21,11 +21,11 @@ public:
 	
 	ARPGDoorBase();
 
-protected:
-	
 	/* IRPGInteractInterface */
 	virtual void InteractNative(AActor* Interactor) override;
 	virtual FText GetNameNative() const override;
+	
+protected:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Components")
 	USceneComponent* RootSceneComponent;

@@ -58,11 +58,6 @@ struct FInventoryItem
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory item")
 	UTexture2D* Thumbnail;	
 
-	/** !!!UNUSED!!! */
-	// TODO: Remove this
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory item")
-	float Durability;
-
 	/* Item's actor class, that actually has a model and where the use function is defined. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory item")
 	TSubclassOf<ARPGItemBase> Class;
@@ -76,7 +71,6 @@ struct FInventoryItem
 		MaxStackSize = 20;
 		bConsumable = false;
 		Thumbnail = nullptr;
-		Durability = 10.f;
 		Class = nullptr;
 	}
 };

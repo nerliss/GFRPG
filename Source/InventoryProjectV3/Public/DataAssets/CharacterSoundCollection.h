@@ -13,8 +13,4 @@ class INVENTORYPROJECTV3_API UCharacterSoundCollection : public UDataAsset
 {
 	GENERATED_BODY()
 	
-public:
-	
-	/* Sound that will be played when character dies */
-
 };

@@ -123,7 +123,7 @@ struct FEquipableItem
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory slot")
 	EEquipmentSlot EquipmentSlot;
 
-	/* TODO: Add some stats and durability here */
+	/* TODO: Add some stats */
 
 	FEquipableItem()
 	{

@@ -41,21 +41,26 @@ void ARPGQuestMarkerLocation::OnSphereBeginOverlap(UPrimitiveComponent* Overlapp
 		return;
 	}
 
-	if (PlayerCharacter->GetQuestLogComponent())
+	if (!PlayerCharacter->GetQuestLogComponent())
 	{
-		for (const ARPGQuest* Quest : PlayerCharacter->GetQuestLogComponent()->GetActiveQuests())
+		return;
+	}
+
+	for (const ARPGQuest* Quest : PlayerCharacter->GetQuestLogComponent()->GetActiveQuests())
+	{
+		if (!Quest)
 		{
-			if (Quest)
+			continue;
+		}
+
+		// TODO: May be add some additional check for this specific marker location and compare against it
+		for (const FObjectiveData Objective : Quest->GetObjectives())
+		{
+			if (Objective.Type == OT_Location && !Objective.bCompleted && Objective.bCanBeCompleted)
 			{
-				for (const FObjectiveData Objective : Quest->GetObjectives())
-				{
-					if (Objective.Type == OT_Location && !Objective.bCompleted && Objective.bCanBeCompleted)
-					{
-						Quest->OnLocationReached.Broadcast(this);
-						LOG_WITH_FUNCTION_NAME(LogRPGQuests, Warning, TEXT("Reached Location Objective %s (object name: %s)"), *Name.ToString(), *GetName());
-						break;
-					}
-				}
+				Quest->OnLocationReached.Broadcast(this);
+				LOG_WITH_FUNCTION_NAME(LogRPGQuests, Warning, TEXT("Reached Location Objective %s (object name: %s)"), *Name.ToString(), *GetName());
+				break;
 			}
 		}
 	}

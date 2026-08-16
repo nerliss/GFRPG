@@ -11,6 +11,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Quests/RPGQuestMarkerLocation.h"
 #include "Utility/LogDefinitions.h"
+#include "Utility/Utility.h"
 #include "Widgets/Quests/RPGQuestLogWidget.h"
 
 ARPGQuest::ARPGQuest()
@@ -150,7 +151,7 @@ void ARPGQuest::MakeNearestObjectiveAvailable(int32 ObjectiveIndex)
 {
 	if (ObjectiveIndex == Objectives.Num() - 1)
 	{
-		UE_LOG(LogRPGQuests, Error, TEXT("[ARPGQuest::MakeNearestObjectiveAvailable] Already at the last objective"));
+		LOG_WITH_FUNCTION_NAME(LogRPGQuests, Error, TEXT("Already at the last objective"));
 		return;
 	}
 
@@ -172,7 +173,7 @@ void ARPGQuest::MakeNearestObjectiveAvailable(int32 ObjectiveIndex)
 	{
 		Objectives[NearestIncompleteObjectiveIndex].bCanBeCompleted = true;
 
-		UE_LOG(LogRPGQuests, Verbose, TEXT("[ARPGQuest::MakeNearestObjectiveAvailable] Objective %s is now active"), *GetNameSafe(Objectives[NearestIncompleteObjectiveIndex].Target.Get()));
+		LOG_WITH_FUNCTION_NAME(LogRPGQuests, Verbose, TEXT("Objective %s is now active"), *GetNameSafe(Objectives[NearestIncompleteObjectiveIndex].Target.Get()));
 
 		const ARPGItemBase* ObjectiveItem = Cast<ARPGItemBase>(Objectives[NearestIncompleteObjectiveIndex].Target.Get());
 		if (ObjectiveItem)
@@ -186,7 +187,7 @@ void ARPGQuest::MakeNearestObjectiveAvailable(int32 ObjectiveIndex)
 					Objectives[NearestIncompleteObjectiveIndex].bCompleted = true;
 					Objectives[NearestIncompleteObjectiveIndex].bCanBeCompleted = true;
 
-					UE_LOG(LogRPGQuests, Verbose, TEXT("[ARPGQuest::MakeNearestObjectiveAvailable] Objective's target is item (%s) and player has enough these items (%d) to automatically complete this objective"), *GetNameSafe(ObjectiveItem), Objectives[NearestIncompleteObjectiveIndex].Amount)
+					LOG_WITH_FUNCTION_NAME(LogRPGQuests, Verbose, TEXT("Objective's target is item (%s) and player has enough these items (%d) to automatically complete this objective"), *GetNameSafe(ObjectiveItem), Objectives[NearestIncompleteObjectiveIndex].Amount)
 
 					MakeNearestObjectiveAvailable(ObjectiveIndex); // Probably needs to be ObjectiveIndex + 1 or something
 				}
@@ -195,7 +196,7 @@ void ARPGQuest::MakeNearestObjectiveAvailable(int32 ObjectiveIndex)
 	}
 	else
 	{
-		UE_LOG(LogRPGQuests, Warning, TEXT("[ARPGQuest::MakeNearestObjectiveAvailable] No more objectives available"));
+		LOG_WITH_FUNCTION_NAME(LogRPGQuests, Warning, TEXT("No more objectives available"));
 	}
 }
 
@@ -209,13 +210,13 @@ bool ARPGQuest::GetActiveObjective(int32& ObjectiveIndex, FObjectiveData& Object
 			ObjectiveIndex = i;
 			Objective = LocalObjective;
 
-			UE_LOG(LogRPGQuests, Verbose, TEXT("[ARPGQuest::GetActiveObjective] Found active objective %s at %d index"), *GetNameSafe(Objective.Target.Get()), ObjectiveIndex);
+			LOG_WITH_FUNCTION_NAME(LogRPGQuests, Verbose, TEXT("Found active objective %s at %d index"), *GetNameSafe(Objective.Target.Get()), ObjectiveIndex);
 
 			return true;
 		}
 	}
 
-	UE_LOG(LogRPGQuests, Error, TEXT("[ARPGQuest::GetActiveObjective] No active objectives found"));
+	LOG_WITH_FUNCTION_NAME(LogRPGQuests, Error, TEXT("No active objectives found"));
 	return false;
 }
 
@@ -233,7 +234,7 @@ bool ARPGQuest::GetNextObjective(int32& ObjectiveIndex, FObjectiveData& Objectiv
 			ObjectiveIndex = NextObjectiveIndex;
 			Objective = Objectives[NextObjectiveIndex];
 
-			UE_LOG(LogRPGQuests, Verbose, TEXT("[ARPGQuest::GetNextObjective] Found next objective %s at %d index"), *GetNameSafe(Objective.Target.Get()), ObjectiveIndex);
+			LOG_WITH_FUNCTION_NAME(LogRPGQuests, Verbose, TEXT("Found next objective %s at %d index"), *GetNameSafe(Objective.Target.Get()), ObjectiveIndex);
 
 			return true;
 		}
@@ -242,7 +243,7 @@ bool ARPGQuest::GetNextObjective(int32& ObjectiveIndex, FObjectiveData& Objectiv
 	ObjectiveIndex = 0;
 	Objective = FObjectiveData();
 
-	UE_LOG(LogRPGQuests, Error, TEXT("[ARPGQuest::GetNextObjective] No next objective found"));
+	LOG_WITH_FUNCTION_NAME(LogRPGQuests, Error, TEXT("No next objective found"));
 
 	return false;
 }
@@ -256,7 +257,7 @@ void ARPGQuest::CalculateXP()
 	}
 
 	XPReward = FMath::CeilToFloat(PlayerCharacter->XPComp->CalculateXPReward(true, XPRewardMultiplier));
-	UE_LOG(LogRPGQuests, Verbose, TEXT("[ARPGQuest::CalculateXP] Quest %s (object %s) now has updated XP Reward: %f"), *Name.ToString(), *GetName(), XPReward);
+	LOG_WITH_FUNCTION_NAME(LogRPGQuests, Verbose, TEXT("Quest %s (object %s) now has updated XP Reward: %f"), *Name.ToString(), *GetName(), XPReward);
 }
 
 void ARPGQuest::OnQuestCompleted()

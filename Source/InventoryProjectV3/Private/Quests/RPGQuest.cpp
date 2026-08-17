@@ -80,7 +80,7 @@ void ARPGQuest::CheckLocationObjective(ARPGQuestMarkerLocation* LocationTarget)
 		const ARPGQuestMarkerLocation* LocationObjective = Cast<ARPGQuestMarkerLocation>(Objective.Target.Get());
 		if (!Objective.bCompleted && Objective.bCanBeCompleted && LocationObjective == LocationTarget)
 		{
-			UE_LOG(LogRPGQuests, Verbose, TEXT("[ARPGQuest::CheckLocationObjective] Found required Location Objective, %s is now marked as completed"), *LocationObjective->GetName());
+			LOG_WITH_FUNCTION_NAME(LogRPGQuests, Verbose, TEXT("Found required Location Objective, %s is now marked as completed"), *LocationObjective->GetName());
 			MakeNearestObjectiveAvailable(i);
 			Objectives[i].bCompleted = true;
 			bUpdateUI = true;
